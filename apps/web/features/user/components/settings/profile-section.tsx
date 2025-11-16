@@ -52,7 +52,7 @@ export const ProfileSection = () => {
   }, [data?.user.id]);
 
   const [profileErrors, setProfileErrors] = useState<Record<string, string>>(
-    {}
+    {},
   );
 
   const handleProfileSubmit = async (e: React.FormEvent) => {

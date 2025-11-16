@@ -17,6 +17,12 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@repo/ui/components/tooltip";
+import {
   type ColumnDef,
   type ColumnFiltersState,
   flexRender,
@@ -35,13 +41,13 @@ import {
   ChevronDown,
   Search,
 } from "lucide-react";
-import * as React from "react";
+import { useMemo, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchPlaceholder?: string;
-  searchKey?: string;
+  searchKey?: string | string[];
 }
 
 export function DataTable<TData, TValue>({
@@ -50,13 +56,11 @@ export function DataTable<TData, TValue>({
   searchPlaceholder = "Search...",
   searchKey = "name",
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
     data,
@@ -77,6 +81,31 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  /** 🔍 Fungsi bantu: ambil nilai nested seperti "user.name" */
+  const getNestedValue = (obj: any, path: string): any => {
+    return path.split(".").reduce((acc, key) => acc?.[key], obj);
+  };
+
+  /** 🔎 Filter data secara manual */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const filteredData = useMemo(() => {
+    if (!globalFilter) return data;
+    const keys = Array.isArray(searchKey) ? searchKey : [searchKey];
+    const search = globalFilter.toLowerCase();
+
+    return data.filter((item) =>
+      keys.some((key) => {
+        const value = getNestedValue(item, key);
+        return value?.toString().toLowerCase().includes(search);
+      }),
+    );
+  }, [data, globalFilter, searchKey]);
+
+  table.setOptions((prev) => ({
+    ...prev,
+    data: filteredData,
+  }));
+
   const renderSortIcon = (isSorted: false | "asc" | "desc") => {
     if (isSorted === "asc") return <ArrowUp className="ml-2 h-4 w-4" />;
     if (isSorted === "desc") return <ArrowDown className="ml-2 h-4 w-4" />;
@@ -90,12 +119,8 @@ export function DataTable<TData, TValue>({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder={searchPlaceholder}
-            value={
-              (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn(searchKey)?.setFilterValue(event.target.value)
-            }
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -159,10 +184,12 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      <div className="max-w-[200px] truncate">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </div>
                     </TableCell>
                   ))}
                 </TableRow>

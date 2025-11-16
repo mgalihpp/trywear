@@ -10,8 +10,8 @@ import { AdminSidebar } from "@/features/admin/components/app-sidebar";
 import { TopNav } from "@/features/admin/components/top-nav";
 
 export const metadata: Metadata = {
-  title: "Monowear Admin Dashboard",
-  description: "Admin dashboard for Monowear e-commerce platform",
+  title: "TryWear Admin Dashboard",
+  description: "Admin dashboard for TryWear e-commerce platform",
 };
 
 const geistSans = localFont({

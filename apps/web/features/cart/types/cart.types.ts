@@ -1,19 +1,20 @@
 export interface CartItem {
-  id: number;
+  id: string;
   name: string;
   price: number;
   image: string;
   quantity: number;
   storage?: string;
   color?: string;
+  size?: string;
 }
 
 export interface CartState {
   items: CartItem[];
-  addToCart: (item: Omit<CartItem, "quantity">) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
-  readonly totalItems: number;
-  readonly totalPrice: number;
+  totalItems: () => number;
+  totalPrice: () => number;
 }

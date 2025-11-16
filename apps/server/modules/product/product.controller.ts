@@ -13,53 +13,55 @@ import { AppResponse } from "@/utils/appResponse";
 import { BaseController } from "../controller";
 import { ProductService } from "./product.service";
 
+const normalizeQuery = (query: any) => {
+  const fixed: any = { ...query };
+
+  // Convert color[]
+  if (query["colors[]"])
+    fixed.colors = Array.isArray(query["colors[]"])
+      ? query["colors[]"]
+      : [query["colors[]"]];
+  if (query["sizes[]"])
+    fixed.sizes = Array.isArray(query["sizes[]"])
+      ? query["sizes[]"]
+      : [query["sizes[]"]];
+  if (query["priceRange[]"])
+    fixed.priceRange = Array.isArray(query["priceRange[]"])
+      ? query["priceRange[]"]
+      : [query["priceRange[]"]];
+
+  return fixed;
+};
+
 export class ProductController extends BaseController<Product, ProductService> {
   constructor() {
     super(new ProductService());
   }
 
-  getAll = asyncHandler(async (req: Request, res: Response) => {
-    const q = listProductsQuery.parse(req.query);
-    const where: Prisma.ProductWhereInput = {};
-
-    if (q.category) where.category = { slug: q.category };
-    if (q.q)
-      where.OR = [
-        {
-          title: {
-            contains: q.q,
-            mode: "insensitive",
-          },
-        },
-        {
-          description: {
-            contains: q.q,
-            mode: "insensitive",
-          },
-        },
-      ];
-
-    const page = Number(q.page || 1);
-    const limit = Math.min(Number(q.limit || 12), 100);
-
-    const products = await this.service.findAll({
-      where,
-      include: {
-        category: true,
-        product_images: true,
-        product_variants: {
-          include: {
-            inventory: true,
-          },
-        },
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+  getAll = asyncHandler(async (_req: Request, res: Response) => {
+    const products = await this.service.findAll();
 
     return new AppResponse({
       res,
       data: products,
+    });
+  });
+
+  getAllByFilters = asyncHandler(async (req: Request, res: Response) => {
+    const q = listProductsQuery.parse(normalizeQuery(req.query));
+
+    const products = await this.service.findAll(q);
+
+    return new AppResponse({ res, data: products });
+  });
+
+  getRelatedProducts = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = productIdParams.parse(req.params);
+    const relatedProducts = await this.service.findSimilarProducts(id);
+
+    return new AppResponse({
+      res,
+      data: relatedProducts,
     });
   });
 
@@ -113,6 +115,14 @@ export class ProductController extends BaseController<Product, ProductService> {
     return new AppResponse({
       res,
       data: deletedImage,
+    });
+  });
+
+  getAvailableFilters = asyncHandler(async (_req: Request, res: Response) => {
+    const filters = await this.service.getAvailableFilters();
+    return new AppResponse({
+      res,
+      data: filters,
     });
   });
 }

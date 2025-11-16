@@ -10,6 +10,7 @@ import {
 } from "@repo/ui/components/sheet";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
+import { formatCurrency } from "@/features/admin/utils";
 import { useCartStore } from "@/features/cart/store/useCartStore";
 
 const CartSheet = () => {
@@ -21,14 +22,14 @@ const CartSheet = () => {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <ShoppingCart className="h-5 w-5" />
-          {totalItems > 0 && (
+          {totalItems() > 0 && (
             <span className="absolute -top-1 -right-1 h-5 w-5 bg-foreground text-background text-xs flex items-center justify-center font-bold">
-              {totalItems}
+              {totalItems()}
             </span>
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col">
+      <SheetContent className="w-full sm:max-w-lg flex flex-col p-4">
         <SheetHeader>
           <SheetTitle className="text-2xl font-bold">Keranjang</SheetTitle>
         </SheetHeader>
@@ -114,7 +115,7 @@ const CartSheet = () => {
             <div className="border-t border-border pt-6 space-y-4">
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>Rp {totalPrice.toLocaleString("id-ID")}</span>
+                <span>{formatCurrency(totalPrice())}</span>
               </div>
               <div className="space-y-2">
                 <Button asChild className="w-full h-12">

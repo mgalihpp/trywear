@@ -40,7 +40,7 @@ export const OrdersSection = () => {
   ];
 
   const filteredOrders = orders.filter(
-    (order) => orderFilter === "all" || order.status === orderFilter
+    (order) => orderFilter === "all" || order.status === orderFilter,
   );
 
   const handleReview = (productName: string) => {

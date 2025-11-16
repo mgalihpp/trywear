@@ -3,28 +3,19 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader } from "@repo/ui/components/card";
-import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { ErrorAlert } from "@/features/admin/components//error-alert";
 import { DataTable } from "@/features/admin/components/data-table";
 import { DataTableSkeleton } from "@/features/admin/components/data-table-skeleton";
+import { useProducts } from "@/features/admin/queries/useProductQuery";
 import { formatCurrency } from "@/features/admin/utils";
-import { api } from "@/lib/api";
 import type { ProductWithRelations } from "@/types/index";
 import { DeleteProductDialog } from "./delete-product-dialog";
 
 export function ProductsTable() {
-  const {
-    data: productsData,
-    isPending,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ["products"],
-    queryFn: api.product.getAll,
-  });
+  const { data: productsData, isPending, isError, refetch } = useProducts();
 
   const columns: ColumnDef<ProductWithRelations>[] = [
     {
@@ -68,7 +59,7 @@ export function ProductsTable() {
         // Menjumlahkan stok
         const totalStock = inventories.reduce(
           (sum, inv) => sum + (inv?.stock_quantity ?? 0),
-          0
+          0,
         );
 
         return (
@@ -137,7 +128,7 @@ export function ProductsTable() {
             columns={columns}
             data={productsData}
             searchPlaceholder="Cari berdasarkan nama produk or SKU..."
-            searchKey="title"
+            searchKey={["title", "sku", "category.name"]}
           />
         )}
       </CardContent>

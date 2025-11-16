@@ -80,6 +80,7 @@ export function CategoryCombobox({
 
           setCategories([...categories, newCategory]);
           setValue(newValue);
+          onValueChange(Number(newValue));
           setNewCategoryName("");
           setDialogOpen(false);
           setOpen(false);
@@ -94,7 +95,7 @@ export function CategoryCombobox({
             }
           }
         },
-      }
+      },
     );
   };
 
@@ -163,7 +164,7 @@ export function CategoryCombobox({
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === category.value ? "opacity-100" : "opacity-0"
+                        value === category.value ? "opacity-100" : "opacity-0",
                       )}
                     />
                     {category.label}

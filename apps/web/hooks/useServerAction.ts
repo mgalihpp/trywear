@@ -5,7 +5,7 @@ type Action<TArgs, TResult> = (args: TArgs) => Promise<TResult>;
 
 export function useServerAction<TArgs, TResult>(
   action: Action<TArgs, TResult>,
-  onFinished: ((result: TResult) => void) | null = null
+  onFinished: ((result: TResult) => void) | null = null,
 ) {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<TResult | null>(null);

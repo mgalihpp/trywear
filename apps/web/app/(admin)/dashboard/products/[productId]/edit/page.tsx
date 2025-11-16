@@ -37,7 +37,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@repo/ui/components/tooltip";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Save } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -55,6 +55,7 @@ import { ProductVariantsSection } from "../../_components/product-variant-sectio
 
 export default function EditProductPage() {
   const params = useParams();
+  const queryClient = useQueryClient();
   const { productId } = params;
 
   const [variantOptions, setVariantOptions] = useState<VariantOption[]>([]);
@@ -62,6 +63,8 @@ export default function EditProductPage() {
     VariantCombination[]
   >([]);
   const { attachments, setAttachments, isUploading } = useProductMediaUpload();
+
+  console.log(isUploading);
 
   const form = useForm<z.infer<typeof updateProductSchema>>({
     resolver: zodResolver(updateProductSchema),
@@ -75,11 +78,7 @@ export default function EditProductPage() {
     },
   });
 
-  const {
-    data: productData,
-    isPending,
-    refetch,
-  } = useQuery({
+  const { data: productData, isPending } = useQuery({
     queryKey: ["product", productId],
     queryFn: () => api.product.getById(productId as string),
   });
@@ -102,15 +101,15 @@ export default function EditProductPage() {
 
       // --- DELETE old variants that no longer exist ---
       const variantsToDelete = existingVariants.filter(
-        (v) => !currentVariantIds.includes(v.id)
+        (v) => !currentVariantIds.includes(v.id),
       );
 
       await Promise.all(
         variantsToDelete.map((v) =>
           deleteProductVariantMutation.mutateAsync({
             variantId: v.id,
-          })
-        )
+          }),
+        ),
       );
 
       // --- UPDATE & CREATE ---
@@ -135,7 +134,7 @@ export default function EditProductPage() {
           } else {
             await createProductVariantsMutation.mutateAsync([variant]);
           }
-        })
+        }),
       );
 
       // filter hanya gambar baru (belum ada di database)
@@ -143,7 +142,7 @@ export default function EditProductPage() {
 
       if (newAttachments.length > 0) {
         const uniqueAttachments = Array.from(
-          new Map(newAttachments.map((a) => [a.key, a])).values()
+          new Map(newAttachments.map((a) => [a.key, a])).values(),
         );
 
         const imagesPayload = uniqueAttachments.map((a, index) => ({
@@ -157,11 +156,18 @@ export default function EditProductPage() {
         await createProductImagesMutation.mutateAsync(imagesPayload);
       }
 
+      queryClient.refetchQueries({
+        queryKey: ["product", productId],
+      });
+
+      queryClient.refetchQueries({
+        queryKey: ["products"],
+      });
+
       toast.success("Product Updated!");
-      refetch();
     },
     onError: () => {
-      toast.error("Gagal memperbaharui produk");
+      toast.error("Gagal memperbarui produk");
     },
   });
 
@@ -206,11 +212,11 @@ export default function EditProductPage() {
       setAttachments(
         productData.product_images.map((i) => ({
           id: i.id,
-          file: new File([], i.alt ?? "image"),
+          file: new File([i.url], i.alt ?? "image"),
           key: i.key,
           url: i.url,
           isUploading: false,
-        }))
+        })),
       );
     }
   }, [productData, form, setAttachments]);
@@ -241,7 +247,7 @@ export default function EditProductPage() {
       });
 
       const reconstructedOptions: VariantOption[] = Object.entries(
-        optionMap
+        optionMap,
       ).map(([name, values]) => ({
         name,
         values: Array.from(values),
@@ -258,9 +264,23 @@ export default function EditProductPage() {
     });
   };
 
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/ /g, "-")
+      .replace(/[^\w-]+/g, "");
+  };
+
+  const generateSku = (title: string) => {
+    const words = title.split(" ");
+    let sku = words.map((word) => word.charAt(0).toUpperCase()).join("");
+    sku += "-" + Math.floor(100 + Math.random() * 900).toString();
+    return sku;
+  };
+
   return (
     <div className="p-0 md:p-8 space-y-6">
-      <div>
+      <div className="max-md:p-4">
         <h1 className="text-3xl font-bold text-foreground">Edit Product</h1>
         <p className="text-muted-foreground mt-2">Update product information</p>
       </div>
@@ -319,6 +339,13 @@ export default function EditProductPage() {
                             <Input
                               {...field}
                               placeholder="misal, baju-kasual"
+                              onBlur={() => {
+                                const title = form.getValues("title");
+                                if (!field.value && title) {
+                                  const generatedSlug = generateSlug(title);
+                                  form.setValue("slug", generatedSlug);
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -336,7 +363,17 @@ export default function EditProductPage() {
                             SKU
                           </FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="misal, MW-001" />
+                            <Input
+                              {...field}
+                              placeholder="misal, baju-kasual"
+                              onBlur={() => {
+                                const title = form.getValues("title");
+                                if (!field.value && title) {
+                                  const generatedSku = generateSku(title);
+                                  form.setValue("sku", generatedSku);
+                                }
+                              }}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -422,7 +459,7 @@ export default function EditProductPage() {
                                 onChange={(e) => {
                                   form.setValue(
                                     "price_cents",
-                                    Number(e.target.value)
+                                    Number(e.target.value),
                                   );
                                 }}
                                 type="number"
@@ -450,7 +487,7 @@ export default function EditProductPage() {
                         placeholder="0"
                         value={variantCombinations.reduce(
                           (total, v) => total + (v.stock_quantity ?? 0),
-                          0
+                          0,
                         )}
                         readOnly
                       />
@@ -532,7 +569,7 @@ export default function EditProductPage() {
                     disabled={
                       updateProductMutation.isPending ||
                       updateProductVariantsMutation.isPending ||
-                      isUploading
+                      attachments.some((a) => a.isUploading)
                     }
                   >
                     <Save />

@@ -52,3 +52,10 @@ export const formatCurrency = (amount: number) => {
     maximumFractionDigits: 0,
   }).format(amount);
 };
+
+export const formatDate = (input?: string | Date | null): string => {
+  if (!input) return "";
+  const date = typeof input === "string" ? new Date(input) : input;
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 10); // "YYYY-MM-DD"
+};

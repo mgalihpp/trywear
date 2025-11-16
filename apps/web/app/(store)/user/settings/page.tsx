@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/avatar";
 import { ChevronRight, Lock, MapPin, Package, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AddressSection } from "@/features/user/components/settings/address/address-section";
@@ -7,11 +12,6 @@ import { OrdersSection } from "@/features/user/components/settings/orders/orders
 import { ProfileSection } from "@/features/user/components/settings/profile-section";
 import { SecuritySection } from "@/features/user/components/settings/security-section";
 import { authClient } from "@/lib/auth-client";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/ui/components/avatar";
 
 export default function SettingsPage() {
   const { data } = authClient.useSession();

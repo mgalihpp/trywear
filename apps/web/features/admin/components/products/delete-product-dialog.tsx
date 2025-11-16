@@ -10,12 +10,9 @@ import {
   AlertDialogTrigger,
 } from "@repo/ui/components/alert-dialog";
 import { Button } from "@repo/ui/components/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { useDeleteProduct } from "@/features/admin/queries/useProductQuery";
 
 type DeleteProductDialogProps = {
   productId: string;
@@ -26,22 +23,7 @@ export function DeleteProductDialog({
   productId,
   children,
 }: DeleteProductDialogProps) {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const deleteProductMutation = useMutation({
-    mutationFn: (productId: string) => api.product.delete(productId),
-    onSuccess: () => {
-      toast.success("Produk berhasil dihapus!");
-      queryClient.refetchQueries({
-        queryKey: ["products"],
-      });
-      router.push(`/dashboard/products`);
-    },
-    onError: () => {
-      toast.error("Gagal menghapus produk");
-    },
-  });
+  const deleteProductMutation = useDeleteProduct();
 
   return (
     <AlertDialog>

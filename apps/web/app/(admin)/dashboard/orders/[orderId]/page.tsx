@@ -9,10 +9,13 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { Label } from "@repo/ui/components/label";
-import { ArrowLeft, Package, Truck } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Package, Truck } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { formatDate } from "@/features/admin/utils";
+import { api } from "@/lib/api";
 
 // Mock order data
 const mockOrder = {
@@ -35,6 +38,17 @@ const mockOrder = {
 export default function OrderDetailPage() {
   const router = useRouter();
   const params = useParams();
+  const { orderId } = params;
+
+  const {
+    data: orderData,
+    isPending,
+    refetch,
+  } = useQuery({
+    queryKey: ["order", orderId],
+    queryFn: () => api.order.getById(orderId as string),
+  });
+
   const [order, setOrder] = useState(mockOrder);
   const [newStatus, setNewStatus] = useState(order.status);
 
@@ -53,9 +67,9 @@ export default function OrderDetailPage() {
   return (
     <div className="p-0 md:p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Order {order.id}</h1>
+        <h1 className="text-3xl font-bold text-foreground">Detail Pesanan</h1>
         <p className="text-muted-foreground mt-2">
-          View and manage order details
+          Lihat dan kelola detail pesanan
         </p>
       </div>
 
@@ -65,30 +79,36 @@ export default function OrderDetailPage() {
           {/* Order Status */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Status</CardTitle>
+              <CardTitle>Status Pesanan</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    Current Status
+                    Status Sekarang
                   </p>
                   <Badge
                     className={
-                      statusColors[order.status as keyof typeof statusColors]
+                      statusColors[
+                        orderData?.status as keyof typeof statusColors
+                      ]
                     }
                   >
-                    {order.status}
+                    {orderData?.status}
                   </Badge>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-muted-foreground">Order Date</p>
-                  <p className="font-medium">{order.date}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Tanggal Pesanan
+                  </p>
+                  <p className="font-medium">
+                    {formatDate(orderData?.created_at)}
+                  </p>
                 </div>
               </div>
               <div className="space-y-2">
                 <Label className="block text-sm font-medium">
-                  Update Status
+                  Perbarui Status
                 </Label>
                 <div className="flex gap-2">
                   <select
@@ -101,7 +121,7 @@ export default function OrderDetailPage() {
                     <option value="Shipped">Shipped</option>
                     <option value="Delivered">Delivered</option>
                   </select>
-                  <Button onClick={handleStatusUpdate}>Update</Button>
+                  <Button onClick={handleStatusUpdate}>Perbarui</Button>
                 </div>
               </div>
             </CardContent>
@@ -110,7 +130,7 @@ export default function OrderDetailPage() {
           {/* Order Items */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Items</CardTitle>
+              <CardTitle>Barang Pesanan</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -125,13 +145,13 @@ export default function OrderDetailPage() {
                         Qty: {item.quantity}
                       </p>
                     </div>
-                    <p className="font-medium">${item.price}</p>
+                    <p className="font-medium">Rp {item.price}</p>
                   </div>
                 ))}
               </div>
               <div className="mt-4 pt-4 border-t flex justify-between font-semibold">
                 <span>Total</span>
-                <span>${order.amount}</span>
+                <span>Rp {order.amount}</span>
               </div>
             </CardContent>
           </Card>
@@ -141,26 +161,31 @@ export default function OrderDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Truck className="w-5 h-5" />
-                Shipping Information
+                Informasi Pengiriman
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Shipping Address
+                  Alamat pengiriman
                 </p>
-                <p className="font-medium">{order.shippingAddress}</p>
+                <p className="font-medium">
+                  {orderData?.address?.address_line1}
+                </p>
+                <p className="font-medium">
+                  {orderData?.address?.address_line2}
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    Shipping Method
+                    Metode Pengiriman
                   </p>
                   <p className="font-medium">{order.shippingMethod}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    Tracking Number
+                    Nomor Pelacakan
                   </p>
                   <p className="font-medium">{order.trackingNumber}</p>
                 </div>
@@ -174,11 +199,11 @@ export default function OrderDetailPage() {
           {/* Customer Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Customer Information</CardTitle>
+              <CardTitle>Informasi Pelanggan</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <p className="text-sm text-muted-foreground">Name</p>
+                <p className="text-sm text-muted-foreground">Nama</p>
                 <p className="font-medium">{order.customer}</p>
               </div>
               <div>
@@ -186,7 +211,7 @@ export default function OrderDetailPage() {
                 <p className="font-medium text-sm break-all">{order.email}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Phone</p>
+                <p className="text-sm text-muted-foreground">Telephone</p>
                 <p className="font-medium">{order.phone}</p>
               </div>
             </CardContent>
@@ -195,24 +220,24 @@ export default function OrderDetailPage() {
           {/* Order Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>Ringkasan Pesanan</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${order.amount}</span>
+                <span>Rp {order.amount}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span>$0.00</span>
+                <span className="text-muted-foreground">Pengiriman</span>
+                <span>Rp 0.00</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tax</span>
-                <span>$0.00</span>
+                <span className="text-muted-foreground">Pajak</span>
+                <span>Rp 0.00</span>
               </div>
               <div className="border-t pt-3 flex justify-between font-semibold">
                 <span>Total</span>
-                <span>${order.amount}</span>
+                <span>Rp {order.amount}</span>
               </div>
             </CardContent>
           </Card>
@@ -220,7 +245,7 @@ export default function OrderDetailPage() {
           {/* Actions */}
           <Card>
             <CardHeader>
-              <CardTitle>Actions</CardTitle>
+              <CardTitle>Aksi</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button className="w-full bg-transparent" variant="outline">

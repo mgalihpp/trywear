@@ -1,5 +1,11 @@
 import type { Addresses } from "@repo/db";
 import { Button } from "@repo/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/dropdown-menu";
 import { MapPin, MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,12 +15,6 @@ import {
   useUpdateAddress,
 } from "@/features/user/queries/useAddressQuery";
 import AddressDialog from "./address-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@repo/ui/components/dropdown-menu";
 
 export const AddressSection = () => {
   const { data: addresses } = useAddresses();

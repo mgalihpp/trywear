@@ -10,21 +10,21 @@ import { DollarSign, ShoppingCart, TrendingUp, Users } from "lucide-react";
 
 const stats = [
   {
-    title: "Total Revenue",
-    value: "$45,231.89",
+    title: "Total Penghasilan",
+    value: "Rp 8.700.000",
     change: "+20.1%",
     icon: DollarSign,
     color: "text-emerald-600",
   },
   {
-    title: "Total Orders",
+    title: "Total Pesanan",
     value: "1,234",
     change: "+15.3%",
     icon: ShoppingCart,
     color: "text-blue-600",
   },
   {
-    title: "Total Customers",
+    title: "Total Pelanggan",
     value: "892",
     change: "+8.2%",
     icon: Users,

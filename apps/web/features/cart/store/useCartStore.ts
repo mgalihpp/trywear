@@ -37,11 +37,11 @@ export const useCartStore = create<CartState>((set, get) => ({
   clearCart: () => set({ items: [] }),
 
   // derived/computed properties
-  get totalItems() {
+  totalItems: () => {
     return get().items.reduce((sum, item) => sum + item.quantity, 0);
   },
 
-  get totalPrice() {
+  totalPrice: () => {
     return get().items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,

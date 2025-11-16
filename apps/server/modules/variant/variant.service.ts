@@ -48,7 +48,7 @@ export class ProductVariantsService extends BaseService<
         stock_quantity: stock_quantity ?? 0,
         reserved_quantity: reserved_quantity ?? 0,
         safety_stock: safety_stock ?? 0,
-      }
+      },
     );
 
     return { variant: createdVariant, inventory: createdInventory };
@@ -76,7 +76,7 @@ export class ProductVariantsService extends BaseService<
         });
 
         return createdVariant;
-      })
+      }),
     );
 
     return createdVariants;
@@ -131,5 +131,93 @@ export class ProductVariantsService extends BaseService<
     });
 
     return deletedVariantInventory;
+  }
+
+  async getAvailableColors() {
+    const variants = await this.db.productVariants.findMany({
+      select: { option_values: true },
+    });
+
+    const colors = [
+      ...new Set(
+        variants
+          .map((v) => {
+            // Ensure option_values is an object and has 'color'
+            if (
+              typeof v.option_values === "object" &&
+              v.option_values !== null &&
+              "color" in v.option_values
+            ) {
+              return v.option_values.color;
+            }
+            return undefined;
+          })
+          .filter(Boolean),
+      ),
+    ];
+
+    return colors;
+  }
+
+  async getAvailableSizes() {
+    const variants = await this.db.productVariants.findMany({
+      select: { option_values: true },
+    });
+
+    const rawSizes = variants
+      .map((v) => {
+        if (
+          typeof v.option_values === "object" &&
+          v.option_values !== null &&
+          "size" in v.option_values
+        ) {
+          return v.option_values.size;
+        }
+        return undefined;
+      })
+      .filter((s): s is string | number => s !== undefined && s !== null);
+
+    const uniqueSizes = Array.from(new Set(rawSizes));
+
+    // Detect if sizes are numeric (e.g., "36", 38)
+    const allNumeric = uniqueSizes.every((s) => !Number.isNaN(Number(s)));
+
+    // Common apparel size ordering (case-insensitive)
+    const sizeOrder = new Map<string, number>([
+      ["xxs", 0],
+      ["xs", 1],
+      ["s", 2],
+      ["m", 3],
+      ["l", 4],
+      ["xl", 5],
+      ["xxl", 6],
+      ["3xl", 7],
+      ["4xl", 8],
+    ]);
+
+    const comparator = (a: string | number, b: string | number) => {
+      if (allNumeric) return Number(a) - Number(b);
+
+      const aStr = String(a).toLowerCase();
+      const bStr = String(b).toLowerCase();
+
+      const aOrder = sizeOrder.has(aStr) ? sizeOrder.get(aStr)! : undefined;
+      const bOrder = sizeOrder.has(bStr) ? sizeOrder.get(bStr)! : undefined;
+
+      if (aOrder !== undefined && bOrder !== undefined) return aOrder - bOrder;
+      if (aOrder !== undefined) return -1;
+      if (bOrder !== undefined) return 1;
+
+      // Fallback: numeric compare if possible, else lexical
+      const aNum = Number(a);
+      const bNum = Number(b);
+      if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) return aNum - bNum;
+
+      return aStr.localeCompare(bStr);
+    };
+
+    const sizes = uniqueSizes.sort(comparator);
+
+    return sizes;
   }
 }

@@ -1,8 +1,5 @@
 import type { Inventory } from "@repo/db";
-import type {
-  CreateInventoryInput,
-  UpdateInventoryInput,
-} from "@repo/schema/productSchema";
+import type { CreateInventoryInput } from "@repo/schema/productSchema";
 import { AppError } from "@/utils/appError";
 import { BaseService } from "../service";
 

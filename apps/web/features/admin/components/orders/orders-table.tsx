@@ -8,11 +8,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
+import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Eye, Truck } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { DataTable } from "@/features/admin/components/data-table";
+import { api } from "@/lib/api";
+import type { OrderWithRelations } from "@/types/index";
+import { formatCurrency, formatDate } from "../../utils";
+import { DataTableSkeleton } from "../data-table-skeleton";
+import { ErrorAlert } from "../error-alert";
 
 interface Order {
   id: string;
@@ -74,28 +80,51 @@ const statusColors = {
 };
 
 export function OrdersTable() {
-  const [orders_list, setOrders] = useState<Order[]>(orders);
+  // const [orders_list, setOrders] = useState<Order[]>(orders);
 
-  const columns: ColumnDef<Order>[] = [
+  const {
+    data: ordersData,
+    isPending,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["orders"],
+    queryFn: api.order.getAll,
+  });
+
+  const columns: ColumnDef<OrderWithRelations>[] = [
     {
       accessorKey: "id",
+      enableGlobalFilter: true,
       header: "Order ID",
+      cell: ({ row }) => {
+        return row.original.id.slice(0, 10);
+      },
     },
     {
-      accessorKey: "customer",
-      header: "Customer",
+      accessorKey: "user",
+      header: "Pelanggan",
+      cell: ({ row }) => {
+        const customer = row.original.user;
+
+        return <span>{customer?.name}</span>;
+      },
     },
     {
-      accessorKey: "date",
-      header: "Date",
+      accessorKey: "order_items",
+      header: "Barang",
+      cell: ({ row }) => {
+        const items = row.original.order_items;
+        return <span>{items.length}</span>;
+      },
     },
     {
-      accessorKey: "items",
-      header: "Items",
-    },
-    {
-      accessorKey: "amount",
-      header: "Amount",
+      accessorKey: "total_cents",
+      header: "Total Harga",
+      cell: ({ row }) => {
+        const amount = Number(row.original.total_cents);
+        return <span>{formatCurrency(amount)}</span>;
+      },
     },
     {
       accessorKey: "status",
@@ -110,8 +139,15 @@ export function OrdersTable() {
       },
     },
     {
+      accessorKey: "created_at",
+      header: "Tanggal",
+      cell: ({ row }) => {
+        return <span>{formatDate(row.original.created_at)}</span>;
+      },
+    },
+    {
       id: "actions",
-      header: "Actions",
+      header: "Aksi",
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -133,15 +169,24 @@ export function OrdersTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Orders</CardTitle>
+        <h3 className="text-lg font-semibold">Pesanan</h3>
       </CardHeader>
       <CardContent>
-        <DataTable
-          columns={columns}
-          data={orders_list}
-          searchPlaceholder="Search by order ID or customer..."
-          searchKey="id"
-        />
+        {isPending ? (
+          <DataTableSkeleton />
+        ) : isError ? (
+          <ErrorAlert
+            description="Gagal mendapatkan data order"
+            action={() => refetch()}
+          />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={ordersData}
+            searchPlaceholder="Cari berdasarkan nama order ID atau customer..."
+            searchKey={["id", "user.name"]}
+          />
+        )}
       </CardContent>
     </Card>
   );

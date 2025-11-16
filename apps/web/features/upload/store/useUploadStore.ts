@@ -6,7 +6,7 @@ interface UploadStore {
   uploadProgress: number;
   isUploading: boolean;
   setAttachments: (
-    updater: Attachment[] | ((prev: Attachment[]) => Attachment[])
+    updater: Attachment[] | ((prev: Attachment[]) => Attachment[]),
   ) => void;
   setUploadProgress: (progress: number) => void;
   addAttachments: (files: Attachment[]) => void;

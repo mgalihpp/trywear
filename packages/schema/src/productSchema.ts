@@ -80,7 +80,7 @@ export const createProductImagesSchema = z.array(
     alt: z.string().optional(),
     sort_order: z.number(),
     key: z.string(),
-  })
+  }),
 );
 
 export type ParamsProductId = z.infer<typeof productIdParams>;
@@ -93,3 +93,4 @@ export type UpdateInventoryInput = z.infer<typeof updateInventorySchema>;
 export type CreateProductImagesInput = z.infer<
   typeof createProductImagesSchema
 >;
+export type ListProductQueryInput = z.infer<typeof listProductsQuery>;

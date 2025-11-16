@@ -1,0 +1,84 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@repo/ui/components/accordion";
+import { Skeleton } from "@repo/ui/components/skeleton";
+import { cn } from "@repo/ui/lib/utils";
+import type { FilterProps } from "@/types/index";
+
+interface FilterColorProps {
+  applyArrayFilter: ({
+    category,
+    value,
+  }: {
+    category: "colors" | "sizes";
+    value: string;
+  }) => void;
+  filter: FilterProps;
+  isLoading: boolean;
+  colors: string[] | undefined;
+}
+
+const FilterColor: React.FC<FilterColorProps> = ({
+  applyArrayFilter,
+  filter,
+  isLoading,
+  colors,
+}) => {
+  return (
+    <Accordion type="single" collapsible>
+      <AccordionItem value="color">
+        <AccordionTrigger className="hover:no-underline">
+          Colors
+        </AccordionTrigger>
+        <AccordionContent className="pt-6">
+          {isLoading ? (
+            <FilterColorSkeleton />
+          ) : !colors || colors.length === 0 ? (
+            <p className="text-xs text-grey-3">No colors found.</p>
+          ) : (
+            <ul className="space-y-4">
+              {colors.map((color: string | undefined | null, index) => (
+                <li key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`color-${index}`}
+                    className="size-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    onChange={() => {
+                      applyArrayFilter({
+                        category: "colors",
+                        value: color as string,
+                      });
+                    }}
+                    checked={filter.colors.includes(color as string)}
+                  />
+
+                  <label
+                    htmlFor={`color-${index}`}
+                    className={cn("ml-3 text-sm capitalize text-gray-600", {
+                      "font-medium text-gray-900": filter.colors.includes(
+                        color as string,
+                      ),
+                    })}
+                  >
+                    {color}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+};
+
+const FilterColorSkeleton = () => {
+  return Array.from({ length: 4 }, (_, index) => (
+    <Skeleton className="mb-4 h-5 w-full" key={index} />
+  ));
+};
+
+export default FilterColor;

@@ -45,6 +45,10 @@ const productVariantsController = new ProductVariantsController();
  */
 productRouter.get("/", productController.getAll);
 
+productRouter.get("/related/:id", productController.getRelatedProducts);
+productRouter.get("/filters", productController.getAllByFilters);
+productRouter.get("/get-filters", productController.getAvailableFilters);
+
 /**
  * @swagger
  * /api/v1/products/{id}:
@@ -134,7 +138,6 @@ productRouter.put("/:id", productController.update);
 productRouter.delete("/:id", productController.delete);
 
 /* ---------------------- PRODUCT IMAGES ---------------------- */
-
 /**
  * @swagger
  * /api/v1/products/images:
@@ -144,15 +147,11 @@ productRouter.delete("/:id", productController.delete);
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               images:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
+ *             type: array
+ *             items:
+ *               $ref: '#/components/schemas/ProductImage'
  *     responses:
  *       201:
  *         description: Images uploaded
@@ -166,7 +165,7 @@ productRouter.post("/images", productController.createImages);
  *     summary: Delete a product image
  *     tags: [Products]
  *     parameters:
- *       - $ref: '#/components/parameters/ImageId'
+ *       - $ref: '#/components/parameters/ProductImageId'
  *     responses:
  *       204:
  *         description: Image deleted successfully

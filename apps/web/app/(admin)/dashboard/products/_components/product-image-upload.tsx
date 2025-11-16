@@ -44,6 +44,7 @@ export const ProductImageUpload = () => {
   } = useProductMediaUpload();
 
   const { getInputProps, getRootProps, isDragActive } = useDropzone({
+    maxFiles: 5 - attachments.length,
     onDrop: startUpload,
   });
 
@@ -56,6 +57,8 @@ export const ProductImageUpload = () => {
 
     startUpload(files);
   }
+
+  console.log(attachments);
 
   return (
     <Card className="mb-8">

@@ -20,7 +20,15 @@ export const productApi = {
 
   getById: async (productId: string) => {
     const res = await axios.get<ApiResponse<ProductWithRelations>>(
-      `/products/${productId}`
+      `/products/${productId}`,
+    );
+    const { data } = res.data;
+    return data;
+  },
+
+  getRelatedProducts: async (productId: string) => {
+    const res = await axios.get<ApiResponse<ProductWithRelations[]>>(
+      `/products/related/${productId}`,
     );
     const { data } = res.data;
     return data;
@@ -47,7 +55,7 @@ export const productApi = {
   update: async (productId: string, input: UpdateProductInput) => {
     const res = await axios.put<ApiResponse<Product>>(
       `/products/${productId}`,
-      input
+      input,
     );
     const { data } = res.data;
     return data;
@@ -92,7 +100,7 @@ export const productApi = {
         "/products/filters",
         {
           params: filters,
-        }
+        },
       );
       const { data } = res.data;
       return data;

@@ -1,0 +1,84 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@repo/ui/components/accordion";
+import { Skeleton } from "@repo/ui/components/skeleton";
+import { cn } from "@repo/ui/lib/utils";
+import type { FilterProps } from "@/types/index";
+
+interface FilterSizeProps {
+  applyArrayFilter: ({
+    category,
+    value,
+  }: {
+    category: "colors" | "sizes";
+    value: string;
+  }) => void;
+  filter: FilterProps;
+  isLoading: boolean;
+  sizes: string[] | undefined;
+}
+
+const FilterSize: React.FC<FilterSizeProps> = ({
+  applyArrayFilter,
+  filter,
+  isLoading,
+  sizes,
+}) => {
+  return (
+    <Accordion type="single" collapsible>
+      <AccordionItem value="size">
+        <AccordionTrigger className="hover:no-underline">
+          Sizes
+        </AccordionTrigger>
+        <AccordionContent className="pt-6">
+          {isLoading ? (
+            <FilterSizeSkeleton />
+          ) : !sizes || sizes.length === 0 ? (
+            <p className="text-xs text-grey-3">No sizes found.</p>
+          ) : (
+            <ul className="space-y-4">
+              {sizes.map((size: string | undefined | null, index) => (
+                <li key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`size-${index}`}
+                    className="size-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    onChange={() => {
+                      applyArrayFilter({
+                        category: "sizes",
+                        value: size as string,
+                      });
+                    }}
+                    checked={filter.sizes.includes(size as string)}
+                  />
+
+                  <label
+                    htmlFor={`size-${index}`}
+                    className={cn("ml-3 text-sm uppercase text-gray-600", {
+                      "font-medium text-gray-900": filter.sizes.includes(
+                        size as string,
+                      ),
+                    })}
+                  >
+                    {size}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+};
+
+const FilterSizeSkeleton = () => {
+  return Array.from({ length: 4 }, (_, index) => (
+    <Skeleton className="mb-4 h-5 w-full" key={index} />
+  ));
+};
+
+export default FilterSize;

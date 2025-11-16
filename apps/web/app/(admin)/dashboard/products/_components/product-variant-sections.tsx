@@ -64,7 +64,7 @@ export function ProductVariantsSection({
 
   const handleKeyPress = (
     e: KeyboardEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -91,7 +91,7 @@ export function ProductVariantsSection({
       if (index === optionNames.length) {
         const existing = variantCombinations.find(
           (combo) =>
-            JSON.stringify(combo.option_values) === JSON.stringify(current)
+            JSON.stringify(combo.option_values) === JSON.stringify(current),
         );
         combinations.push({
           sku: `${sku}-${Object.values(current).join("-")}`,
@@ -162,10 +162,10 @@ export function ProductVariantsSection({
       | "reserved_quantity"
       | "safety_stock"
       | "additional_price_cents",
-    value: number
+    value: number,
   ) => {
     const newCombinations = variantCombinations.map((c) =>
-      c.sku === sku ? { ...c, [field]: value } : c
+      c.sku === sku ? { ...c, [field]: value } : c,
     );
     setVariantCombinations(newCombinations);
   };
@@ -173,7 +173,7 @@ export function ProductVariantsSection({
   const displayedCombinations =
     filteredCombinations.length > 0
       ? variantCombinations.filter((c) =>
-          filteredCombinations.some((fc) => fc.sku === c.sku)
+          filteredCombinations.some((fc) => fc.sku === c.sku),
         )
       : variantCombinations;
 
@@ -274,12 +274,13 @@ export function ProductVariantsSection({
               </div>
             </div>
           ))}
-          <div className="grid grid-cols-2 items-center gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 items-center gap-2">
             <Button
               type="button"
               onClick={generateVariantCombinations}
               className="w-full"
               variant="default"
+              disabled={variantOptions.length === 0}
             >
               <Package className="h-4 w-4 mr-2" />
               Generate Kombinasi Varian
@@ -293,12 +294,13 @@ export function ProductVariantsSection({
                   setVariantOptions([]);
                   setVariantCombinations([]);
                   toast.success(
-                    "Semua opsi dan kombinasi varian telah dihapus"
+                    "Semua opsi dan kombinasi varian telah dihapus",
                   );
                 }
               }}
               className="w-full"
               variant="destructive"
+              disabled={variantCombinations.length === 0}
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Hapus varian
@@ -325,8 +327,8 @@ export function ProductVariantsSection({
 
                   const filtered = variantCombinations.filter((combo) =>
                     Object.entries(filters).every(([key, values]) =>
-                      values.includes(combo.option_values[key]!)
-                    )
+                      values.includes(combo.option_values[key]!),
+                    ),
                   );
 
                   setFilteredCombinations(filtered);

@@ -1,4 +1,3 @@
-import { Footer } from "@/components/navbar/footer";
 import { CategoriesProduct } from "@/features/home/components/categories-product";
 import { CTA } from "@/features/home/components/cta";
 import { FeaturedProduct } from "@/features/home/components/featured-product";
@@ -13,7 +12,6 @@ export default function Home() {
       <CategoriesProduct />
       <WhyChooseUs />
       <CTA />
-      <Footer />
     </main>
   );
 }

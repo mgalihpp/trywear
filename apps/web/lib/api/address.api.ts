@@ -22,7 +22,7 @@ export const addressApi = {
   update: async (id: number, input: UpdateAddressInput) => {
     const res = await axios.put<ApiResponse<Addresses>>(
       `/address/${id}`,
-      input
+      input,
     );
     const { data } = res.data;
     return data;

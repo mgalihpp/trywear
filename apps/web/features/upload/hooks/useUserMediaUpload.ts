@@ -22,7 +22,7 @@ export function useUserMediaUpload() {
           `trywear_attachment_${crypto.randomUUID()}.${extension}`,
           {
             type: file.type,
-          }
+          },
         );
       });
       setAttachments((prev) => [
@@ -43,7 +43,7 @@ export function useUserMediaUpload() {
             url: uploadResult.ufsUrl,
             isUploading: false,
           };
-        })
+        }),
       );
     },
     onUploadError(e) {

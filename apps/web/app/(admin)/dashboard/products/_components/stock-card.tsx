@@ -21,7 +21,7 @@ type StockCardProps = {
       | "stock_quantity"
       | "reserved_quantity"
       | "safety_stock",
-    value: number
+    value: number,
   ) => void;
 };
 
@@ -104,7 +104,7 @@ export const StockCard = ({
                 updateVariantStock(
                   combo.sku,
                   "additional_price_cents",
-                  parseInt(e.target.value) || 0
+                  parseInt(e.target.value) || 0,
                 )
               }
               className="pr-20"
@@ -129,7 +129,7 @@ export const StockCard = ({
                 updateVariantStock(
                   combo.sku,
                   "stock_quantity",
-                  parseInt(e.target.value) || 0
+                  parseInt(e.target.value) || 0,
                 )
               }
               className="text-center font-semibold"
@@ -148,7 +148,7 @@ export const StockCard = ({
                 updateVariantStock(
                   combo.sku,
                   "reserved_quantity",
-                  parseInt(e.target.value) || 0
+                  parseInt(e.target.value) || 0,
                 )
               }
               className="text-center"
@@ -167,7 +167,7 @@ export const StockCard = ({
                 updateVariantStock(
                   combo.sku,
                   "safety_stock",
-                  parseInt(e.target.value) || 0
+                  parseInt(e.target.value) || 0,
                 )
               }
               className="text-center"

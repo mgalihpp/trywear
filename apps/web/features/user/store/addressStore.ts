@@ -14,7 +14,7 @@ export const useAddressStore = create<AddressStore>((set) => ({
   updateAddress: (id, updatedData) =>
     set((state) => ({
       addresses: state.addresses.map((addr) =>
-        addr.id === id ? { ...addr, ...updatedData } : addr
+        addr.id === id ? { ...addr, ...updatedData } : addr,
       ),
     })),
 

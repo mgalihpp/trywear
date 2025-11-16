@@ -11,7 +11,7 @@ export const orderApi = {
 
   getById: async (orderId: string) => {
     const res = await axios.get<ApiResponse<OrderWithFullRelations>>(
-      `/orders/${orderId}`
+      `/orders/${orderId}`,
     );
     const { data } = res.data;
     return data;

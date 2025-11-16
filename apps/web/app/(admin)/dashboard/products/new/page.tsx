@@ -33,7 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@repo/ui/components/tooltip";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -51,6 +51,7 @@ import { ProductVariantsSection } from "../_components/product-variant-sections"
 
 export default function CreateProductPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
@@ -101,6 +102,10 @@ export default function CreateProductPage() {
       toast.success("Product Created!");
       setAttachments([]);
 
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+
       // Redirect ke product tabel
       router.push("/dashboard/products");
     },
@@ -132,6 +137,20 @@ export default function CreateProductPage() {
   useEffect(() => {
     setAttachments([]);
   }, [setAttachments]);
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/ /g, "-")
+      .replace(/[^\w-]+/g, "");
+  };
+
+  const generateSku = (title: string) => {
+    const words = title.split(" ");
+    let sku = words.map((word) => word.charAt(0).toUpperCase()).join("");
+    sku += "-" + Math.floor(100 + Math.random() * 900).toString();
+    return sku;
+  };
 
   return (
     <div className="p-0 md:p-8 space-y-6">
@@ -196,6 +215,13 @@ export default function CreateProductPage() {
                             <Input
                               {...field}
                               placeholder="misal, baju-kasual"
+                              onBlur={() => {
+                                const title = form.getValues("title");
+                                if (!field.value && title) {
+                                  const generatedSlug = generateSlug(title);
+                                  form.setValue("slug", generatedSlug);
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -213,7 +239,17 @@ export default function CreateProductPage() {
                             SKU
                           </FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="misal, MW-001" />
+                            <Input
+                              {...field}
+                              placeholder="misal, MW-001"
+                              onBlur={() => {
+                                const title = form.getValues("title");
+                                if (!field.value && title) {
+                                  const generatedSku = generateSku(title);
+                                  form.setValue("sku", generatedSku);
+                                }
+                              }}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -296,7 +332,7 @@ export default function CreateProductPage() {
                                 onChange={(e) => {
                                   form.setValue(
                                     "price_cents",
-                                    Number(e.target.value)
+                                    Number(e.target.value),
                                   );
                                 }}
                                 type="number"
@@ -324,7 +360,7 @@ export default function CreateProductPage() {
                         placeholder="0"
                         value={variantCombinations.reduce(
                           (total, v) => total + (v.stock_quantity ?? 0),
-                          0
+                          0,
                         )}
                         readOnly
                       />
@@ -407,7 +443,7 @@ export default function CreateProductPage() {
                       !form.formState.isDirty ||
                       createProductMutation.isPending ||
                       createProductVariantsMutation.isPending ||
-                      isUploading
+                      attachments.some((a) => a.isUploading)
                     }
                   >
                     <Plus />

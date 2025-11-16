@@ -11,6 +11,7 @@ import {
 } from "@repo/ui/components/dropdown-menu";
 import { Filter, X } from "lucide-react";
 import { useState } from "react";
+import type { VariantOption } from "@/types/index";
 
 interface FilterProps {
   variantOptions: VariantOption[];
@@ -19,7 +20,7 @@ interface FilterProps {
 
 export function VariantFilter({ variantOptions, onFilterChange }: FilterProps) {
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
 
   const toggleFilter = (key: string, value: string) => {

@@ -28,7 +28,7 @@ export const SecuritySection = () => {
   });
 
   const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>(
-    {}
+    {},
   );
 
   const [runSendEmailAction, isPending] = useServerAction(sendEmail);
