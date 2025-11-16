@@ -103,7 +103,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-4">
-        <div>
+        <div className="hidden sm:block">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>

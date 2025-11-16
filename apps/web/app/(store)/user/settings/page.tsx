@@ -63,7 +63,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="container mx-auto px-4 lg:px-8 py-8">
+    <main className="container mx-auto px-4 max-w-7xl lg:px-8 py-8">
       {/* Mobile View - List Navigation */}
       <div className="md:hidden">
         <div className="bg-card border border-border rounded-lg p-6 mb-6">

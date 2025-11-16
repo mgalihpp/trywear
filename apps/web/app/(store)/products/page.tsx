@@ -227,7 +227,7 @@ export default function ProductsPage() {
     }));
 
   return (
-    <main className="min-h-screen container mx-auto px-4 py-8">
+    <main className="min-h-screen container max-w-7xl mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* ==== SIDEBAR FILTER (FULL LEFT DESKTOP) ==== */}
         <aside className="hidden lg:block lg:col-span-1 lg:sticky lg:top-20 self-start h-fit">

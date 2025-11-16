@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@repo/ui/components/breadcrumb";
 import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
 import { ArrowLeft } from "lucide-react";
@@ -20,20 +28,26 @@ export default function CartPage() {
     <main className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Kembali Berbelanja
-          </Link>
-          <h1 className="text-3xl font-bold mt-4">Keranjang Belanja</h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Cart</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <h1 className="text-2xl sm:text-3xl font-bold mt-4">
+            Keranjang Kamu
+          </h1>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-6 sm:py-8">
         {items.length === 0 ? (
           // Empty Cart State
           <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -64,19 +78,19 @@ export default function CartPage() {
           </div>
         ) : (
           // Cart with Items
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Items List */}
             <div className="lg:col-span-2">
-              <Card className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-lg font-semibold">
+              <Card className="p-4 sm:p-6">
+                <div className="sm:flex hidden flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+                  <h2 className="text-base sm:text-lg font-semibold">
                     Items ({totalItems()})
                   </h2>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={clearCart}
-                    className="text-destructive hover:text-destructive"
+                    className="text-destructive hover:text-destructive w-full sm:w-auto"
                   >
                     Kosongkan Keranjang
                   </Button>
@@ -118,11 +132,13 @@ export default function CartPage() {
                   </span>
                 </div>
 
-                <Button className="w-full mb-2" size="lg">
-                  Lanjutkan ke Pembayaran
-                </Button>
+                <Link href="/checkout">
+                  <Button className="w-full" size="lg">
+                    Lanjutkan ke Pembayaran
+                  </Button>
+                </Link>
                 <Link href="/">
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" size="lg">
                     Lanjutkan Berbelanja
                   </Button>
                 </Link>

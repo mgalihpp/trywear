@@ -67,6 +67,14 @@ export type AddressStore = {
   setDefaultAddress: (id: number) => void;
 };
 
+export interface ShippingMethod {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  estimatedDays: number;
+}
+
 export type SortType = "none" | "newest" | "price-asc" | "price-desc";
 
 export type FilterProps = {

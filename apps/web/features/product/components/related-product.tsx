@@ -23,7 +23,7 @@ const RelatedProducts = ({ productId }: RelatedProductsProps) => {
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["related-products"],
+    queryKey: ["related-products", productId],
     queryFn: () => api.product.getRelatedProducts(productId),
   });
 

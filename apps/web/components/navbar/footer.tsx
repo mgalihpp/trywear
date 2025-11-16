@@ -3,41 +3,25 @@ import Link from "next/link";
 export const Footer = () => {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="container mx-auto px-4 lg:px-8 py-12">
+      <div className="container mx-auto max-w-7xl px-4 lg:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div>
             <h4 className="font-bold mb-4">Shop</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link
-                  href="#"
+                  href="/products"
                   className="hover:text-foreground transition-colors"
                 >
-                  Smartphones
+                  Semua Produk
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/products?sort=none&category=2&query=&price.isCustom=false&price.range.0=0&price.range.1=1000000&page=1&pageSize=12"
                   className="hover:text-foreground transition-colors"
                 >
-                  Laptops
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-foreground transition-colors"
-                >
-                  Audio
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-foreground transition-colors"
-                >
-                  Wearables
+                  Shirts
                 </Link>
               </li>
             </ul>
@@ -50,7 +34,7 @@ export const Footer = () => {
                   href="#"
                   className="hover:text-foreground transition-colors"
                 >
-                  Contact Us
+                  Hubungi kami
                 </Link>
               </li>
               <li>
@@ -66,7 +50,7 @@ export const Footer = () => {
                   href="#"
                   className="hover:text-foreground transition-colors"
                 >
-                  Shipping
+                  Pengiriman
                 </Link>
               </li>
               <li>
@@ -74,7 +58,7 @@ export const Footer = () => {
                   href="#"
                   className="hover:text-foreground transition-colors"
                 >
-                  Returns
+                  Pengembalian
                 </Link>
               </li>
             </ul>
@@ -87,7 +71,7 @@ export const Footer = () => {
                   href="#"
                   className="hover:text-foreground transition-colors"
                 >
-                  About Us
+                  Tentang Kami
                 </Link>
               </li>
               <li>
@@ -95,15 +79,7 @@ export const Footer = () => {
                   href="#"
                   className="hover:text-foreground transition-colors"
                 >
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-foreground transition-colors"
-                >
-                  Press
+                  Karier
                 </Link>
               </li>
             </ul>
@@ -116,7 +92,7 @@ export const Footer = () => {
                   href="#"
                   className="hover:text-foreground transition-colors"
                 >
-                  Privacy Policy
+                  Kebijakan Privasi
                 </Link>
               </li>
               <li>
@@ -124,7 +100,7 @@ export const Footer = () => {
                   href="#"
                   className="hover:text-foreground transition-colors"
                 >
-                  Terms of Service
+                  Ketentuan Layanan
                 </Link>
               </li>
             </ul>
