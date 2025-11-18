@@ -10,7 +10,6 @@ import {
 } from "@repo/ui/components/breadcrumb";
 import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency } from "@/features/admin/utils";
 import { CartItem } from "@/features/cart/components/cart-item";
@@ -21,7 +20,7 @@ export default function CartPage() {
 
   const subtotal = totalPrice();
   const tax = subtotal * 0.1; // 10% tax
-  const shipping = items.length > 0 ? 10 : 0;
+  const shipping = 0;
   const total = subtotal + tax + shipping;
 
   return (
@@ -97,7 +96,7 @@ export default function CartPage() {
                 </div>
                 <div className="space-y-4">
                   {items.map((item) => (
-                    <CartItem key={item.id} item={item} />
+                    <CartItem key={item.variant_id} item={item} />
                   ))}
                 </div>
               </Card>
@@ -121,7 +120,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Pengiriman</span>
-                    <span>{formatCurrency(shipping)}</span>
+                    <span>-</span>
                   </div>
                 </div>
 

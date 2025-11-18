@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
-import { Input } from "@repo/ui/components/input";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { formatCurrency } from "@/features/admin/utils";
@@ -15,20 +14,13 @@ interface CartItemProps {
 export function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeFromCart } = useCartStore();
 
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
-    if (value > 0) {
-      updateQuantity(item.id, value);
-    }
-  };
-
   const incrementQuantity = () => {
-    updateQuantity(item.id, item.quantity + 1);
+    updateQuantity(item.id, item.variant_id, item.quantity + 1);
   };
 
   const decrementQuantity = () => {
     if (item.quantity > 1) {
-      updateQuantity(item.id, item.quantity - 1);
+      updateQuantity(item.id, item.variant_id, item.quantity - 1);
     }
   };
 
@@ -52,9 +44,9 @@ export function CartItem({ item }: CartItemProps) {
           </h3>
 
           <div className="flex gap-2 mt-1 text-xs text-muted-foreground">
-            {item.color && <span>{item.color}</span>}
-            {item.size && <span>{item.size}</span>}
-            {item.storage && <span>{item.storage}</span>}
+            {item.color && <span>Color: {item.color}</span>}
+            {item.size && <span>Size: {item.size}</span>}
+            {item.storage && <span>Stock: {item.storage}</span>}
           </div>
         </div>
 
@@ -69,7 +61,7 @@ export function CartItem({ item }: CartItemProps) {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => removeFromCart(item.id)}
+          onClick={() => removeFromCart(item.id, item.variant_id)}
           className="text-destructive hover:text-destructive hover:bg-destructive/10"
         >
           <Trash2 className="w-4 h-4" />

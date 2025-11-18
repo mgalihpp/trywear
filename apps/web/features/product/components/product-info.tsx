@@ -45,7 +45,7 @@ const colorStyle = {
 const ProductInfo = ({ product }: ProductInfoProps) => {
   const { addToCart } = useCartStore();
   const opts_value = parseOptions(product.product_variants[0]?.option_values);
-  const [selectedSize, setSelectedSize] = useState("S");
+  const [selectedSize, setSelectedSize] = useState(opts_value.size ?? "S");
   const [selectedColor, setSelectedColor] = useState(
     opts_value?.color ?? "default",
   );
@@ -58,7 +58,12 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
   const selectedVariant = findVariant(product, selectedSize, selectedColor);
   const availableStock = selectedVariant ? getVariantStock(selectedVariant) : 0;
   const inStock = availableStock > 0;
-  const inCart = items.some((i) => i.id === product.id);
+  const cartItem = items.find(
+    (i) => i.id === product.id && i.variant_id === selectedVariant?.id,
+  );
+  const inCart = !!cartItem;
+  const cartQuantity = cartItem?.quantity ?? 0;
+  const canAddMore = quantity < availableStock - cartQuantity;
 
   const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
@@ -85,12 +90,17 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
   const handleAddToCart = () => {
     addToCart({
       id: product.id,
+      variant_id: selectedVariant?.id as string,
       image: product.product_images?.[0]?.url as string,
       name: product.title,
       quantity: quantity,
-      price: Number(product.price_cents),
+      price:
+        Number(product.price_cents) +
+        Number(selectedVariant?.additional_price_cents),
       size: selectedSize,
       color: selectedColor,
+      storage:
+        selectedVariant?.inventory[0]?.stock_quantity.toString() ?? undefined,
     });
 
     toast.success("Added to cart");
@@ -280,16 +290,16 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           size="lg"
           className="w-full h-14 text-base font-semibold"
           onClick={handleAddToCart}
-          disabled={!inStock || inCart}
+          disabled={!inStock || !canAddMore}
         >
-          Add to Cart
+          {canAddMore ? (inCart ? "Add More" : "Add to Cart") : "Sold Out"}
         </Button>
 
         <Button
           size="lg"
           variant="outline"
           className="w-full h-14 text-base font-semibold border-2 hover:bg-foreground hover:text-background"
-          disabled={!inStock || inCart}
+          disabled={!inStock || !canAddMore}
         >
           Buy Now
         </Button>
@@ -302,7 +312,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         <AccordionItem value="description">
           <AccordionTrigger>Description</AccordionTrigger>
           <AccordionContent>
-            <p className="text-base leading-relaxed text-muted-foreground">
+            <p className="text-base leading-relaxed text-muted-foreground whitespace-pre-line">
               {product.description}
             </p>
           </AccordionContent>

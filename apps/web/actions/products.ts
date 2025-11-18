@@ -3,21 +3,25 @@
 import { db } from "@repo/db";
 
 export const getProductBySlug = async (slug: string) => {
-  const product = await db.product.findFirst({
-    where: {
-      slug,
-    },
-    include: {
-      category: true,
-      product_variants: {
-        include: {
-          inventory: true,
-        },
+  try {
+    const product = await db.product.findFirst({
+      where: {
+        slug,
       },
-      product_images: true,
-      reviews: true,
-    },
-  });
+      include: {
+        category: true,
+        product_variants: {
+          include: {
+            inventory: true,
+          },
+        },
+        product_images: true,
+        reviews: true,
+      },
+    });
 
-  return product;
+    return product;
+  } catch (error) {
+    console.error(error);
+  }
 };

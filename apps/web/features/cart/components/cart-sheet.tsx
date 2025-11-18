@@ -49,7 +49,7 @@ const CartSheet = () => {
             <div className="flex-1 overflow-auto py-6 space-y-6">
               {items.map((item) => (
                 <div
-                  key={item.id}
+                  key={item.variant_id}
                   className="flex gap-4 pb-6 border-b border-border"
                 >
                   <div className="w-24 h-24 bg-secondary border border-border">
@@ -66,14 +66,24 @@ const CartSheet = () => {
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6"
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.id, item.variant_id)}
                       >
                         <X className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
+                    {item.color && (
+                      <p className="text-xs text-muted-foreground">
+                        Warna: {item.color}
+                      </p>
+                    )}
+                    {item.size && (
+                      <p className="text-xs text-muted-foreground">
+                        Ukuran: {item.size}
+                      </p>
+                    )}
                     {item.storage && (
                       <p className="text-xs text-muted-foreground">
-                        Storage: {item.storage}
+                        Stok: {item.storage}
                       </p>
                     )}
                     <div className="flex items-center justify-between">
@@ -83,7 +93,11 @@ const CartSheet = () => {
                           size="icon"
                           className="h-7 w-7 p-0"
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
+                            updateQuantity(
+                              item.id,
+                              item.variant_id,
+                              item.quantity - 1,
+                            )
                           }
                         >
                           <Minus className="h-3 w-3" />
@@ -96,15 +110,18 @@ const CartSheet = () => {
                           size="icon"
                           className="h-7 w-7 p-0"
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(
+                              item.id,
+                              item.variant_id,
+                              item.quantity + 1,
+                            )
                           }
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
                       <p className="font-bold text-sm">
-                        Rp{" "}
-                        {(item.price * item.quantity).toLocaleString("id-ID")}
+                        {formatCurrency(item.price * item.quantity)}
                       </p>
                     </div>
                   </div>

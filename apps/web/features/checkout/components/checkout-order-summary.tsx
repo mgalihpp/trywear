@@ -39,7 +39,10 @@ export function CheckoutOrderSummary({
       {/* Items Preview */}
       <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b max-h-[200px] overflow-y-auto">
         {items.map((item) => (
-          <div key={item.id} className="flex gap-2 sm:gap-3 text-xs sm:text-sm">
+          <div
+            key={item.variant_id}
+            className="flex gap-2 sm:gap-3 text-xs sm:text-sm"
+          >
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded flex items-center justify-center flex-shrink-0">
               {item.image ? (
                 <img

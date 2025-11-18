@@ -57,7 +57,6 @@ const data = {
     {
       title: "Products",
       icon: Box,
-      isActive: true,
       url: "#",
       items: [
         { title: "All Products", url: "/products" },

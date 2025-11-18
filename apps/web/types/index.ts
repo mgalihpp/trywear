@@ -39,6 +39,7 @@ export type ProductWithRelations = Prisma.ProductGetPayload<{
 export type OrderWithRelations = Prisma.OrdersGetPayload<{
   include: {
     order_items: true;
+    payments: true;
     user: true;
   };
 }>;
@@ -48,12 +49,24 @@ export type OrderWithFullRelations = Prisma.OrdersGetPayload<{
     address: true;
     order_items: {
       include: {
-        variant: true;
+        variant: {
+          include: {
+            product: {
+              include: {
+                product_images: true;
+              };
+            };
+          };
+        };
       };
     };
     payments: true;
     returns: true;
-    shipments: true;
+    shipments: {
+      include: {
+        shipment_method: true;
+      };
+    };
     user: true;
   };
 }>;
@@ -67,13 +80,16 @@ export type AddressStore = {
   setDefaultAddress: (id: number) => void;
 };
 
-export interface ShippingMethod {
-  id: string;
+export type Region = "JABODETABEK" | "JAWA" | "LUAR_JAWA";
+
+export type ShippingMethod = {
+  id: number;
   name: string;
   description: string;
-  price: number;
+  basePrice: number;
   estimatedDays: number;
-}
+  regionModifier: Record<Region, number>;
+};
 
 export type SortType = "none" | "newest" | "price-asc" | "price-desc";
 

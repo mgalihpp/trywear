@@ -3,14 +3,15 @@
 import { Card } from "@repo/ui/components/card";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
-import { Package, Truck } from "lucide-react";
+import { Package } from "lucide-react";
+import Image from "next/image";
 import { formatCurrency } from "@/features/admin/utils";
 import type { ShippingMethod } from "@/types/index";
 
 interface ShippingMethodSelectorProps {
   methods: ShippingMethod[];
-  selectedMethodId: string | null;
-  onSelect: (id: string) => void;
+  selectedMethodId: number | null;
+  onSelect: (id: number) => void;
 }
 
 export function ShippingMethodSelector({
@@ -23,7 +24,10 @@ export function ShippingMethodSelector({
       <h2 className="text-sm sm:text-base lg:text-lg font-semibold">
         Metode Pengiriman
       </h2>
-      <RadioGroup value={selectedMethodId || ""} onValueChange={onSelect}>
+      <RadioGroup
+        value={selectedMethodId?.toString() || ""}
+        onValueChange={(v) => onSelect(Number(v))}
+      >
         <div className="space-y-2 sm:space-y-3">
           {methods.map((method) => (
             <Card
@@ -37,7 +41,7 @@ export function ShippingMethodSelector({
             >
               <div className="flex items-start gap-2 sm:gap-3">
                 <RadioGroupItem
-                  value={method.id}
+                  value={method.id.toString()}
                   id={`shipping-${method.id}`}
                   className="mt-1 flex-shrink-0"
                 />
@@ -48,8 +52,14 @@ export function ShippingMethodSelector({
                   >
                     <div className="flex items-start gap-2 sm:gap-3">
                       <div className="w-7 h-7 sm:w-8 sm:h-8 bg-muted rounded flex items-center justify-center flex-shrink-0">
-                        {method.name.includes("Express") ? (
-                          <Truck className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
+                        {method.name.includes("JNE") ? (
+                          <Image
+                            src="/image/JNE.png"
+                            alt="jne"
+                            width={32}
+                            height={32}
+                            className="object-contain rounded-full w-auto h-auto"
+                          />
                         ) : (
                           <Package className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
                         )}
@@ -71,7 +81,7 @@ export function ShippingMethodSelector({
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div className="font-semibold text-xs sm:text-sm lg:text-base text-primary">
-                    +{formatCurrency(method.price)}
+                    +{formatCurrency(method.basePrice)}
                   </div>
                 </div>
               </div>
