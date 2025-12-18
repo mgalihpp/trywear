@@ -15,7 +15,6 @@ import { id } from "date-fns/locale";
 import {
   AlertTriangle,
   Bell,
-  Check,
   CheckCheck,
   CreditCard,
   Package,
@@ -296,7 +295,7 @@ export function NotificationBell() {
                   typeof window !== "undefined" &&
                   window.location.pathname.startsWith("/dashboard")
                     ? "/dashboard/notifications"
-                    : "/user/notifications"
+                    : "/user/settings/notifications"
                 }
               >
                 Lihat semua notifikasi

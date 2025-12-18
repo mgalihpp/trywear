@@ -13,14 +13,72 @@ import { useUserOrders } from "@/features/order/queries/useOrderQuery";
 import { authClient } from "@/lib/auth-client";
 import ReviewDialog from "./review-dialog";
 
-const statusLabels: Record<string, string> = {
-  pending: "Menunggu Pembayaran",
+// Status labels berdasarkan order.status DAN payment.status
+const orderStatusLabels: Record<string, string> = {
+  pending: "Menunggu Konfirmasi",
   processing: "Diproses",
   shipped: "Dikirim",
+  in_transit: "Dalam Pengiriman",
   delivered: "Terkirim",
   completed: "Selesai",
   cancelled: "Dibatalkan",
   cancel: "Dibatalkan",
+};
+
+// Status labels untuk payment
+const paymentStatusLabels: Record<string, string> = {
+  pending: "Menunggu Pembayaran",
+  settlement: "Lunas",
+  capture: "Lunas",
+  failed: "Pembayaran Gagal",
+  cancelled: "Dibatalkan",
+  cancel: "Dibatalkan",
+  expired: "Kadaluarsa",
+  expire: "Kadaluarsa",
+};
+
+// Helper: Tentukan status display berdasarkan order dan payment
+const getDisplayStatus = (
+  orderStatus: string,
+  paymentStatus?: string | null,
+): { label: string; color: string } => {
+  // Jika payment pending, tampilkan menunggu pembayaran
+  if (paymentStatus === "pending") {
+    return {
+      label: paymentStatusLabels?.pending || "Menunggu Konfirmasi",
+      color: "bg-yellow-500/20 text-yellow-600 border-yellow-500/30",
+    };
+  }
+
+  // Jika payment failed/cancelled/expired
+  if (
+    paymentStatus === "failed" ||
+    paymentStatus === "cancelled" ||
+    paymentStatus === "cancel" ||
+    paymentStatus === "expired" ||
+    paymentStatus === "expire"
+  ) {
+    return {
+      label: paymentStatusLabels[paymentStatus] || "Dibatalkan",
+      color: "bg-destructive/20 text-destructive border-destructive/30",
+    };
+  }
+
+  // Jika order cancelled
+  if (orderStatus === "cancelled" || orderStatus === "cancel") {
+    return {
+      label: "Dibatalkan",
+      color: "bg-destructive/20 text-destructive border-destructive/30",
+    };
+  }
+
+  // Order status biasa (payment sudah settlement)
+  return {
+    label: orderStatusLabels[orderStatus] || orderStatus.replace(/_/g, " "),
+    color:
+      statusColors[orderStatus as keyof typeof statusColors] ||
+      "bg-secondary text-secondary-foreground",
+  };
 };
 
 export const OrdersSection = () => {
@@ -36,16 +94,60 @@ export const OrdersSection = () => {
     refetch,
   } = useUserOrders(sessionData?.user.id as string);
 
-  const mainFilteredOrders = orderData
-    ?.filter(
-      (order) =>
-        !["cancel", "cancelled"].includes(order.status) &&
-        (orderFilter === "all" ||
-          orderFilter === "processing" ||
-          orderFilter === "shipping" ||
-          orderFilter === "delivered") &&
-        (orderFilter === "all" || order.status === orderFilter),
-    )
+  // Helper untuk filter berdasarkan status
+  const matchesFilter = (
+    orderStatus: string,
+    paymentStatus?: string | null,
+    filter?: string,
+  ) => {
+    // Check if order/payment is cancelled
+    const isCancelled =
+      ["cancel", "cancelled"].includes(orderStatus) ||
+      ["cancel", "cancelled", "failed", "expired", "expire"].includes(
+        paymentStatus ?? "",
+      );
+
+    if (filter === "all") {
+      // Semua KECUALI yang dibatalkan
+      return !isCancelled;
+    }
+
+    if (filter === "pending") {
+      // Menunggu pembayaran
+      return paymentStatus === "pending";
+    }
+
+    if (filter === "processing") {
+      // Diproses - payment sudah lunas, order belum dikirim
+      return (
+        (paymentStatus === "settlement" || paymentStatus === "capture") &&
+        ["pending", "processing", "ready"].includes(orderStatus)
+      );
+    }
+
+    if (filter === "shipped") {
+      // Dikirim
+      return ["shipped", "in_transit"].includes(orderStatus);
+    }
+
+    if (filter === "delivered") {
+      // Selesai
+      return ["delivered", "completed"].includes(orderStatus);
+    }
+
+    if (filter === "cancel") {
+      // Dibatalkan
+      return isCancelled;
+    }
+
+    return true;
+  };
+
+  const filteredOrders = orderData
+    ?.filter((order) => {
+      const paymentStatus = order.payments?.[0]?.status;
+      return matchesFilter(order.status, paymentStatus, orderFilter);
+    })
     ?.sort((a, b) => {
       const aIsCompleted = ["delivered", "completed"].includes(a.status);
       const bIsCompleted = ["delivered", "completed"].includes(b.status);
@@ -58,17 +160,6 @@ export const OrdersSection = () => {
       );
     });
 
-  // Filter cancel (khusus dibatalkan)
-  const cancelledOrders = orderData
-    ?.filter((order) => ["cancel", "cancelled"].includes(order.status))
-    ?.sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
-
-  const filteredOrders =
-    orderFilter === "cancel" ? cancelledOrders : mainFilteredOrders;
-
   const handleReview = (product: Product) => {
     setReviewProduct(product);
     setReviewDialogOpen(true);
@@ -76,27 +167,39 @@ export const OrdersSection = () => {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h2 className="text-2xl font-bold">Pesanan Saya</h2>
-        <div className="flex gap-2 flex-wrap">
+      {/* Header & Filters - improved mobile */}
+      <div className="flex flex-col gap-4 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold">Pesanan Saya</h2>
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
           <Button
             variant={orderFilter === "all" ? "default" : "outline"}
             size="sm"
             onClick={() => setOrderFilter("all")}
+            className="shrink-0"
           >
             Semua
+          </Button>
+          <Button
+            variant={orderFilter === "pending" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setOrderFilter("pending")}
+            className="shrink-0"
+          >
+            Belum Bayar
           </Button>
           <Button
             variant={orderFilter === "processing" ? "default" : "outline"}
             size="sm"
             onClick={() => setOrderFilter("processing")}
+            className="shrink-0"
           >
             Diproses
           </Button>
           <Button
-            variant={orderFilter === "shipping" ? "default" : "outline"}
+            variant={orderFilter === "shipped" ? "default" : "outline"}
             size="sm"
-            onClick={() => setOrderFilter("shipping")}
+            onClick={() => setOrderFilter("shipped")}
+            className="shrink-0"
           >
             Dikirim
           </Button>
@@ -104,6 +207,7 @@ export const OrdersSection = () => {
             variant={orderFilter === "delivered" ? "default" : "outline"}
             size="sm"
             onClick={() => setOrderFilter("delivered")}
+            className="shrink-0"
           >
             Selesai
           </Button>
@@ -111,8 +215,9 @@ export const OrdersSection = () => {
             variant={orderFilter === "cancel" ? "default" : "outline"}
             size="sm"
             onClick={() => setOrderFilter("cancel")}
+            className="shrink-0"
           >
-            Dibatalkan
+            Batal
           </Button>
         </div>
       </div>
@@ -134,9 +239,11 @@ export const OrdersSection = () => {
               (review) => review.user_id === userId,
             );
             const hasReview = !!userReview;
-            const badgeColor =
-              statusColors[order.status as keyof typeof statusColors] ??
-              "bg-secondary text-secondary-foreground";
+            const paymentStatus = order.payments?.[0]?.status;
+            const { label: statusLabel, color: badgeColor } = getDisplayStatus(
+              order.status,
+              paymentStatus,
+            );
             const reviewLink =
               hasReview && primaryProduct?.slug
                 ? `/product/${primaryProduct.slug}#reviews`
@@ -145,36 +252,40 @@ export const OrdersSection = () => {
             return (
               <div
                 key={order.id}
-                className="border border-border rounded-lg p-6 space-y-4 shadow-sm bg-card/50"
+                className="border border-border rounded-lg overflow-hidden shadow-sm bg-card/50"
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="space-y-1">
-                    <h3 className="font-bold text-lg">Pesanan #{order.id}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(order.created_at), "dd MMMM yyyy HH:mm")}{" "}
-                      WIB
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge className={badgeColor}>
-                      {statusLabels[order.status] ||
-                        order.status.replace(/_/g, " ")}
-                    </Badge>
-                    <p className="font-semibold text-lg">
-                      {formatCurrency(Number(order.total_cents))}
-                    </p>
+                {/* Header - Mobile optimized */}
+                <div className="p-4 sm:p-5 border-b border-border bg-muted/30">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-sm sm:text-base truncate">
+                        Pesanan #{order.id.slice(0, 8)}...
+                      </h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                        {format(new Date(order.created_at), "dd MMM yyyy, HH:mm")}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <Badge className={`${badgeColor} text-xs`}>
+                        {statusLabel}
+                      </Badge>
+                      <p className="font-bold text-sm sm:text-base">
+                        {formatCurrency(Number(order.total_cents))}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="border-t border-border pt-4">
+                {/* Items */}
+                <div className="p-4 sm:p-5">
                   <div className="space-y-3">
                     {order.order_items.slice(0, 2).map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors"
+                        className="flex items-center gap-3"
                       >
-                        {/* Image - mobile smaller */}
-                        <div className="w-12 h-12 flex-shrink-0 bg-muted rounded-lg overflow-hidden">
+                        {/* Image */}
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 bg-muted rounded-lg overflow-hidden">
                           {item.variant?.product.product_images[0]?.url ? (
                             <img
                               src={item.variant.product.product_images[0].url}
@@ -183,39 +294,45 @@ export const OrdersSection = () => {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-muted">
-                              <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                              <ImageIcon className="w-5 h-5 text-muted-foreground" />
                             </div>
                           )}
                         </div>
 
-                        {/* Content - full width on mobile */}
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <p className="font-medium text-sm leading-4 line-clamp-2">
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm line-clamp-1">
                             {item.title}
                           </p>
-                          <VariantInfo variant={item.variant} />
-                        </div>
-
-                        {/* Quantity & Price - mobile stack */}
-                        <div className="flex flex-col items-end gap-1.5 text-sm font-medium min-w-[50px]">
-                          <span className="text-muted-foreground text-xs">
-                            x{item.quantity}
-                          </span>
-                          <span className="text-foreground text-sm">
-                            {formatCurrency(Number(item.total_price_cents))}
-                          </span>
+                          <div className="text-xs text-muted-foreground mt-0.5">
+                            <VariantInfo variant={item.variant} />
+                          </div>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-xs text-muted-foreground">
+                              x{item.quantity}
+                            </span>
+                            <span className="font-medium text-sm">
+                              {formatCurrency(Number(item.total_price_cents))}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
+                    {order.order_items.length > 2 && (
+                      <p className="text-xs text-muted-foreground text-center py-1">
+                        +{order.order_items.length - 2} produk lainnya
+                      </p>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                {/* Actions */}
+                <div className="p-4 sm:p-5 pt-0 flex gap-2">
                   <Button
                     variant="outline"
-                    size="default"
+                    size="sm"
                     asChild
-                    className="flex-1 h-11"
+                    className="flex-1 h-9"
                   >
                     <Link href={`/order?order_id=${order.id}`}>
                       Lihat Detail
@@ -225,20 +342,20 @@ export const OrdersSection = () => {
                     (userReview && reviewLink ? (
                       <Button
                         variant="outline"
-                        size="default"
-                        className="flex-1 h-11"
+                        size="sm"
+                        className="flex-1 h-9"
                         asChild
                       >
                         <Link href={reviewLink}>
-                          <Star className="h-4 w-4 mr-2" />
+                          <Star className="h-3.5 w-3.5 mr-1.5" />
                           Lihat Ulasan
                         </Link>
                       </Button>
                     ) : (
                       <Button
                         variant="default"
-                        size="default"
-                        className="flex-1 h-11"
+                        size="sm"
+                        className="flex-1 h-9"
                         disabled={!primaryProduct || hasReview}
                         onClick={() =>
                           !hasReview &&
@@ -246,8 +363,8 @@ export const OrdersSection = () => {
                           handleReview(primaryProduct)
                         }
                       >
-                        <Star className="h-4 w-4 mr-2" />
-                        {hasReview ? "Ulasan sudah dibuat" : "Beri Ulasan"}
+                        <Star className="h-3.5 w-3.5 mr-1.5" />
+                        Beri Ulasan
                       </Button>
                     ))}
                 </div>
@@ -258,9 +375,11 @@ export const OrdersSection = () => {
       </div>
 
       {!isPending && !isError && filteredOrders?.length === 0 && (
-        <div className="text-center py-16 border border-border rounded-lg bg-card/50">
-          <Package className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">Tidak ada pesanan ditemukan</p>
+        <div className="text-center py-12 border border-border rounded-lg bg-card/50">
+          <Package className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
+            Tidak ada pesanan ditemukan
+          </p>
         </div>
       )}
 
@@ -297,10 +416,11 @@ function VariantInfo({ variant }: VariantInfoProps) {
   if (!opts) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
-      {opts.color && <span>Warna: {opts.color}</span>}
-      {opts.size && <span>Ukuran: {opts.size}</span>}
-    </div>
+    <span>
+      {opts.color && `Warna: ${opts.color}`}
+      {opts.color && opts.size && " • "}
+      {opts.size && `Ukuran: ${opts.size}`}
+    </span>
   );
 }
 
@@ -310,32 +430,34 @@ function OrdersSkeleton() {
       {[1, 2, 3].map((item) => (
         <div
           key={item}
-          className="border border-border rounded-lg p-6 space-y-4 bg-card/50"
+          className="border border-border rounded-lg overflow-hidden bg-card/50"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-32" />
-              <Skeleton className="h-4 w-28" />
-            </div>
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-6 w-24" />
-              <Skeleton className="h-6 w-28" />
+          <div className="p-4 border-b border-border bg-muted/30">
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-4 w-24" />
+              </div>
             </div>
           </div>
-          <div className="border-t border-border pt-4 space-y-3">
+          <div className="p-4 space-y-3">
             {[1, 2].map((line) => (
-              <div
-                key={line}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
-              >
-                <Skeleton className="h-4 w-48" />
-                <Skeleton className="h-4 w-12" />
+              <div key={line} className="flex items-center gap-3">
+                <Skeleton className="w-14 h-14 rounded-lg shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
+          <div className="p-4 pt-0 flex gap-2">
+            <Skeleton className="h-9 flex-1" />
+            <Skeleton className="h-9 flex-1" />
           </div>
         </div>
       ))}

@@ -80,7 +80,7 @@ export const Header = () => {
               variant="ghost"
               size="icon"
               className={cn(
-                "rounded-full",
+                "",
                 isTransparent
                   ? "text-white hover:text-white hover:bg-white/20"
                   : "hover:bg-accent",
@@ -95,7 +95,7 @@ export const Header = () => {
               variant="ghost"
               size="icon"
               className={cn(
-                "rounded-full hidden sm:flex",
+                "hidden sm:flex",
                 isTransparent
                   ? "text-white hover:text-white hover:bg-white/20"
                   : "hover:bg-accent",
@@ -119,7 +119,7 @@ export const Header = () => {
               variant="ghost"
               size="icon"
               className={cn(
-                "rounded-full hidden sm:flex",
+                "hidden sm:flex",
                 isTransparent
                   ? "text-white hover:text-white hover:bg-white/20"
                   : "hover:bg-accent",

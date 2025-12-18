@@ -7,42 +7,42 @@ import Link from "next/link";
 export const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center -mt-20">
-      {/* Full-width background image */}
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80"
-          alt="Fashion Store"
-          className="w-full h-full object-cover"
-        />
-        {/* Dark overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
-      </div>
+      {/* Full-width background image - fixed for zoom */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80')",
+        }}
+      />
+      {/* Dark overlay with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
 
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
             <span className="text-sm text-white/90 font-medium">
-              New Collection 2024
+              Koleksi Terbaru 2024
             </span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[0.9] mb-6">
-            Define
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1] mb-8">
+            Temukan
             <br />
-            Your
+            Gayamu
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200">
-              Style
+              Sendiri
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg lg:text-xl text-white/70 mb-8 max-w-md leading-relaxed">
+          <p className="text-lg lg:text-xl text-white/80 mb-10 max-w-xl leading-relaxed">
             Temukan koleksi fashion premium yang membuat penampilanmu semakin
             memukau. Kualitas terbaik, harga terjangkau.
           </p>
@@ -55,7 +55,7 @@ export const Hero = () => {
               asChild
             >
               <Link href="/products">
-                Explore Collection
+                Jelajahi Koleksi
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
@@ -64,25 +64,25 @@ export const Hero = () => {
               className="h-14 px-8 text-base font-semibold bg-white/10 border-2 border-white text-white hover:bg-white hover:text-black rounded-full transition-colors"
             >
               <Play className="mr-2 h-5 w-5 fill-current" />
-              Watch Lookbook
+              Lihat Lookbook
             </Button>
           </div>
 
           {/* Product Stats */}
-          <div className="flex flex-wrap items-center gap-6 lg:gap-8 text-white/80">
+          <div className="flex flex-wrap items-center gap-8 lg:gap-12 text-white/80">
             <div>
               <p className="text-2xl lg:text-3xl font-bold text-white">1000+</p>
-              <p className="text-xs lg:text-sm">Products</p>
+              <p className="text-sm lg:text-base">Produk</p>
             </div>
-            <div className="w-px h-8 lg:h-10 bg-white/20" />
+            <div className="w-px h-10 lg:h-12 bg-white/20" />
             <div>
               <p className="text-2xl lg:text-3xl font-bold text-white">50+</p>
-              <p className="text-xs lg:text-sm">Brands</p>
+              <p className="text-sm lg:text-base">Merek</p>
             </div>
-            <div className="w-px h-8 lg:h-10 bg-white/20" />
+            <div className="w-px h-10 lg:h-12 bg-white/20" />
             <div>
-              <p className="text-2xl lg:text-3xl font-bold text-white">Free</p>
-              <p className="text-xs lg:text-sm">Shipping</p>
+              <p className="text-2xl lg:text-3xl font-bold text-white">Gratis</p>
+              <p className="text-sm lg:text-base">Pengiriman</p>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@ export const Hero = () => {
 
       {/* Scroll indicator - hidden on mobile */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 text-white/50">
-        <span className="text-xs uppercase tracking-widest">Scroll</span>
+        <span className="text-xs uppercase tracking-widest">Gulir</span>
         <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent" />
       </div>
     </section>

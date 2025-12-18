@@ -71,7 +71,7 @@ export default function CheckoutPage() {
     script.id = scriptId;
     script.src =
       process.env.NODE_ENV === "production"
-        ? "https://app.midtrans.com/snap/snap.js"
+        ? "https://app.sandbox.midtrans.com/snap/snap.js"
         : "https://app.sandbox.midtrans.com/snap/snap.js";
     script.setAttribute(
       "data-client-key",

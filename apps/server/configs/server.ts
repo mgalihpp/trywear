@@ -11,6 +11,7 @@ import {
   securityLogger,
 } from "@/middleware/logger";
 import { generalLimiter } from "@/middleware/rateLimiter";
+import { paymentScheduler } from "@/modules/payment/payment.scheduler";
 import v1Router from "@/routes";
 import appConfig from "./appConfig";
 import { corsOptions } from "./cors";
@@ -69,8 +70,13 @@ export class Server {
         console.log(
           `Server running on port ${this.port}\n\nRunning: ${appConfig.SERVER_ORIGIN}\n\n`,
         );
+
+        // Start background schedulers
+        paymentScheduler.start();
+
         resolve();
       });
     });
   }
 }
+

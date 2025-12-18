@@ -122,6 +122,14 @@ export async function updatePaymentStatus({
 
     if (!order) throw new Error("Order not found");
 
+    // Get current payment status BEFORE update
+    const currentPayment = await db.payments.findUnique({
+      where: { order_id },
+      select: { status: true },
+    });
+
+    const previousStatus = currentPayment?.status;
+
     const payment = await db.payments.update({
       where: { order_id }, // asumsi constraint unique di order_id
       data: {
@@ -130,8 +138,18 @@ export async function updatePaymentStatus({
       },
     });
 
-    // Create notifications based on payment status
-    if (["capture", "settlement"].includes(status)) {
+    // Only create notifications if status is actually changing to prevent duplicates
+    const isNewSettlement =
+      ["capture", "settlement"].includes(status) &&
+      !["capture", "settlement"].includes(previousStatus ?? "");
+
+    const isNewCancellation =
+      (status === "cancel" || status === "expire") &&
+      previousStatus !== "cancel" &&
+      previousStatus !== "expire" &&
+      previousStatus !== "cancelled";
+
+    if (isNewSettlement) {
       // Notify user that payment is successful
       await db.notifications.create({
         data: {
@@ -156,7 +174,7 @@ export async function updatePaymentStatus({
           })),
         });
       }
-    } else if (status === "cancel" || status === "expire") {
+    } else if (isNewCancellation) {
       // Notify user that order/payment is cancelled
       await db.notifications.create({
         data: {

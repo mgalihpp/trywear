@@ -7,10 +7,10 @@ export const snap = new MidTrans.Snap({
   isProduction: appConfig.NODE_ENV !== "development",
   serverKey:
     appConfig.NODE_ENV !== "development"
-      ? appConfig.MIDTRANS_PRODUCTION_SERVER_KEY
+      ? appConfig.MIDTRANS_SANDBOX_SERVER_KEY
       : appConfig.MIDTRANS_SANDBOX_SERVER_KEY,
   clientKey:
     appConfig.NODE_ENV !== "development"
-      ? appConfig.MIDTRANS_PRODUCTION_CLIENT_KEY
+      ? appConfig.MIDTRANS_SANDBOX_CLIENT_KEY
       : appConfig.MIDTRANS_SANDBOX_CLIENT_KEY,
 });
