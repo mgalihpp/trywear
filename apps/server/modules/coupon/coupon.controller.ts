@@ -98,8 +98,12 @@ export class CouponController {
 
   getAvailable = asyncHandler(async (req: Request, res: Response) => {
     const userSegmentId = req.user?.segment_id;
+    const userId = req.user?.id;
 
-    const coupons = await this.couponService.getAvailableCoupons(userSegmentId);
+    const coupons = await this.couponService.getAvailableCoupons(
+      userSegmentId,
+      userId,
+    );
 
     return new AppResponse({
       res,

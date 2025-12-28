@@ -123,7 +123,7 @@ export const UserMenu = ({ isTransparent }: UserMenuProps) => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/user/setting/orders" className="cursor-pointer">
+          <Link href="/user/settings/orders" className="cursor-pointer">
             <Package className="mr-2 h-4 w-4" />
             <span>Pesanan Saya</span>
           </Link>

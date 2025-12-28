@@ -150,13 +150,25 @@ export class CouponService extends BaseService<Coupons, "coupons"> {
       throw AppError.badRequest("Kupon sudah kadaluarsa");
     }
 
-    // 2. Check usage limit
+    // 2. Check usage limit (Global)
     if (coupon.usage_limit) {
       const usedCount = await this.db.orders.count({
         where: { coupon_code: code },
       });
       if (usedCount >= coupon.usage_limit) {
         throw AppError.badRequest("Kuota kupon sudah habis");
+      }
+    }
+
+    // 3. Check usage limit (Per User)
+    if (coupon.usage_limit_per_user) {
+      const userUsedCount = await this.db.orders.count({
+        where: { coupon_code: code, user_id: userId },
+      });
+      if (userUsedCount >= coupon.usage_limit_per_user) {
+        throw AppError.badRequest(
+          "Anda sudah mencapai batas penggunaan untuk kupon ini",
+        );
       }
     }
 
@@ -214,7 +226,7 @@ export class CouponService extends BaseService<Coupons, "coupons"> {
     });
   }
 
-  async getAvailableCoupons(userSegmentId?: number | null) {
+  async getAvailableCoupons(userSegmentId?: number | null, userId?: string) {
     const now = new Date();
 
     const coupons = await this.db.coupons.findMany({
@@ -224,10 +236,6 @@ export class CouponService extends BaseService<Coupons, "coupons"> {
           {
             OR: [{ expires_at: null }, { expires_at: { gt: now } }],
           },
-          // 2. Usage limit check is simpler in code, or complex query.
-          // For list, we might show all non-expired, and check limit later
-          // OR checking limit here if possible.
-          // For now let's filter purely by segment and time.
         ],
       },
       include: {
@@ -236,24 +244,42 @@ export class CouponService extends BaseService<Coupons, "coupons"> {
       orderBy: { expires_at: "asc" },
     });
 
-    // Client-side filtering for complex logic (segment match)
-    return coupons.filter((coupon) => {
-      // Check segment
+    // Check usage limits (requires async loop)
+    const validCoupons = [];
+    for (const coupon of coupons) {
+      // 1. Check segment
       const restrictedSegments = coupon.segment_coupons.map(
         (sc) => sc.segment_id,
       );
       if (restrictedSegments.length > 0) {
         if (!userSegmentId || !restrictedSegments.includes(userSegmentId)) {
-          return false; // User not in allowed segment
+          continue;
         }
       }
 
-      // Check limit (if we want to hide fully used coupons)
-      // This might be N+1 lazy loading if we query usage for each.
-      // For list view, maybe we skip strict used check or doing it if list is small.
-      // Let's assume we show them, validation will catch full usage.
+      // 2. Check Global Limit
+      if (coupon.usage_limit) {
+        const usedCount = await this.db.orders.count({
+          where: { coupon_code: coupon.code },
+        });
+        if (usedCount >= coupon.usage_limit) {
+          continue;
+        }
+      }
 
-      return true;
-    });
+      // 3. Check Per-User Limit
+      if (coupon.usage_limit_per_user && userId) {
+        const userUsedCount = await this.db.orders.count({
+          where: { coupon_code: coupon.code, user_id: userId },
+        });
+        if (userUsedCount >= coupon.usage_limit_per_user) {
+          continue;
+        }
+      }
+
+      validCoupons.push(coupon);
+    }
+
+    return validCoupons;
   }
 }

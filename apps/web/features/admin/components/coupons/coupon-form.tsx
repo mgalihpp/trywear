@@ -78,6 +78,7 @@ export function CouponForm({ initialData }: CouponFormProps) {
         "percentage",
       discount_value: initialData?.discount_value || 0,
       usage_limit: initialData?.usage_limit ?? null,
+      usage_limit_per_user: initialData?.usage_limit_per_user ?? null,
       expires_at: initialData?.expires_at
         ? new Date(initialData.expires_at).toISOString()
         : null,
@@ -246,6 +247,31 @@ export function CouponForm({ initialData }: CouponFormProps) {
                           </FormControl>
                           <FormDescription>
                             Jumlah maksimal kupon dapat digunakan.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="usage_limit_per_user"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Max per User</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              value={field.value ?? ""}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                field.onChange(val === "" ? null : Number(val));
+                              }}
+                              placeholder="Tak terbatas"
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Max pemakaian per user (contoh: 1).
                           </FormDescription>
                           <FormMessage />
                         </FormItem>

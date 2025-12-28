@@ -18,6 +18,7 @@ export const createCouponSchema = z.object({
   discount_value: z.number().positive("Nilai diskon harus positif"),
   expires_at: z.string().datetime().nullable().optional(),
   usage_limit: z.number().int().nonnegative().nullable().optional(),
+  usage_limit_per_user: z.number().int().nonnegative().nullable().optional(),
   segment_ids: z.array(z.number()).optional(),
 });
 

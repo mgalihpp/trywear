@@ -350,6 +350,7 @@ model Coupons {
   discount_value  Float?
   expires_at      DateTime?        @db.Timestamptz
   usage_limit     Int?
+  usage_limit_per_user Int?
   segment_coupons SegmentCoupons[]
 }
 
