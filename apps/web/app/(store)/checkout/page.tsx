@@ -13,6 +13,7 @@ import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
 import { Separator } from "@repo/ui/components/separator";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, Info } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,7 @@ import { SHIPPING_METHODS } from "@/features/order/constants/shipment";
 import AddressDialog from "@/features/user/components/settings/address/address-dialog";
 import { useAddresses } from "@/features/user/queries/useAddressQuery";
 import { useServerAction } from "@/hooks/useServerAction";
+import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import type { Snap } from "@/types/midtrans";
 
@@ -63,6 +65,13 @@ export default function CheckoutPage() {
   const [addressDialogOpen, setAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Addresses | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [discountAmount, setDiscountAmount] = useState(0);
+
+  const { data: segments } = useQuery({
+    queryKey: ["segments"],
+    queryFn: () => api.segment.getAll(),
+  });
 
   useEffect(() => {
     if (typeof window === "undefined" || window.snap) return;
@@ -101,7 +110,19 @@ export default function CheckoutPage() {
   );
   const shippingCost = selectedShipping?.basePrice || 0;
   const tax = subtotal * 0.1;
-  const total = subtotal + tax + shippingCost;
+  const userSegment = segments?.find(
+    (s) => s.id === (data?.user as any)?.segment_id, // Type cast if segment_id missing in type
+  );
+
+  const segmentDiscount =
+    userSegment && userSegment.discount_percent > 0
+      ? (subtotal * userSegment.discount_percent) / 100
+      : 0;
+
+  const total = Math.max(
+    0,
+    subtotal + tax + shippingCost - discountAmount - segmentDiscount,
+  );
 
   const handleCheckout = async () => {
     if (!selectedAddressId) {
@@ -127,6 +148,7 @@ export default function CheckoutPage() {
           })),
           address_id: selectedAddressId,
           shipment_method_id: selectedShippingId,
+          coupon_code: couponCode || undefined,
         },
         {
           onSuccess: async (data) => {
@@ -345,6 +367,10 @@ export default function CheckoutPage() {
                 total={total}
                 isProcessing={isProcessing || orderMutation.isPending}
                 onCheckout={handleCheckout}
+                onCouponChange={setCouponCode}
+                onApplyDiscount={setDiscountAmount}
+                segmentDiscount={segmentDiscount}
+                segmentName={userSegment?.name}
               />
             </div>
           </div>

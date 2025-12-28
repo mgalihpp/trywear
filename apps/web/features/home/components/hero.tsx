@@ -81,7 +81,9 @@ export const Hero = () => {
             </div>
             <div className="w-px h-10 lg:h-12 bg-white/20" />
             <div>
-              <p className="text-2xl lg:text-3xl font-bold text-white">Gratis</p>
+              <p className="text-2xl lg:text-3xl font-bold text-white">
+                Gratis
+              </p>
               <p className="text-sm lg:text-base">Pengiriman</p>
             </div>
           </div>

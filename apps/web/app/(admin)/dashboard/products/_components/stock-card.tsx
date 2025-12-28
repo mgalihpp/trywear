@@ -4,12 +4,9 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { Progress } from "@repo/ui/components/progress";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
-import {
-  formatCurrency,
-  getStockPercentage,
-  getStockStatus,
-} from "@/features/admin/utils";
+import { getStockPercentage, getStockStatus } from "@/features/admin/utils";
 import type { VariantCombination, VariantOption } from "@/types/index";
+import { CurrencyInput } from "./currency-input";
 
 type StockCardProps = {
   combo: VariantCombination;
@@ -95,24 +92,12 @@ export const StockCard = ({
         {/* Additional Price */}
         <div className="space-y-2">
           <Label className="text-sm font-medium">Harga Tambahan</Label>
-          <div className="relative">
-            <Input
-              type="number"
-              min="0"
-              value={combo.additional_price_cents}
-              onChange={(e) =>
-                updateVariantStock(
-                  combo.sku,
-                  "additional_price_cents",
-                  parseInt(e.target.value) || 0,
-                )
-              }
-              className="pr-20"
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-              {formatCurrency(combo.additional_price_cents)}
-            </div>
-          </div>
+          <CurrencyInput
+            value={combo.additional_price_cents}
+            onValueChange={(value) =>
+              updateVariantStock(combo.sku, "additional_price_cents", value)
+            }
+          />
         </div>
 
         {/* Stock Inputs Grid */}

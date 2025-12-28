@@ -5,9 +5,8 @@ import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader } from "@repo/ui/components/card";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Edit2, Mail, Phone } from "lucide-react";
+import { Edit2, Mail } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import { DataTable } from "@/features/admin/components/data-table";
 import { api } from "@/lib/api";
 import type { UserWithRelations } from "@/types/index";
@@ -102,6 +101,26 @@ export function CustomersTable() {
         );
       },
     },
+    {
+      accessorKey: "segment",
+      header: "Segment",
+      cell: ({ row }) => {
+        const segment = row.original.segment;
+        if (!segment) {
+          return <Badge variant="outline">-</Badge>;
+        }
+        return (
+          <Badge
+            style={{
+              backgroundColor: segment.color || "#6b7280",
+              color: "#fff",
+            }}
+          >
+            {segment.name}
+          </Badge>
+        );
+      },
+    },
     // {
     //   accessorKey: "phone",
     //   header: "Phone",
@@ -115,23 +134,22 @@ export function CustomersTable() {
     //     );
     //   },
     // },
-    {
-      accessorKey: "orders",
-      header: "Orders",
-      cell: ({ row }) => {
-        const total_orders = row.original.orders.length ?? 0;
+    // {
+    //   accessorKey: "orders",
+    //   header: "Orders",
+    //   cell: ({ row }) => {
+    //     const total_orders = row.original.orders.length ?? 0;
 
-        return total_orders;
-      },
-    },
+    //     return total_orders;
+    //   },
+    // },
     {
       accessorKey: "spent",
       header: "Total Spent",
       cell: ({ row }) => {
-        const total_spent = row.original.orders.reduce(
-          (acc, order) => acc + Number(order.total_cents),
-          0,
-        );
+        const total_spent = row.original.orders
+          .filter((order) => order.status === "delivered")
+          .reduce((acc, order) => acc + Number(order.total_cents), 0);
 
         return <span>{formatCurrency(total_spent)}</span>;
       },

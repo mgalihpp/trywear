@@ -27,6 +27,24 @@ export class CategoriesController extends BaseController<
     });
   });
 
+  getById = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = paramsIdSchema.parse(req.params);
+    const cat = await this.service.findById(Number(id));
+
+    if (!cat) {
+      res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+      return;
+    }
+
+    new AppResponse({
+      res,
+      data: cat,
+    });
+  });
+
   create = asyncHandler(async (req: Request, res: Response) => {
     const parsed = createCategorySchema.parse(req.body);
     const cat = await this.service.create(parsed);

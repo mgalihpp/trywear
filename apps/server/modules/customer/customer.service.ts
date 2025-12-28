@@ -7,14 +7,37 @@ export class CustomerService extends BaseService<User, "user"> {
     super("user");
   }
 
-  findAll = async () => {
+  findAll = async (segmentSlug?: string) => {
     const customers = await this.db[this.model].findMany({
+      where: segmentSlug
+        ? {
+            segment: {
+              slug: segmentSlug,
+            },
+          }
+        : undefined,
       include: {
-        orders: {
+        segment: {
           select: {
-            total_cents: true,
+            id: true,
+            name: true,
+            slug: true,
+            color: true,
+            icon: true,
+            discount_percent: true,
           },
         },
+        orders: {
+          include: {
+            payments: true,
+            shipments: true,
+            order_items: true,
+            returns: true,
+          },
+        },
+      },
+      orderBy: {
+        lifetime_spent: "desc",
       },
     });
 
@@ -27,6 +50,7 @@ export class CustomerService extends BaseService<User, "user"> {
         id,
       },
       include: {
+        segment: true,
         orders: true,
         addresses: true,
       },

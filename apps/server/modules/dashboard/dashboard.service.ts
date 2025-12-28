@@ -4,6 +4,44 @@ export class DashboardService {
   private db = db;
 
   /**
+   * Get segment distribution for dashboard
+   */
+  async getSegmentDistribution() {
+    const segments = await this.db.customerSegment.findMany({
+      where: { is_active: true },
+      orderBy: { priority: "desc" },
+      include: {
+        _count: {
+          select: { users: true },
+        },
+        users: {
+          select: {
+            lifetime_spent: true,
+          },
+        },
+      },
+    });
+
+    return segments.map((segment) => {
+      const totalSpent = segment.users.reduce(
+        (sum, user) => sum + Number(user.lifetime_spent),
+        0,
+      );
+
+      return {
+        id: segment.id,
+        name: segment.name,
+        slug: segment.slug,
+        color: segment.color,
+        icon: segment.icon,
+        customerCount: segment._count.users,
+        totalSpent,
+        discountPercent: segment.discount_percent,
+      };
+    });
+  }
+
+  /**
    * Get overview statistics for the dashboard
    */
   async getOverviewStats() {

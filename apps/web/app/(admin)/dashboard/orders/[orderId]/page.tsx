@@ -414,8 +414,18 @@ export default function OrderDetailPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Pengiriman</span>
-                <span>{formatCurrency(Number(orderData?.shipping_cents))}</span>
+                <span className="font-medium">
+                  {formatCurrency(Number(orderData?.shipping_cents))}
+                </span>
               </div>
+              {Number(orderData?.discount_cents) > 0 && (
+                <div className="flex justify-between text-destructive">
+                  <span>Diskon</span>
+                  <span>
+                    - {formatCurrency(Number(orderData?.discount_cents))}
+                  </span>
+                </div>
+              )}
               <div className="border-t pt-3 flex justify-between font-semibold">
                 <span>Total</span>
                 <span>{formatCurrency(Number(orderData?.total_cents))}</span>

@@ -348,6 +348,7 @@ const OrderDetails = () => {
               subtotal: Number(orderData?.subtotal_cents),
               tax: Number(orderData?.tax_cents),
               shipping: Number(orderData?.shipping_cents),
+              discount: Number(orderData?.discount_cents),
               total: Number(orderData?.total_cents),
             }}
           />

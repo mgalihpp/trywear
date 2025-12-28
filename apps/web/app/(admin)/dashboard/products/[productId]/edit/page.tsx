@@ -52,6 +52,7 @@ import { CategoryCombobox } from "../../_components/category-combobox";
 import { CurrencyInput } from "../../_components/currency-input";
 import { ProductImageUpload } from "../../_components/product-image-upload";
 import { ProductVariantsSection } from "../../_components/product-variant-sections";
+import { SupplierSelect } from "../../_components/supplier-select";
 
 export default function EditProductPage() {
   const params = useParams();
@@ -81,6 +82,8 @@ export default function EditProductPage() {
       description: "",
       price_cents: 0,
       status: "draft",
+      category_id: undefined,
+      supplier_id: undefined,
     },
   });
 
@@ -213,6 +216,7 @@ export default function EditProductPage() {
         price_cents: Number(productData.price_cents ?? 0),
         status: productData.status,
         category_id: productData.category_id ?? undefined,
+        supplier_id: productData.supplier_id ?? undefined,
       });
 
       setAttachments(
@@ -403,6 +407,26 @@ export default function EditProductPage() {
                               value={field.value ?? undefined}
                               onValueChange={(value) => {
                                 form.setValue("category_id", value);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="supplier_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="block text-sm font-medium mb-2">
+                            Pemasok
+                          </FormLabel>
+                          <FormControl>
+                            <SupplierSelect
+                              value={field.value}
+                              onValueChange={(value) => {
+                                form.setValue("supplier_id", value);
                               }}
                             />
                           </FormControl>

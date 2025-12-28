@@ -26,6 +26,12 @@ export const auth = betterAuth({
       console.log(`Password reset for user: ${user.email}`);
     },
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
 
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, _request) => {
@@ -38,6 +44,12 @@ export const auth = betterAuth({
     },
   },
   plugins: [admin()],
+  user: {
+    additionalFields: {
+      segment_id: { type: "number" },
+      lifetime_spent: { type: "number" },
+    },
+  },
 });
 
 type Session = typeof auth.$Infer.Session;

@@ -89,10 +89,11 @@ class HttpClient {
         },
       })
         .then((res: AxiosResponse<{ status_code: number }>) => {
+          const statusCode = Number(res.data.status_code);
           if (
             Object.hasOwn(res.data, "status_code") &&
-            res.data.status_code >= 400 &&
-            res.data.status_code !== 407
+            statusCode >= 400 &&
+            statusCode !== 407
           ) {
             reject(
               new MidtransError(

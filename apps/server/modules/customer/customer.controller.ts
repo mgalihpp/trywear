@@ -11,8 +11,9 @@ export class CustomerController extends BaseController<User, CustomerService> {
     super(new CustomerService());
   }
 
-  getAll = asyncHandler(async (_req: Request, res: Response) => {
-    const customers = await this.service.findAll();
+  getAll = asyncHandler(async (req: Request, res: Response) => {
+    const segmentSlug = req.query.segment as string | undefined;
+    const customers = await this.service.findAll(segmentSlug);
 
     return new AppResponse({
       res,

@@ -56,6 +56,35 @@ categoriesRouter.get("/", categoriesController.getAll);
 
 /**
  * @swagger
+ * /api/v1/categories/{id}:
+ *   get:
+ *     summary: Get category by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - $ref: '#/components/parameters/CategoryId'
+ *     responses:
+ *       200:
+ *         description: Category retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/SuccessResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       $ref: '#/components/schemas/Category'
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+categoriesRouter.get("/:id", categoriesController.getById);
+
+/**
+ * @swagger
  * /api/v1/categories:
  *   post:
  *     summary: Create a new category

@@ -10,6 +10,7 @@ type OrderItemsCardProps = {
     subtotal?: number | null;
     tax?: number | null;
     shipping?: number | null;
+    discount?: number | null;
     total?: number | null;
   };
 };
@@ -107,6 +108,14 @@ export function OrderItemsCard({
             {formatCurrency(totals.shipping ?? 0)}
           </span>
         </div>
+        {totals.discount && totals.discount > 0 && (
+          <div className="flex justify-between text-destructive">
+            <span>Diskon</span>
+            <span className="font-medium">
+              - {formatCurrency(totals.discount)}
+            </span>
+          </div>
+        )}
         <div className="flex justify-between text-xl font-bold pt-3">
           <span>Total</span>
           <span>{formatCurrency(totals.total ?? 0)}</span>

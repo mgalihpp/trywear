@@ -85,22 +85,31 @@ export class PaymentScheduler {
             cancelledCount++;
           }
         } catch (error) {
-          // Jika error 404 dari Midtrans (transaksi tidak ditemukan)
-          // Berarti transaksi expired atau tidak valid, otomatis batalkan
-          const is404 =
-            error &&
-            typeof error === "object" &&
-            "ApiResponse" in error &&
-            (error as { ApiResponse: { status_code: string } }).ApiResponse
-              ?.status_code === "404";
+          // Jika error dari Midtrans, cek apakah ini status yang bisa dianggap expire/cancel
+          const midtransError = error as any;
+          const apiResponse = midtransError?.ApiResponse;
+          const statusCode = String(
+            apiResponse?.status_code || midtransError?.httpStatusCode || "",
+          );
+          const transactionStatus = apiResponse?.transaction_status;
 
-          if (is404) {
+          const isTerminal =
+            transactionStatus === "expire" ||
+            transactionStatus === "cancel" ||
+            transactionStatus === "deny" ||
+            statusCode === "407" ||
+            statusCode === "404";
+
+          if (isTerminal) {
+            const reason =
+              transactionStatus ||
+              (statusCode === "404" ? "not_found" : "expire");
             console.log(
-              `[PaymentScheduler] Payment ${payment.order_id} not found in Midtrans, auto-cancelling...`,
+              `[PaymentScheduler] Payment ${payment.order_id} is in terminal state (${reason}) in Midtrans, auto-cancelling...`,
             );
             await this.cancelPaymentAndOrder(
               payment.order_id,
-              "not_found",
+              reason,
               payment.order?.user_id,
             );
             cancelledCount++;
@@ -119,7 +128,10 @@ export class PaymentScheduler {
         );
       }
     } catch (error) {
-      console.error("[PaymentScheduler] Error checking expired payments:", error);
+      console.error(
+        "[PaymentScheduler] Error checking expired payments:",
+        error,
+      );
     }
   }
 
@@ -151,11 +163,38 @@ export class PaymentScheduler {
       await db.$transaction(async (tx) => {
         // 1. Kembalikan reserved stock
         for (const item of order.order_items) {
-          await tx.inventory.updateMany({
+          if (!item.variant_id) continue;
+
+          const inventory = await tx.inventory.findUnique({
+            where: { variant_id: item.variant_id as string },
+          });
+
+          if (!inventory) continue;
+
+          await tx.inventory.update({
             where: { variant_id: item.variant_id as string },
             data: {
               reserved_quantity: {
                 decrement: item.quantity,
+              },
+            },
+          });
+
+          // Log stock movement ke AuditLogs
+          await tx.auditLogs.create({
+            data: {
+              action: "STOCK_UNRESERVE",
+              object_type: "INVENTORY",
+              object_id: item.variant_id as string,
+              metadata: {
+                variant_id: item.variant_id,
+                quantity_change: -item.quantity,
+                previous_reserved: inventory.reserved_quantity,
+                new_reserved: Math.max(
+                  0,
+                  inventory.reserved_quantity - item.quantity,
+                ),
+                reason: `Order ${orderId} ${status} - pembayaran kedaluwarsa/dibatalkan, reservasi dibebaskan`,
               },
             },
           });

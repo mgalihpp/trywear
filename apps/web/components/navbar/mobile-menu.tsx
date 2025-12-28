@@ -1,15 +1,31 @@
 "use client";
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/avatar";
+import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
-import { Sheet, SheetContent, SheetTrigger } from "@repo/ui/components/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@repo/ui/components/sheet";
+import { useQuery } from "@tanstack/react-query";
 import {
   Baby,
   Heart,
   Home,
+  LogOut,
   Menu,
   Package,
   Percent,
+  Settings,
   ShirtIcon,
   ShoppingBag,
   Sparkles,
@@ -18,6 +34,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { api } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
 
 const categories = [
   { label: "Pria", href: "/products?category=pria", icon: ShirtIcon },
@@ -35,6 +53,26 @@ const quickLinks = [
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+
+  const { data: segments } = useQuery({
+    queryKey: ["segments"],
+    queryFn: () => api.segment.getAll(),
+    enabled: !!user,
+  });
+
+  const userSegment = segments?.find((s) => s.id === (user as any)?.segment_id);
+
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          setOpen(false);
+        },
+      },
+    });
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -48,6 +86,10 @@ const MobileMenu = () => {
         hideClose
         className="w-full max-w-sm p-0 border-0"
       >
+        <SheetHeader className="hidden">
+          <SheetTitle></SheetTitle>
+          <SheetDescription></SheetDescription>
+        </SheetHeader>
         <div className="flex flex-col h-full bg-background">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
@@ -56,12 +98,11 @@ const MobileMenu = () => {
               onClick={() => setOpen(false)}
               className="flex items-center gap-2"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">
-                  TW
-                </span>
-              </div>
-              <span className="text-xl font-bold">TryWear</span>
+              <img
+                src={"/logo-dark.png"}
+                alt="TryWear"
+                className="h-20 w-auto"
+              />
             </Link>
             <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
               <X className="h-5 w-5" />
@@ -119,21 +160,67 @@ const MobileMenu = () => {
             </div>
           </div>
 
-          {/* Footer */}
+          {/* Footer / Auth */}
           <div className="p-4 border-t border-border space-y-3">
-            <Button
-              className="w-full h-12 font-semibold"
-              onClick={() => setOpen(false)}
-              asChild
-            >
-              <Link href="/user/settings">
-                <User className="mr-2 h-5 w-5" />
-                Masuk / Daftar
-              </Link>
-            </Button>
-            <p className="text-center text-xs text-muted-foreground">
-              v1.0.0 • Made with ❤️ in Indonesia
-            </p>
+            {user ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-secondary/30 border border-border">
+                  <Avatar className="h-12 w-12 border-2 border-background shadow-sm">
+                    <AvatarImage src={user.image || undefined} />
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                      {user.name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-base truncate">{user.name}</p>
+                    {userSegment && (
+                      <Badge
+                        variant="outline"
+                        style={{
+                          backgroundColor: `${userSegment.color}10`,
+                          color: userSegment.color ?? undefined,
+                          borderColor: `${userSegment.color}40`,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {userSegment.name} Member
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="ghost"
+                    className="h-10 text-sm"
+                    asChild
+                    onClick={() => setOpen(false)}
+                  >
+                    <Link href="/user/settings">
+                      <Settings /> Pengaturan
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="h-10 text-sm text-destructive hover:text-destructive hover:bg-destructive/5"
+                    onClick={handleLogout}
+                  >
+                    <LogOut />
+                    Keluar
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                className="w-full h-12 font-semibold"
+                onClick={() => setOpen(false)}
+                asChild
+              >
+                <Link href="/login">
+                  <User className="mr-2 h-5 w-5" />
+                  Masuk / Daftar
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </SheetContent>

@@ -32,14 +32,14 @@ interface AddressDialogProps {
 }
 
 const createAddressSchema = z.object({
-  recipient_name: z.string().max(50),
-  label: z.string().max(50).optional().nullable(),
-  address_line1: z.string().optional().nullable(),
+  recipient_name: z.string().min(3, "Nama penerima minimal 3 karakter").max(50),
+  label: z.string().min(1, "Label alamat wajib diisi").max(50),
+  address_line1: z.string().min(10, "Alamat lengkap minimal 10 karakter"),
   address_line2: z.string().optional().nullable(),
-  city: z.string().max(100).optional().nullable(),
+  city: z.string().min(1, "Kota wajib diisi").max(100),
   province: z.string().max(100).optional().nullable(),
-  postal_code: z.string().max(20).optional().nullable(),
-  phone: z.string().max(50).optional().nullable(),
+  postal_code: z.string().min(5, "Kode pos minimal 5 karakter").max(20),
+  phone: z.string().min(10, "Nomor telepon minimal 10 karakter").max(50),
   country: z.string().max(100).optional().nullable(),
   lat: z.number().optional().nullable(),
   lng: z.number().optional().nullable(),
@@ -147,6 +147,7 @@ const AddressDialog = ({
           onChange={(e) => setFormData({ ...formData, label: e.target.value })}
           placeholder="Rumah, Kantor, Apartemen..."
           className="mt-2"
+          aria-invalid={!!errors.label}
         />
         {errors.label && (
           <p className="text-sm text-destructive mt-1">{errors.label}</p>
@@ -162,11 +163,13 @@ const AddressDialog = ({
             onChange={(e) =>
               setFormData({ ...formData, recipient_name: e.target.value })
             }
+            placeholder="Nama Penerima"
             className="mt-2"
+            aria-invalid={!!errors.recipient_name}
           />
-          {errors.recipientName && (
+          {errors.recipient_name && (
             <p className="text-sm text-destructive mt-1">
-              {errors.recipientName}
+              {errors.recipient_name}
             </p>
           )}
         </div>
@@ -178,7 +181,9 @@ const AddressDialog = ({
             onChange={(e) =>
               setFormData({ ...formData, phone: e.target.value })
             }
+            placeholder="0825247......"
             className="mt-2"
+            aria-invalid={!!errors.phone}
           />
           {errors.phone && (
             <p className="text-sm text-destructive mt-1">{errors.phone}</p>
@@ -194,11 +199,15 @@ const AddressDialog = ({
           onChange={(e) =>
             setFormData({ ...formData, address_line1: e.target.value })
           }
+          placeholder="Jl. Mawar No. 123..."
           className="mt-2"
           rows={3}
+          aria-invalid={!!errors.address_line1}
         />
-        {errors.address && (
-          <p className="text-sm text-destructive mt-1">{errors.address}</p>
+        {errors.address_line1 && (
+          <p className="text-sm text-destructive mt-1">
+            {errors.address_line1}
+          </p>
         )}
       </div>
 
@@ -210,6 +219,8 @@ const AddressDialog = ({
             value={formData.city}
             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
             className="mt-2"
+            placeholder="Bandung"
+            aria-invalid={!!errors.city}
           />
           {errors.city && (
             <p className="text-sm text-destructive mt-1">{errors.city}</p>
@@ -224,9 +235,13 @@ const AddressDialog = ({
               setFormData({ ...formData, postal_code: e.target.value })
             }
             className="mt-2"
+            placeholder="12345"
+            aria-invalid={!!errors.postal_code}
           />
-          {errors.postalCode && (
-            <p className="text-sm text-destructive mt-1">{errors.postalCode}</p>
+          {errors.postal_code && (
+            <p className="text-sm text-destructive mt-1">
+              {errors.postal_code}
+            </p>
           )}
         </div>
       </div>

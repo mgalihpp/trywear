@@ -23,7 +23,7 @@ declare global {
 }
 
 BigInt.prototype.toJSON = function () {
-  const int = Number.parseInt(this.toString());
+  const int = Number.parseInt(this.toString(), 10);
   // Return numeric value if it's a safe integer, otherwise return string representation
   return Number.isSafeInteger(int) ? int : this.toString();
 };
@@ -79,4 +79,3 @@ export class Server {
     });
   }
 }
-

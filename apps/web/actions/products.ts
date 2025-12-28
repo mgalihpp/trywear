@@ -17,6 +17,7 @@ export const getProductBySlug = async (slug: string) => {
         slug,
       },
       include: {
+        supplier: true,
         category: true,
         product_variants: {
           include: {

@@ -24,6 +24,7 @@ export class ProductService extends BaseService<Product, "product"> {
       return this.db[this.model].findMany({
         include: {
           category: true,
+          supplier: true,
           product_images: { orderBy: { sort_order: "asc" } },
           product_variants: { include: { inventory: true } },
           reviews: true,
@@ -96,6 +97,7 @@ export class ProductService extends BaseService<Product, "product"> {
       orderBy,
       include: {
         category: true,
+        supplier: true,
         product_images: { orderBy: { sort_order: "asc" } },
         product_variants: { include: { inventory: true } },
         reviews: true,
@@ -111,6 +113,7 @@ export class ProductService extends BaseService<Product, "product"> {
         id,
       },
       include: {
+        supplier: true,
         product_images: true,
         product_variants: { include: { inventory: true } },
         reviews: true,

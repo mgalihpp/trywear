@@ -8,7 +8,7 @@ import {
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { Bell, ChevronRight, Lock, MapPin, Package, User } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
 
@@ -25,6 +25,10 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isRoot = pathname === "/user/settings";
   const isLoading = isPending;
+
+  if (!isLoading && !data?.user) {
+    return redirect("/login");
+  }
 
   const isActive = (href: string) =>
     pathname === href ||

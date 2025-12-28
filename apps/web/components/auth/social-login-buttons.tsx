@@ -2,18 +2,25 @@
 
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
 export default function SocialLoginButtons() {
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
   const handleSocialLogin = async (provider: string) => {
-    setLoadingProvider(provider);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      setLoadingProvider(provider);
+      await authClient.signIn.social({
+        provider,
+        callbackURL: "/",
+      });
+    } catch (error) {
+      console.error(`Login with ${provider} failed:`, error);
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
       setLoadingProvider(null);
-      // Here you would typically redirect to OAuth provider
-      console.log(`Logging in with ${provider}`);
-    }, 1000);
+    }
   };
 
   return (

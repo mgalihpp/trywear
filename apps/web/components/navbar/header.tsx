@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import CartSheet from "@/features/cart/components/cart-sheet";
 import { NotificationBell } from "@/features/user/components/settings/notification/notification-bell";
 import MobileMenu from "./mobile-menu";
+import { UserMenu } from "./user-menu";
 
 const navLinks = [
   { label: "Beranda", href: "/" },
@@ -47,7 +48,7 @@ export const Header = () => {
           {/* Left - Mobile Menu & Logo */}
           <div className="flex items-center gap-4">
             <MobileMenu />
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="hidden lg:flex items-center gap-2">
               <img
                 src={isTransparent ? "/logo.png" : "/logo-dark.png"}
                 alt="TryWear"
@@ -115,21 +116,7 @@ export const Header = () => {
             >
               <NotificationBell />
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "hidden sm:flex",
-                isTransparent
-                  ? "text-white hover:text-white hover:bg-white/20"
-                  : "hover:bg-accent",
-              )}
-              asChild
-            >
-              <Link href="/user/settings">
-                <User className="h-5 w-5" />
-              </Link>
-            </Button>
+            <UserMenu isTransparent={isTransparent} />
             <div
               className={cn(
                 isTransparent

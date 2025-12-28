@@ -16,57 +16,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import * as React from "react";
 
-export const docsConfig = {
-  mainNav: [
-    {
-      title: "Documentation",
-      href: "/docs",
-      external: false,
-    },
-    {
-      title: "Components",
-      href: "/components",
-      external: false,
-    },
-    {
-      title: "GitHub",
-      href: "https://github.com",
-      external: true,
-    },
-  ],
-  sidebarNav: [
-    {
-      title: "Getting Started",
-      items: [
-        {
-          title: "Introduction",
-          href: "/docs/introduction",
-        },
-        {
-          title: "Installation",
-          href: "/docs/installation",
-        },
-      ],
-    },
-    {
-      title: "Components",
-      items: [
-        {
-          title: "Button",
-          href: "/docs/components/button",
-        },
-        {
-          title: "Card",
-          href: "/docs/components/card",
-        },
-        {
-          title: "Dialog",
-          href: "/docs/components/dialog",
-        },
-      ],
-    },
-  ],
-};
+import { ADMIN_NAV_DATA } from "@/features/admin/constants/navigation";
 
 export function SearchCommand({ ...props }: any) {
   const router = useRouter();
@@ -109,7 +59,7 @@ export function SearchCommand({ ...props }: any) {
         onClick={() => setOpen(true)}
         {...props}
       >
-        <span className="hidden lg:inline-flex">Search anything...</span>
+        <span className="hidden lg:inline-flex">Search dashboard...</span>
         <span className="inline-flex lg:hidden">
           <Search />
         </span>
@@ -121,53 +71,45 @@ export function SearchCommand({ ...props }: any) {
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Links">
-            {docsConfig.mainNav
-              .filter((navitem) => !navitem.external)
-              .map((navItem) => (
-                <CommandItem
-                  key={navItem.href}
-                  value={navItem.title}
-                  onSelect={() => {
-                    runCommand(() => router.push(navItem.href as string));
-                  }}
-                >
-                  <File />
-                  {navItem.title}
-                </CommandItem>
-              ))}
+          <CommandGroup heading="General">
+            <CommandItem
+              onSelect={() => {
+                runCommand(() => router.push("/dashboard"));
+              }}
+            >
+              <Laptop className="mr-2 h-4 w-4" />
+              Dashboard Overview
+            </CommandItem>
           </CommandGroup>
-          {docsConfig.sidebarNav.map((group) => (
+          {ADMIN_NAV_DATA.navMain.map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
               {group.items.map((navItem) => (
                 <CommandItem
-                  key={navItem.href}
-                  value={navItem.title}
+                  key={navItem.url}
+                  value={`${group.title} ${navItem.title}`}
                   onSelect={() => {
-                    runCommand(() => router.push(navItem.href as string));
+                    runCommand(() => router.push(`/dashboard${navItem.url}`));
                   }}
                 >
-                  <div className="mr-2 flex h-4 w-4 items-center justify-center">
-                    <Circle className="h-3 w-3" />
-                  </div>
+                  {group.icon && <group.icon className="mr-2 h-4 w-4" />}
                   {navItem.title}
                 </CommandItem>
               ))}
             </CommandGroup>
           ))}
           <CommandSeparator />
-          <CommandGroup heading="Theme">
+          <CommandGroup heading="Settings & Theme">
             <CommandItem onSelect={() => runCommand(() => setTheme("light"))}>
-              <Sun />
-              Light
+              <Sun className="mr-2 h-4 w-4" />
+              Light Mode
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => setTheme("dark"))}>
-              <Moon />
-              Dark
+              <Moon className="mr-2 h-4 w-4" />
+              Dark Mode
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => setTheme("system"))}>
-              <Laptop />
-              System
+              <Laptop className="mr-2 h-4 w-4" />
+              System Theme
             </CommandItem>
           </CommandGroup>
         </CommandList>

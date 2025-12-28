@@ -22,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@repo/ui/components/tooltip";
+import { cn } from "@repo/ui/lib/utils";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -148,13 +149,21 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
       </div>
       <div className="rounded-md border">
-        <Table>
+        <Table className="w-full min-w-max">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
+                  const isLast = index === headerGroup.headers.length - 1;
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={cn(
+                        "whitespace-nowrap",
+                        isLast &&
+                          "sticky right-0 bg-background/95 backdrop-blur z-20 border-l shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]",
+                      )}
+                    >
                       {header.isPlaceholder ? null : (
                         <button
                           type="button"
@@ -182,16 +191,23 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      <div className="max-w-[200px] truncate">
+                  {row.getVisibleCells().map((cell, index) => {
+                    const isLast = index === row.getVisibleCells().length - 1;
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={cn(
+                          isLast &&
+                            "sticky right-0 bg-background/95 backdrop-blur z-10 border-l shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]",
+                        )}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
                         )}
-                      </div>
-                    </TableCell>
-                  ))}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (

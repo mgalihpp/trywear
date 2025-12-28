@@ -262,7 +262,10 @@ export const OrdersSection = () => {
                         Pesanan #{order.id.slice(0, 8)}...
                       </h3>
                       <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                        {format(new Date(order.created_at), "dd MMM yyyy, HH:mm")}
+                        {format(
+                          new Date(order.created_at),
+                          "dd MMM yyyy, HH:mm",
+                        )}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
@@ -280,10 +283,7 @@ export const OrdersSection = () => {
                 <div className="p-4 sm:p-5">
                   <div className="space-y-3">
                     {order.order_items.slice(0, 2).map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-3"
-                      >
+                      <div key={item.id} className="flex items-center gap-3">
                         {/* Image */}
                         <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 bg-muted rounded-lg overflow-hidden">
                           {item.variant?.product.product_images[0]?.url ? (

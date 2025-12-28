@@ -48,6 +48,7 @@ import { CategoryCombobox } from "../_components/category-combobox";
 import { CurrencyInput } from "../_components/currency-input";
 import { ProductImageUpload } from "../_components/product-image-upload";
 import { ProductVariantsSection } from "../_components/product-variant-sections";
+import { SupplierSelect } from "../_components/supplier-select";
 
 export default function CreateProductPage() {
   const router = useRouter();
@@ -61,6 +62,8 @@ export default function CreateProductPage() {
       description: "",
       status: "draft",
       price_cents: 0,
+      category_id: undefined,
+      supplier_id: undefined,
     },
   });
 
@@ -156,6 +159,7 @@ export default function CreateProductPage() {
       description: data?.description,
       status: data.status,
       category_id: data.category_id,
+      supplier_id: data.supplier_id,
     });
   };
 
@@ -299,6 +303,26 @@ export default function CreateProductPage() {
                               value={field.value}
                               onValueChange={(value) => {
                                 form.setValue("category_id", value);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="supplier_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="block text-sm font-medium mb-2">
+                            Pemasok
+                          </FormLabel>
+                          <FormControl>
+                            <SupplierSelect
+                              value={field.value}
+                              onValueChange={(value) => {
+                                form.setValue("supplier_id", value);
                               }}
                             />
                           </FormControl>

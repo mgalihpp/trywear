@@ -1,9 +1,15 @@
 "use client";
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/avatar";
 import { cn } from "@repo/ui/lib/utils";
 import { Heart, Home, Search, ShoppingBag, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
   {
@@ -35,6 +41,8 @@ const navItems = [
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden pb-safe">
@@ -57,9 +65,23 @@ export function MobileBottomNav() {
                 isActive ? "text-primary" : "text-muted-foreground",
               )}
             >
-              <item.icon
-                className={cn("w-5 h-5", isActive && "text-primary")}
-              />
+              {item.label === "Akun" && user ? (
+                <Avatar
+                  className={cn(
+                    "w-5 h-5 border",
+                    isActive ? "border-primary" : "border-muted-foreground",
+                  )}
+                >
+                  <AvatarImage src={user.image || undefined} />
+                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                    {user.name?.charAt(0) || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                <item.icon
+                  className={cn("w-5 h-5", isActive && "text-primary")}
+                />
+              )}
 
               {/* Label */}
               <span

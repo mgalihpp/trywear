@@ -1,5 +1,8 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type SupplierInput, supplierSchema } from "@repo/schema";
+import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -8,122 +11,393 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-import { SuppliersTable } from "@/features/admin/components/suppliers/suppliers-table";
-
-interface Supplier {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  country: string;
-  status: "active" | "inactive";
-  productsCount: number;
-  joinDate: string;
-}
-
-const mockSuppliers: Supplier[] = [
-  {
-    id: "1",
-    name: "Premium Textiles Co.",
-    email: "contact@premiumtextiles.com",
-    phone: "+1-555-0101",
-    address: "123 Fabric Lane",
-    city: "New York",
-    country: "USA",
-    status: "active",
-    productsCount: 45,
-    joinDate: "2023-01-15",
-  },
-  {
-    id: "2",
-    name: "Global Fabrics Ltd.",
-    email: "sales@globalfabrics.com",
-    phone: "+44-20-7946-0958",
-    address: "456 Textile Street",
-    city: "London",
-    country: "UK",
-    status: "active",
-    productsCount: 32,
-    joinDate: "2023-03-20",
-  },
-  {
-    id: "3",
-    name: "Asian Textiles Group",
-    email: "info@asiantextiles.com",
-    phone: "+86-10-1234-5678",
-    address: "789 Silk Road",
-    city: "Shanghai",
-    country: "China",
-    status: "inactive",
-    productsCount: 28,
-    joinDate: "2023-05-10",
-  },
-];
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/dropdown-menu";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@repo/ui/components/form";
+import { Input } from "@repo/ui/components/input";
+import { Skeleton } from "@repo/ui/components/skeleton";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  Edit,
+  Mail,
+  MoreHorizontal,
+  Phone,
+  Plus,
+  Trash2,
+  User,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { DataTable } from "@/features/admin/components/data-table";
+import { api } from "@/lib/api";
+import type { Supplier } from "@/types/index";
 
 export default function SuppliersPage() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>(mockSuppliers);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
 
-  const handleDelete = (id: string) => {
-    setSuppliers(suppliers.filter((s) => s.id !== id));
-    setDeleteId(null);
+  const form = useForm<SupplierInput>({
+    resolver: zodResolver(supplierSchema),
+    defaultValues: {
+      name: "",
+      contact_email: "",
+      phone: "",
+    },
+  });
+
+  const { data: suppliers, isLoading } = useQuery({
+    queryKey: ["suppliers"],
+    queryFn: () => api.supplier.getAll(),
+  });
+
+  // Reset form when dialog closes or editing changes
+  useEffect(() => {
+    if (!isDialogOpen) {
+      form.reset({
+        name: "",
+        contact_email: "",
+        phone: "",
+      });
+      setEditingSupplier(null);
+    }
+  }, [isDialogOpen, form]);
+
+  const createMutation = useMutation({
+    mutationFn: api.supplier.create,
+    onSuccess: () => {
+      toast.success("Supplier berhasil ditambahkan");
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+      setIsDialogOpen(false);
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Gagal menambahkan supplier",
+      );
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<SupplierInput> }) =>
+      api.supplier.update(id, data),
+    onSuccess: () => {
+      toast.success("Supplier berhasil diperbarui");
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+      setIsDialogOpen(false);
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Gagal memperbarui supplier",
+      );
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: api.supplier.delete,
+    onSuccess: () => {
+      toast.success("Supplier berhasil dihapus");
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message ||
+          "Gagal menghapus supplier. Pastikan pemasok tidak memiliki produk.",
+      );
+    },
+  });
+
+  const handleEdit = (supplier: Supplier) => {
+    setEditingSupplier(supplier);
+    form.reset({
+      name: supplier.name,
+      contact_email: supplier.contact_email || "",
+      phone: supplier.phone || "",
+    });
+    setIsDialogOpen(true);
   };
+
+  const onSubmit = (values: SupplierInput) => {
+    if (editingSupplier) {
+      updateMutation.mutate({ id: editingSupplier.id, data: values });
+    } else {
+      createMutation.mutate(values);
+    }
+  };
+
+  const columns: ColumnDef<Supplier>[] = [
+    {
+      accessorKey: "name",
+      header: "Nama Pemasok",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2 font-medium text-foreground">
+          <User className="w-4 h-4 text-muted-foreground" />
+          {row.getValue("name")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "contact_email",
+      header: "Email",
+      cell: ({ row }) => {
+        const email = row.getValue("contact_email") as string;
+        return email ? (
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 text-muted-foreground" />
+            {email}
+          </div>
+        ) : (
+          <span className="text-muted-foreground italic text-sm">N/A</span>
+        );
+      },
+    },
+    {
+      accessorKey: "phone",
+      header: "Telepon",
+      cell: ({ row }) => {
+        const phone = row.getValue("phone") as string;
+        return phone ? (
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4 text-muted-foreground" />
+            {phone}
+          </div>
+        ) : (
+          <span className="text-muted-foreground italic text-sm">N/A</span>
+        );
+      },
+    },
+    {
+      accessorKey: "_count.products",
+      header: "Produk",
+      cell: ({ row }) => (
+        <Badge variant="secondary" className="font-mono">
+          {row.original._count?.products ?? 0} Item
+        </Badge>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Aksi",
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Buka menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => handleEdit(row.original)}>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit Pemasok
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => {
+                if (
+                  confirm(
+                    "Anda yakin ingin menghapus supplier ini secara permanen?",
+                  )
+                ) {
+                  deleteMutation.mutate(row.original.id);
+                }
+              }}
+            >
+              <Trash2 className="text-destructive mr-2 h-4 w-4" />
+              Hapus Pemasok
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
 
   return (
     <div className="p-0 md:p-8 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Suppliers</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your supplier network and relationships
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+            Daftar Pemasok
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Kelola kerjasama dan data inventaris dari pemasok Anda.
           </p>
         </div>
-        <Link href="/admin/suppliers/create">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Supplier
-          </Button>
-        </Link>
+        <Button
+          onClick={() => {
+            setIsDialogOpen(true);
+          }}
+          className="gap-2 shadow-lg hover:shadow-xl transition-all"
+          size="lg"
+        >
+          <Plus className="w-5 h-5" />
+          Tambah Pemasok
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>All Suppliers</CardTitle>
-          <CardDescription>Total: {suppliers.length} suppliers</CardDescription>
+      <Card className="border-none shadow-md overflow-hidden bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-2xl font-bold">Semua Pemasok</CardTitle>
+          <CardDescription>
+            Menampilkan {suppliers?.length ?? 0} pemasok terpercaya dalam
+            sistem.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <SuppliersTable data={suppliers} onDelete={handleDelete} />
+          {isLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-12 w-full rounded-xl" />
+              <Skeleton className="h-24 w-full rounded-xl" />
+              <Skeleton className="h-24 w-full rounded-xl" />
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={suppliers ?? []}
+              searchKey="name"
+              searchPlaceholder="Cari berdasarkan nama pemasok..."
+            />
+          )}
         </CardContent>
       </Card>
 
-      {deleteId && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-sm">
-            <CardHeader>
-              <CardTitle>Delete Supplier</CardTitle>
-              <CardDescription>
-                Are you sure you want to delete this supplier?
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex gap-3 justify-end">
-              <Button variant="outline" onClick={() => setDeleteId(null)}>
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => handleDelete(deleteId)}
-              >
-                Delete
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold">
+                  {editingSupplier ? "Perbarui Pemasok" : "Daftarkan Pemasok"}
+                </DialogTitle>
+                <DialogDescription className="text-base text-muted-foreground">
+                  {editingSupplier
+                    ? `Mengubah informasi untuk ${editingSupplier.name}`
+                    : "Silakan lengkapi detail pemasok baru di bawah ini."}
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base">
+                        Nama Perusahaan/Pemasok
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="PT. Sinergi Logistik"
+                          className="h-11"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contact_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base">Email Resmi</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="support@partner.com"
+                          className="h-11"
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Opsional, digunakan untuk keperluan korespondensi.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base">
+                        No. WhatsApp/Telepon
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="+62 812 3456 789"
+                          className="h-11"
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DialogFooter className="gap-2 sm:gap-0 mt-8">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsDialogOpen(false)}
+                  className="flex-1 sm:flex-none"
+                >
+                  Batal
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={
+                    createMutation.isPending || updateMutation.isPending
+                  }
+                  className="flex-1 sm:flex-none px-8"
+                >
+                  {createMutation.isPending || updateMutation.isPending
+                    ? "Memproses..."
+                    : editingSupplier
+                      ? "Simpan Perubahan"
+                      : "Daftarkan"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

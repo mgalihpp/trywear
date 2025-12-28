@@ -8,15 +8,19 @@ import type { ShipmentStatusType } from "@repo/schema/shippingSchema";
 import appConfig from "@/configs/appConfig";
 import { snap } from "@/lib/midtrans";
 import { AppError } from "@/utils/appError";
+import { CouponService } from "../coupon/coupon.service";
 import { NotificationService } from "../notification/notification.service";
+import { SegmentService } from "../segment/segment.service";
 import { BaseService } from "../service";
 
 export class OrderService extends BaseService<Orders, "orders"> {
   private notificationService: NotificationService;
+  private couponService: CouponService;
 
   constructor() {
     super("orders");
     this.notificationService = new NotificationService();
+    this.couponService = new CouponService();
   }
 
   findAll = async ({
@@ -125,6 +129,7 @@ export class OrderService extends BaseService<Orders, "orders"> {
             id: input.address_id as number,
           },
         },
+        segment: true,
       },
     });
 
@@ -175,8 +180,38 @@ export class OrderService extends BaseService<Orders, "orders"> {
       return basePrice;
     }
 
-    // TODO: apply coupon logic here; keep example simple
-    const discount = 0;
+    // Calculate Discounts (Segment + Coupon)
+    const discount = await (async () => {
+      let totalDiscount = 0;
+
+      // 1. Segment Discount (Automatic)
+      if (user?.segment?.discount_percent) {
+        const segmentDiscount = Math.round(
+          subtotal * (user.segment.discount_percent / 100),
+        );
+        totalDiscount += segmentDiscount;
+      }
+
+      // 2. Coupon Discount
+      if (input.coupon_code) {
+        try {
+          const { discountAmount } = await this.couponService.validateCoupon(
+            input.coupon_code,
+            input.user_id,
+            subtotal,
+            user?.segment_id,
+          );
+          totalDiscount += Math.round(discountAmount);
+        } catch (error) {
+          // If coupon invalid, we just ignore it or throw?
+          // Usually better to throw so user knows why it failed.
+          throw error;
+        }
+      }
+
+      // Cap discount at subtotal
+      return Math.min(totalDiscount, subtotal);
+    })();
     const tax = Math.round(subtotal * 0.1); // adapt as needed
     const shipping = shippingRate(input.shipment_method_id ?? 0);
     const total = subtotal - discount + tax + shipping;
@@ -342,8 +377,17 @@ export class OrderService extends BaseService<Orders, "orders"> {
       });
     }
 
-    console.log(grossAmount);
-    console.log(itemDetailsForMidtrans);
+    if (discount > 0) {
+      itemDetailsForMidtrans.push({
+        id: "DISCOUNT",
+        name: "Diskon (Kupon/Segmen)",
+        price: -discount, // Negative price for discount
+        quantity: 1,
+        brand: "TryWear",
+        category: "Discount",
+        merchant_name: "TryWear",
+      });
+    }
 
     const snapPayload: CreateSnapInput = {
       transaction_details: {
@@ -446,6 +490,10 @@ export class OrderService extends BaseService<Orders, "orders"> {
       }
       if (newStatus === "delivered") {
         extraFields.delivered_at = now;
+
+        // Auto-update customer segment on delivery
+        const segmentService = new SegmentService();
+        await segmentService.assignSegmentToUser(order.user_id);
       }
 
       // 4. Update / Create shipment
@@ -483,6 +531,8 @@ export class OrderService extends BaseService<Orders, "orders"> {
 
           // Pastikan stok cukup (opsional: lempar error jika stok kurang)
           const currentStock = variant.inventory?.[0]?.stock_quantity ?? 0;
+          const currentReserved =
+            variant.inventory?.[0]?.reserved_quantity ?? 0;
           if (currentStock < item.quantity) {
             throw AppError.badRequest(
               `Stok tidak cukup untuk variant ${variant.sku}. Tersedia: ${currentStock}, Dibutuhkan: ${item.quantity}`,
@@ -500,6 +550,24 @@ export class OrderService extends BaseService<Orders, "orders"> {
               },
               stock_quantity: {
                 decrement: item.quantity,
+              },
+            },
+          });
+
+          // Log stock movement ke AuditLogs
+          await tx.auditLogs.create({
+            data: {
+              action: "STOCK_REMOVE",
+              object_type: "INVENTORY",
+              object_id: item.variant_id,
+              metadata: {
+                variant_id: item.variant_id,
+                quantity_change: -item.quantity,
+                previous_quantity: currentStock,
+                new_quantity: currentStock - item.quantity,
+                previous_reserved: currentReserved,
+                new_reserved: Math.max(0, currentReserved - item.quantity),
+                reason: `Order ${orderId} shipped - stok dikirim ke customer`,
               },
             },
           });
@@ -525,7 +593,7 @@ export class OrderService extends BaseService<Orders, "orders"> {
         }
       }
 
-      // 6. (Opsional) Pengembalian stok saat status menjadi cancelled / returned
+      // 6. Pengembalian stok saat status menjadi cancelled / returned
       const shouldRestoreStock =
         (newStatus === "cancelled" || newStatus === "returned") &&
         ["pending", "processing", "shipped"].includes(oldStatus);
@@ -534,12 +602,68 @@ export class OrderService extends BaseService<Orders, "orders"> {
         for (const item of order.order_items) {
           if (!item.variant_id) continue;
 
-          await tx.inventory.updateMany({
+          const inventory = await tx.inventory.findUnique({
             where: { variant_id: item.variant_id },
-            data: {
-              reserved_quantity: { decrement: item.quantity },
-            },
           });
+
+          if (!inventory) continue;
+
+          // Jika order sudah shipped, kembalikan stock_quantity
+          // Jika masih pending/processing, hanya kurangi reserved_quantity
+          const wasShipped = oldStatus === "shipped";
+
+          if (wasShipped) {
+            // Barang sudah dikirim, kembalikan ke stok utama
+            await tx.inventory.update({
+              where: { variant_id: item.variant_id },
+              data: {
+                stock_quantity: { increment: item.quantity },
+              },
+            });
+
+            // Log stock movement
+            await tx.auditLogs.create({
+              data: {
+                action: "STOCK_ADD",
+                object_type: "INVENTORY",
+                object_id: item.variant_id,
+                metadata: {
+                  variant_id: item.variant_id,
+                  quantity_change: item.quantity,
+                  previous_quantity: inventory.stock_quantity,
+                  new_quantity: inventory.stock_quantity + item.quantity,
+                  reason: `Order ${orderId} ${newStatus} - stok dikembalikan`,
+                },
+              },
+            });
+          } else {
+            // Masih pending/processing, hanya lepas reserved
+            await tx.inventory.update({
+              where: { variant_id: item.variant_id },
+              data: {
+                reserved_quantity: { decrement: item.quantity },
+              },
+            });
+
+            // Log stock movement
+            await tx.auditLogs.create({
+              data: {
+                action: "STOCK_UNRESERVE",
+                object_type: "INVENTORY",
+                object_id: item.variant_id,
+                metadata: {
+                  variant_id: item.variant_id,
+                  quantity_change: -item.quantity,
+                  previous_reserved: inventory.reserved_quantity,
+                  new_reserved: Math.max(
+                    0,
+                    inventory.reserved_quantity - item.quantity,
+                  ),
+                  reason: `Order ${orderId} ${newStatus} - reservasi dibatalkan`,
+                },
+              },
+            });
+          }
         }
       }
 

@@ -1,12 +1,16 @@
 import { Router } from "express";
 import { addressRouter } from "@/modules/address/address.route";
 import { categoriesRouter } from "@/modules/categories/categories.route";
+import { couponRouter } from "@/modules/coupon/coupon.route";
 import { customerRouter } from "@/modules/customer/customer.route";
 import { dashboardRouter } from "@/modules/dashboard/dashboard.route";
+import { inventoryRouter } from "@/modules/inventory/inventory.route";
 import { notificationRouter } from "@/modules/notification/notification.route";
 import { orderRouter } from "@/modules/order/order.route";
 import { paymentRouter } from "@/modules/payment/payment.route";
 import { productRouter } from "@/modules/product/product.route";
+import { segmentRouter } from "@/modules/segment/segment.route";
+import { supplierRouter } from "@/modules/supplier/supplier.route";
 
 /**
  * Router utama untuk versi 1 (v1) dari API.
@@ -80,5 +84,33 @@ v1Router.use("/customers", customerRouter);
  * dikelola di dalam router ini.
  */
 v1Router.use("/notifications", notificationRouter);
+
+/**
+ * Route ini menangani semua endpoint terkait customer segments.
+ * Semua route yang berhubungan dengan segmentasi customer, managemen segment.
+ * dikelola di dalam router ini.
+ */
+v1Router.use("/segments", segmentRouter);
+
+/**
+ * Route ini menangani semua endpoint terkait inventory.
+ * Semua route yang berhubungan dengan data inventory, managemen stok.
+ * dikelola di dalam router ini.
+ */
+v1Router.use("/inventory", inventoryRouter);
+
+/**
+ * Route ini menangani semua endpoint terkait supplier.
+ * Semua route yang berhubungan dengan data supplier, managemen supplier.
+ * dikelola di dalam router ini.
+ */
+v1Router.use("/suppliers", supplierRouter);
+
+/**
+ * Route ini menangani semua endpoint terkait coupon.
+ * Semua route yang berhubungan dengan data coupon, managemen kupon.
+ * dikelola di dalam router ini.
+ */
+v1Router.use("/coupons", couponRouter);
 
 export default v1Router;

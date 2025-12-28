@@ -37,10 +37,10 @@ export default function AdminLayout({
           <div className="flex h-screen bg-background">
             <SidebarProvider>
               <AdminSidebar />
-              <SidebarInset>
-                <div className="flex-1 flex flex-col overflow-hidden">
+              <SidebarInset className="min-w-0">
+                <div className="flex-1 flex flex-col overflow-hidden min-w-0">
                   <TopNav />
-                  <div className="flex-1 overflow-auto">{children}</div>
+                  <div className="flex-1 overflow-auto min-w-0">{children}</div>
                 </div>
               </SidebarInset>
             </SidebarProvider>

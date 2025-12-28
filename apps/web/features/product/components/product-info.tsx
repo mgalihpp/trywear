@@ -19,6 +19,7 @@ import {
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import { Check, RefreshCw, Shield, Star, Truck, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { addItemToCart } from "@/actions/cart";
@@ -51,6 +52,7 @@ const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
   const { addToCart, items } = useCartStore();
+  const router = useRouter();
 
   // Initial selected size & color dari variant pertama (kalau ada)
   const initialOptionValues = parseOptions(
@@ -250,7 +252,12 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
 
         <div className="flex items-baseline gap-3">
           <p className="text-3xl font-bold">
-            {formatCurrency(Number(product.price_cents))}
+            {formatCurrency(
+              Number(product.price_cents) +
+                (selectedVariant
+                  ? Number(selectedVariant.additional_price_cents)
+                  : 0),
+            )}
           </p>
 
           <div className="flex items-center gap-2 text-sm">
@@ -392,7 +399,50 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           size="lg"
           variant="outline"
           className="w-full h-14 text-base font-semibold border-2 hover:bg-foreground hover:text-background"
-          disabled={!canAddMore}
+          disabled={!canAddMore || isAddItemToCartPending}
+          onClick={async () => {
+            if (!selectedVariant) {
+              toast.error("Pilih ukuran dan warna terlebih dahulu.");
+              return;
+            }
+
+            if (!inStock || !canAddMore) {
+              toast.error("Stok produk tidak mencukupi.");
+              return;
+            }
+
+            const safeQuantity = Math.min(quantity, remainingStock || 1);
+
+            const cart_item = await runAddItemToCartAction({
+              variant_id: selectedVariant.id as string,
+              quantity: safeQuantity,
+            });
+
+            if (!cart_item) {
+              toast.error("Gagal menambahkan ke keranjang.");
+              return;
+            }
+
+            addToCart({
+              id: product.id,
+              cart_item_id: cart_item.id as number,
+              variant_id: selectedVariant.id as string,
+              image: product.product_images?.[0]?.url as string,
+              name: product.title,
+              quantity: safeQuantity,
+              price:
+                Number(product.price_cents) +
+                Number(selectedVariant.additional_price_cents),
+              size: selectedSize,
+              color: selectedColor,
+              storage:
+                selectedVariant.inventory?.[0]?.stock_quantity?.toString() ??
+                undefined,
+            });
+
+            // Redirect to checkout
+            router.push("/checkout");
+          }}
         >
           Beli Sekarang
         </Button>

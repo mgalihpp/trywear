@@ -3,8 +3,16 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader } from "@repo/ui/components/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { ErrorAlert } from "@/features/admin/components//error-alert";
 import { DataTable } from "@/features/admin/components/data-table";
@@ -21,6 +29,11 @@ export function ProductsTable() {
     {
       accessorKey: "title",
       header: "Nama Produk",
+      cell: ({ row }) => (
+        <span className="font-medium whitespace-nowrap">
+          {row.original.title}
+        </span>
+      ),
     },
     {
       accessorKey: "slug",
@@ -32,11 +45,27 @@ export function ProductsTable() {
     },
     {
       accessorKey: "category",
-      header: "Category",
+      header: "Kategori",
       cell: ({ row }) => {
         if (!row.original.category) return "-";
+        return (
+          <span className="whitespace-nowrap">
+            {row.original.category?.name}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "supplier",
+      header: "Pemasok",
+      cell: ({ row }) => {
+        if (!row.original.supplier) return "-";
 
-        return row.original.category?.name;
+        return (
+          <Badge variant="outline" className="font-normal whitespace-nowrap">
+            {row.original.supplier?.name}
+          </Badge>
+        );
       },
     },
     {
@@ -89,22 +118,36 @@ export function ProductsTable() {
       cell: ({ row }) => {
         const product = row.original;
         return (
-          <div className="flex gap-2">
-            <Link href={`/dashboard/products/${product.id}/edit`}>
-              <Button variant="ghost" size="sm">
-                <Edit2 className="w-4 h-4" />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Buka menu</span>
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
-            </Link>
-            <DeleteProductDialog productId={row.original.id}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </DeleteProductDialog>
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/dashboard/products/${product.id}/edit`}
+                  className="flex items-center"
+                >
+                  <Edit2 className="mr-2 h-4 w-4" />
+                  Edit Produk
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DeleteProductDialog productId={row.original.id}>
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="text-destructive mr-2 h-4 w-4" />
+                  Hapus Produk
+                </DropdownMenuItem>
+              </DeleteProductDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
         );
       },
     },

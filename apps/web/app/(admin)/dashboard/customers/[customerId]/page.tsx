@@ -275,10 +275,12 @@ export default function CustomerDetailPage() {
                 </p>
                 <p className="text-2xl font-bold">
                   {formatCurrency(
-                    customerData?.orders.reduce(
-                      (acc, order) => acc + Number(order.total_cents),
-                      0,
-                    ) ?? 0,
+                    customerData?.orders
+                      .filter((order) => order.status === "delivered")
+                      .reduce(
+                        (acc, order) => acc + Number(order.total_cents),
+                        0,
+                      ) ?? 0,
                   )}
                 </p>
               </div>

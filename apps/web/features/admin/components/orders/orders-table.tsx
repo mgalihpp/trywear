@@ -3,10 +3,19 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader } from "@repo/ui/components/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Eye, Truck } from "lucide-react";
+import { Eye, MoreHorizontal, Truck } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { DataTable } from "@/features/admin/components/data-table";
 import {
   paymentStatusColors,
@@ -17,12 +26,18 @@ import type { OrderWithRelations } from "@/types/index";
 import { formatCurrency, formatDate } from "../../utils";
 import { DataTableSkeleton } from "../data-table-skeleton";
 import { ErrorAlert } from "../error-alert";
+import { ShipmentDialog } from "./shipment-dialog";
 
 type OrdersTableProps = {
   status?: string;
 };
 
 export function OrdersTable({ status }: OrdersTableProps) {
+  const [selectedOrder, setSelectedOrder] = useState<OrderWithRelations | null>(
+    null,
+  );
+  const [isShipmentDialogOpen, setIsShipmentDialogOpen] = useState(false);
+
   const {
     data: ordersData,
     isPending,
@@ -108,16 +123,38 @@ export function OrdersTable({ status }: OrdersTableProps) {
       cell: ({ row }) => {
         const order = row.original;
         return (
-          <div className="flex gap-2">
-            <Link href={`/dashboard/orders/${order.id}`}>
-              <Button variant="ghost" size="sm">
-                <Eye className="w-4 h-4" />
-              </Button>
-            </Link>
-            <Button variant="ghost" size="sm">
-              <Truck className="w-4 h-4" />
-            </Button>
-          </div>
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Buka menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Aksi Pesanan</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/dashboard/orders/${order.id}`}
+                    className="flex items-center"
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Lihat Detail
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setIsShipmentDialogOpen(true);
+                  }}
+                >
+                  <Truck className="mr-2 h-4 w-4" />
+                  Atur Pengiriman
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         );
       },
     },
@@ -145,6 +182,11 @@ export function OrdersTable({ status }: OrdersTableProps) {
           />
         )}
       </CardContent>
+      <ShipmentDialog
+        open={isShipmentDialogOpen}
+        onOpenChange={setIsShipmentDialogOpen}
+        order={selectedOrder}
+      />
     </Card>
   );
 }

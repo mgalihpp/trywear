@@ -1,17 +1,19 @@
+import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
+import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from "@uploadthing/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useUserMediaUpload } from "@/features/upload/hooks/useUserMediaUpload";
+import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 
 const profileSchema = z.object({
   name: z.string().trim().min(1, "Nama wajib diisi").max(100),
   email: z.email("Email tidak valid").max(255),
-  // phone: z.string().trim().min(10, "Nomor telepon minimal 10 digit").max(15),
 });
 
 export const ProfileSection = () => {
@@ -26,8 +28,22 @@ export const ProfileSection = () => {
   const [isDirty, setIsDirty] = useState(false);
   const initialDataRef = useRef(profileData);
 
-  const { attachments, isUploading, startUpload, uploadProgress } =
-    useUserMediaUpload();
+  const {
+    attachments,
+    isUploading,
+    startUpload,
+    uploadProgress,
+    setAttachments,
+  } = useUserMediaUpload();
+
+  const { data: segments } = useQuery({
+    queryKey: ["segments"],
+    queryFn: () => api.segment.getAll(),
+  });
+
+  const userSegment = segments?.find(
+    (s) => s.id === (data?.user as any)?.segment_id,
+  );
 
   const { getInputProps, getRootProps } = useDropzone({
     maxFiles: 1,
@@ -88,6 +104,7 @@ export const ProfileSection = () => {
         toast.error("Mohon perbaiki data yang salah");
       }
     } finally {
+      setAttachments([]);
       setIsLoading(false);
     }
   };
@@ -195,7 +212,22 @@ export const ProfileSection = () => {
             {...getInputProps()}
             onChange={handleFileChange}
           />
-          <h3 className="font-bold text-lg mb-2">{profileData.name}</h3>
+          <div className="flex items-center gap-3 mb-2">
+            <h3 className="font-bold text-lg">{profileData.name}</h3>
+            {userSegment && (
+              <Badge
+                variant="outline"
+                style={{
+                  backgroundColor: `${userSegment.color}10`,
+                  color: userSegment.color ?? undefined,
+                  borderColor: `${userSegment.color}40`,
+                  fontWeight: 600,
+                }}
+              >
+                {userSegment.name} Member
+              </Badge>
+            )}
+          </div>
           <Button type="button" variant="outline" size="sm">
             Pilih Foto
           </Button>
