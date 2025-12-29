@@ -329,14 +329,14 @@ export function CouponForm({ initialData }: CouponFormProps) {
                                       field.onChange(date.toISOString());
                                     }
                                   }}
-                                  initialFocus
+                                  autoFocus
                                   locale={id}
                                 />
                               </PopoverContent>
                             </Popover>
                             <Input
                               type="time"
-                              className="w-[120px]"
+                              className="min-w-[120px]"
                               value={
                                 field.value
                                   ? format(new Date(field.value), "HH:mm")

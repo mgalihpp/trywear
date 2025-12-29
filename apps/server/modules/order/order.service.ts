@@ -62,6 +62,7 @@ export class OrderService extends BaseService<Orders, "orders"> {
         user: true,
         payments: true,
       },
+      orderBy: { created_at: "desc" },
     });
   };
 

@@ -14,210 +14,199 @@ const breadcrumbMap: Record<string, BreadcrumbItem[]> = {
   "/dashboard": [{ label: "Dashboard" }],
 
   // --- 1. PRODUCTS
-  "/dashboard/products": [{ label: "Products" }],
+  "/dashboard/products": [{ label: "Produk" }],
   "/dashboard/products/new": [
-    { label: "Products", href: "/products" },
+    { label: "Produk", href: "/products" },
     { label: "Add Product" },
   ],
   "/dashboard/products/edit": [
-    { label: "Products", href: "/products" },
+    { label: "Produk", href: "/products" },
     { label: "Add Product" },
   ],
   "/dashboard/products/variants": [
-    { label: "Products", href: "/products" },
-    { label: "Variants" },
+    { label: "Produk", href: "/products" },
+    { label: "Varian" },
   ],
   "/dashboard/products/collections": [
-    { label: "Products", href: "/products" },
-    { label: "Collections" },
+    { label: "Produk", href: "/products" },
+    { label: "Koleksi" },
   ],
   "/dashboard/products/archived": [
-    { label: "Products", href: "/products" },
-    { label: "Archived" },
+    { label: "Produk", href: "/products" },
+    { label: "Arsip" },
   ],
 
   // --- 2. ORDERS
-  "/dashboard/orders": [{ label: "Orders" }],
+  "/dashboard/orders": [{ label: "Pesanan" }],
   "/dashboard/orders/pending": [
-    { label: "Orders", href: "/orders" },
-    { label: "Pending" },
+    { label: "Pesanan", href: "/orders" },
+    { label: "Menunggu" },
   ],
   "/dashboard/orders/processing": [
-    { label: "Orders", href: "/orders" },
-    { label: "Processing" },
+    { label: "Pesanan", href: "/orders" },
+    { label: "Diproses" },
   ],
   "/dashboard/orders/shipped": [
-    { label: "Orders", href: "/orders" },
-    { label: "Shipped" },
+    { label: "Pesanan", href: "/orders" },
+    { label: "Dikirim" },
   ],
   "/dashboard/orders/completed": [
-    { label: "Orders", href: "/orders" },
-    { label: "Completed" },
+    { label: "Pesanan", href: "/orders" },
+    { label: "Selesai" },
   ],
   "/dashboard/orders/cancelled": [
-    { label: "Orders", href: "/orders" },
-    { label: "Cancelled" },
+    { label: "Pesanan", href: "/orders" },
+    { label: "Dibatalkan" },
   ],
 
   // --- 3. CUSTOMERS
-  "/dashboard/customers": [{ label: "Customers" }],
+  "/dashboard/customers": [{ label: "Pelanggan" }],
   "/dashboard/customers/segments": [
-    { label: "Customers", href: "/customers" },
+    { label: "Pelanggan", href: "/customers" },
     { label: "Segments" },
   ],
-  "/dashboard/customers/loyalty": [
-    { label: "Customers", href: "/customers" },
-    { label: "Loyalty Program" },
-  ],
-  "/dashboard/customers/blacklist": [
-    { label: "Customers", href: "/customers" },
-    { label: "Blacklist" },
+  "/dashboard/customers/segments/new": [
+    { label: "Pelanggan", href: "/customers" },
+    { label: "Segments", href: "/customers/segments" },
+    { label: "Tambah Segment" },
   ],
 
   // --- 4. INVENTORY
-  "/dashboard/inventory": [{ label: "Inventory" }], // Stock Overview
+  "/dashboard/inventory": [{ label: "Stok" }], // Stock Overview
   "/dashboard/inventory/movements": [
-    { label: "Inventory", href: "/inventory" },
+    { label: "Stok", href: "/inventory" },
     { label: "Stock Movements" },
-  ],
-  "/dashboard/inventory/warehouses": [
-    { label: "Inventory", href: "/inventory" },
-    { label: "Warehouses" },
-  ],
-  "/dashboard/inventory/adjustments": [
-    { label: "Inventory", href: "/inventory" },
-    { label: "Adjustments" },
   ],
 
   // --- 5. SUPPLIERS
-  "/dashboard/suppliers": [{ label: "Suppliers" }],
+  "/dashboard/suppliers": [{ label: "Pemasok" }],
   "/dashboard/suppliers/new": [
-    { label: "Suppliers", href: "/suppliers" },
-    { label: "Create Supplier" }, // Mengikuti pola `/new`
+    { label: "Pemasok", href: "/suppliers" },
+    { label: "Tambah Supplier" }, // Mengikuti pola `/new`
   ],
   "/dashboard/suppliers/orders": [
-    { label: "Suppliers", href: "/suppliers" },
-    { label: "Purchase Orders" },
+    { label: "Pemasok", href: "/suppliers" },
+    { label: "Pesanan" },
   ],
   "/dashboard/suppliers/payments": [
-    { label: "Suppliers", href: "/suppliers" },
-    { label: "Payments" },
+    { label: "Pemasok", href: "/suppliers" },
+    { label: "Pembayaran" },
   ],
 
   // --- 6. CATEGORIES
-  "/dashboard/categories": [{ label: "Categories" }],
+  "/dashboard/categories": [{ label: "Kategori" }],
   "/dashboard/categories/new": [
-    { label: "Categories", href: "/categories" },
-    { label: "Create Category" }, // Mengikuti pola `/new`
+    { label: "Kategori", href: "/categories" },
+    { label: "Tambah Kategori" }, // Mengikuti pola `/new`
   ],
   "/dashboard/categories/sub": [
-    { label: "Categories", href: "/categories" },
-    { label: "Subcategories" },
+    { label: "Kategori", href: "/categories" },
+    { label: "Sub Kategori" },
   ],
   "/dashboard/categories/attributes": [
-    { label: "Categories", href: "/categories" },
-    { label: "Attributes" },
+    { label: "Kategori", href: "/categories" },
+    { label: "Atribut" },
   ],
 
   // --- 7. COUPONS
-  "/dashboard/coupons": [{ label: "Coupons" }],
+  "/dashboard/coupons": [{ label: "Kupon" }],
   "/dashboard/coupons/new": [
-    { label: "Coupons", href: "/coupons" },
-    { label: "Create Coupon" },
+    { label: "Kupon", href: "/coupons" },
+    { label: "Tambah Kupon" },
   ],
   "/dashboard/coupons/expired": [
-    { label: "Coupons", href: "/coupons" },
-    { label: "Expired" },
+    { label: "Kupon", href: "/coupons" },
+    { label: "Kupon Kadarluasa" },
   ],
 
   // --- 8. RETURNS
-  "/dashboard/returns": [{ label: "Returns" }],
+  "/dashboard/returns": [{ label: "Pengembalian" }],
   "/dashboard/returns/requests": [
-    { label: "Returns", href: "/returns" },
-    { label: "Return Requests" },
+    { label: "Pengembalian", href: "/returns" },
+    { label: "Permintaan" },
   ],
   "/dashboard/returns/approved": [
-    { label: "Returns", href: "/returns" },
-    { label: "Approved" },
+    { label: "Pengembalian", href: "/returns" },
+    { label: "Disetujui" },
   ],
   "/dashboard/returns/rejected": [
-    { label: "Returns", href: "/returns" },
-    { label: "Rejected" },
+    { label: "Pengembalian", href: "/returns" },
+    { label: "Ditolak" },
   ],
 
   // --- 9. REVIEWS
-  "/dashboard/reviews": [{ label: "Reviews" }],
+  "/dashboard/reviews": [{ label: "Ulasan" }],
   "/dashboard/reviews/pending": [
-    { label: "Reviews", href: "/reviews" },
-    { label: "Pending Approval" },
+    { label: "Ulasan", href: "/reviews" },
+    { label: "Menunggu Persetujuan" },
   ],
   "/dashboard/reviews/reported": [
-    { label: "Reviews", href: "/reviews" },
-    { label: "Reported" },
+    { label: "Ulasan", href: "/reviews" },
+    { label: "Dilaporkan" },
   ],
 
   // --- 10. ANALYTICS
-  "/dashboard/analytics": [{ label: "Analytics" }],
+  "/dashboard/analytics": [{ label: "Analisis" }],
   "/dashboard/analytics/sales": [
-    { label: "Analytics", href: "/analytics" },
-    { label: "Sales Overview" },
+    { label: "Analisis", href: "/analytics" },
+    { label: "Overview Penjualan" },
   ],
   "/dashboard/analytics/customers": [
-    { label: "Analytics", href: "/analytics" },
-    { label: "Customer Insights" },
+    { label: "Analisis", href: "/analytics" },
+    { label: "Insight Pelanggan" },
   ],
-  "/analytics/products": [
-    { label: "Analytics", href: "/analytics" },
-    { label: "Product Performance" },
+  "/dashboard/analytics/products": [
+    { label: "Analisis", href: "/analytics" },
+    { label: "Performa Produk" },
   ],
 
   // --- 11. REPORTS
-  "/dashboard/reports": [{ label: "Reports" }],
+  "/dashboard/reports": [{ label: "Laporan" }],
   "/dashboard/reports/daily": [
-    { label: "Reports", href: "/reports" },
-    { label: "Daily Reports" },
+    { label: "Laporan", href: "/reports" },
+    { label: "Laporan Harian" },
   ],
   "/dashboard/reports/monthly": [
-    { label: "Reports", href: "/reports" },
-    { label: "Monthly Reports" },
+    { label: "Laporan", href: "/reports" },
+    { label: "Laporan Bulanan" },
   ],
   "/dashboard/reports/custom": [
-    { label: "Reports", href: "/reports" },
-    { label: "Custom Report" },
+    { label: "Laporan", href: "/reports" },
+    { label: "Laporan Kustom" },
   ],
 
   // --- 12. AUDIT LOGS
-  "/dashboard/audit": [{ label: "Audit Logs" }], // All Logs
+  "/dashboard/audit": [{ label: "Audit Log" }], // All Logs
   "/dashboard/audit/users": [
-    { label: "Audit Logs", href: "/audit" },
-    { label: "User Activity" },
+    { label: "Audit Log", href: "/audit" },
+    { label: "Aktivitas User" },
   ],
   "/dashboard/audit/system": [
-    { label: "Audit Logs", href: "/audit" },
-    { label: "System Events" },
+    { label: "Audit Log", href: "/audit" },
+    { label: "Aktivitas Sistem" },
   ],
 
   // --- 13. SETTINGS
-  "/dashboard/settings": [{ label: "Settings" }], // General
+  "/dashboard/settings": [{ label: "Pengaturan" }], // General
   "/dashboard/settings/general": [
-    { label: "Settings", href: "/settings" },
-    { label: "General" },
+    { label: "Pengaturan", href: "/settings" },
+    { label: "Umum" },
   ],
   "/dashboard/settings/payment": [
-    { label: "Settings", href: "/settings" },
-    { label: "Payment" },
+    { label: "Pengaturan", href: "/settings" },
+    { label: "Pembayaran" },
   ],
   "/dashboard/settings/shipping": [
-    { label: "Settings", href: "/settings" },
-    { label: "Shipping" },
+    { label: "Pengaturan", href: "/settings" },
+    { label: "Pengiriman" },
   ],
   "/dashboard/settings/email": [
-    { label: "Settings", href: "/settings" },
-    { label: "Email Templates" },
+    { label: "Pengaturan", href: "/settings" },
+    { label: "Template Email" },
   ],
   "/dashboard/settings/roles": [
-    { label: "Settings", href: "/settings" },
-    { label: "Roles & Permissions" },
+    { label: "Pengaturan", href: "/settings" },
+    { label: "Peran & Izin" },
   ],
 };
 
@@ -232,14 +221,14 @@ export function Breadcrumb() {
     // --- 1. Products: Menangani /products/[id] dan /products/[id]/edit
     if (pathname.includes("/products/") && pathname.includes("/edit")) {
       items = [
-        { label: "Products", href: "/products" },
-        { label: "Edit Product" },
+        { label: "Produk", href: "/products" },
+        { label: "Ubah Produk" },
       ];
     } else if (pathname.match(/^\/products\/[^/]+$/)) {
       // Contoh: /products/123
       items = [
-        { label: "Products", href: "/products" },
-        { label: "Product Details" },
+        { label: "Produk", href: "/products" },
+        { label: "Detail Produk" },
       ];
     }
 
@@ -253,34 +242,39 @@ export function Breadcrumb() {
       !pathname.includes("/cancelled")
     ) {
       items = [
-        { label: "Orders", href: "/orders" },
-        { label: "Order Details" },
+        { label: "Pesanan", href: "/orders" },
+        { label: "Detail Pesanan" },
       ];
     }
 
-    // --- 3. Customers: Menangani /customers/[id]
+    // --- 3. Customers: Menangani /customers/[id] dan /customers/segments/[id]
     else if (
-      pathname.includes("/customers/") &&
-      !pathname.includes("/segments") &&
-      !pathname.includes("/loyalty") &&
-      !pathname.includes("/blacklist")
+      pathname.includes("/customers/segments/") &&
+      !pathname.includes("/new")
     ) {
       items = [
         { label: "Customers", href: "/customers" },
-        { label: "Customer Details" },
+        { label: "Segments", href: "/customers/segments" },
+        { label: "Ubah Segment" },
+      ];
+    } else if (
+      pathname.includes("/customers/") &&
+      !pathname.includes("/segments")
+    ) {
+      items = [
+        { label: "Pelanggan", href: "/customers" },
+        { label: "Detail Pelanggan" },
       ];
     }
 
     // --- 4. Inventory: Menangani /inventory/[id] (Jika ada detail item inventaris)
     else if (
       pathname.includes("/inventory/") &&
-      !pathname.includes("/movements") &&
-      !pathname.includes("/warehouses") &&
-      !pathname.includes("/adjustments")
+      !pathname.includes("/movements")
     ) {
       items = [
         { label: "Inventory", href: "/inventory" },
-        { label: "Stock Item Details" }, // Lebih spesifik dari "Inventory Details"
+        { label: "Detail Stok Barang" }, // Lebih spesifik dari "Inventory Details"
       ];
     }
 
@@ -292,8 +286,8 @@ export function Breadcrumb() {
       !pathname.includes("/new")
     ) {
       items = [
-        { label: "Suppliers", href: "/suppliers" },
-        { label: "Supplier Details" },
+        { label: "Pemasok", href: "/suppliers" },
+        { label: "Detail Pemasok" },
       ];
     }
 
@@ -301,12 +295,11 @@ export function Breadcrumb() {
     else if (
       pathname.includes("/categories/") &&
       !pathname.includes("/sub") &&
-      !pathname.includes("/attributes") &&
       !pathname.includes("/new")
     ) {
       items = [
-        { label: "Categories", href: "/categories" },
-        { label: "Category Details" },
+        { label: "Kategori", href: "/categories" },
+        { label: "Detail Kategori" },
       ];
     }
 

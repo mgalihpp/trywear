@@ -28,6 +28,32 @@ import { DataTableSkeleton } from "../data-table-skeleton";
 import { ErrorAlert } from "../error-alert";
 import { ShipmentDialog } from "./shipment-dialog";
 
+// Label status pesanan dalam Bahasa Indonesia
+const orderStatusLabels: Record<string, string> = {
+  pending: "Menunggu",
+  ready: "Siap Kirim",
+  processing: "Diproses",
+  shipped: "Dikirim",
+  in_transit: "Dalam Pengiriman",
+  delivered: "Terkirim",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
+  failed: "Gagal",
+  returned: "Dikembalikan",
+};
+
+// Label status pembayaran dalam Bahasa Indonesia
+const paymentStatusLabels: Record<string, string> = {
+  pending: "Menunggu",
+  settlement: "Lunas",
+  capture: "Lunas",
+  failed: "Gagal",
+  cancelled: "Dibatalkan",
+  cancel: "Dibatalkan",
+  expired: "Kadaluarsa",
+  expire: "Kadaluarsa",
+};
+
 type OrdersTableProps = {
   status?: string;
 };
@@ -84,19 +110,19 @@ export function OrdersTable({ status }: OrdersTableProps) {
     },
     {
       accessorKey: "status",
-      header: "Shipment Status",
+      header: "Status Pesanan",
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
         return (
           <Badge className={statusColors[status as keyof typeof statusColors]}>
-            {status}
+            {orderStatusLabels[status] || status}
           </Badge>
         );
       },
     },
     {
       accessorKey: "payments",
-      header: "Payment Status",
+      header: "Status Pembayaran",
       cell: ({ row }) => {
         const status = row.original.payments[0]?.status;
         return (
@@ -105,7 +131,7 @@ export function OrdersTable({ status }: OrdersTableProps) {
               paymentStatusColors[status as keyof typeof paymentStatusColors]
             }
           >
-            {status}
+            {paymentStatusLabels[status] || status}
           </Badge>
         );
       },

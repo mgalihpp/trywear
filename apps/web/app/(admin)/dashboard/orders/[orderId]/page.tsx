@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@repo/ui/components/select";
 import { useQueryClient } from "@tanstack/react-query";
-import { Package, Truck } from "lucide-react";
+import { Bell, Package, Printer, Truck } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,6 +36,102 @@ import {
   useOrder,
   useUpdateOrderStatus,
 } from "@/features/order/queries/useOrderQuery";
+
+// Label status pesanan dalam Bahasa Indonesia
+const orderStatusLabels: Record<string, string> = {
+  pending: "Menunggu",
+  ready: "Siap Kirim",
+  processing: "Diproses",
+  shipped: "Dikirim",
+  in_transit: "Dalam Pengiriman",
+  delivered: "Terkirim",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
+  failed: "Gagal",
+  returned: "Dikembalikan",
+};
+
+// Fungsi untuk cetak label pengiriman
+const handlePrintLabel = (orderData: any) => {
+  if (!orderData) return;
+
+  const shippingMethod =
+    SHIPPING_METHODS.find(
+      (m) => m.id === orderData.shipments?.[0]?.shipment_method_id,
+    )?.name || "Standard";
+
+  const labelContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Label Pengiriman - ${orderData.id.slice(0, 8)}</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .label { border: 2px solid #000; padding: 20px; max-width: 400px; margin: 0 auto; }
+        .header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 15px; margin-bottom: 15px; }
+        .header h1 { font-size: 18px; margin-bottom: 5px; }
+        .header .order-id { font-size: 12px; color: #666; }
+        .section { margin-bottom: 15px; }
+        .section-title { font-size: 10px; color: #666; text-transform: uppercase; margin-bottom: 5px; }
+        .recipient { font-size: 16px; font-weight: bold; }
+        .address { font-size: 14px; line-height: 1.4; }
+        .phone { font-size: 14px; margin-top: 5px; }
+        .tracking { text-align: center; border-top: 2px dashed #000; padding-top: 15px; margin-top: 15px; }
+        .tracking-number { font-size: 18px; font-weight: bold; letter-spacing: 2px; }
+        .shipping-method { font-size: 12px; color: #666; margin-top: 5px; }
+        .footer { text-align: center; font-size: 10px; color: #999; margin-top: 15px; }
+        @media print { body { padding: 0; } .no-print { display: none; } }
+      </style>
+    </head>
+    <body>
+      <div class="label">
+        <div class="header">
+          <h1>LABEL PENGIRIMAN</h1>
+          <div class="order-id">Order #${orderData.id.slice(0, 8)}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Penerima</div>
+          <div class="recipient">${orderData.address?.recipient_name || "-"}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Alamat</div>
+          <div class="address">
+            ${orderData.address?.address_line1 || ""}<br/>
+            ${orderData.address?.address_line2 ? orderData.address.address_line2 + "<br/>" : ""}
+            ${orderData.address?.city || ""}, ${orderData.address?.postal_code || ""}<br/>
+            ${orderData.address?.province || ""}          </div>
+          <div class="phone">Tel: ${orderData.address?.phone || "-"}</div>
+        </div>
+        
+        <div class="tracking">
+          <div class="section-title">Nomor Resi</div>
+          <div class="tracking-number">${orderData.shipments?.[0]?.tracking_number || "BELUM ADA"}</div>
+          <div class="shipping-method">${shippingMethod}</div>
+        </div>
+        
+        <div class="footer">
+          Dicetak pada: ${new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+        </div>
+      </div>
+      
+      <div class="no-print" style="text-align: center; margin-top: 20px;">
+        <button onclick="window.print()" style="padding: 10px 20px; font-size: 14px; cursor: pointer;">
+          Cetak Label
+        </button>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const printWindow = window.open("", "_blank", "width=500,height=600");
+  if (printWindow) {
+    printWindow.document.write(labelContent);
+    printWindow.document.close();
+  }
+};
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -160,7 +256,8 @@ export default function OrderDetailPage() {
                       ]
                     }
                   >
-                    {orderData?.status}
+                    {orderStatusLabels[orderData?.status ?? ""] ||
+                      orderData?.status}
                   </Badge>
                 </div>
                 <div className="text-right">
@@ -189,9 +286,7 @@ export default function OrderDetailPage() {
                     <SelectContent>
                       {ShipmentStatus.options.map((s) => (
                         <SelectItem key={s} value={s}>
-                          {s
-                            .replace(/_/g, " ")
-                            .replace(/\b\w/g, (c) => c.toUpperCase())}
+                          {orderStatusLabels[s] || s}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -221,10 +316,25 @@ export default function OrderDetailPage() {
                 {orderData?.order_items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-3 border rounded-md"
+                    className="flex items-start gap-4 p-3 border rounded-md"
                   >
-                    <div>
-                      <p className="font-medium">{item.title}</p>
+                    {/* Product Image */}
+                    <div className="w-16 h-16 flex-shrink-0 bg-muted rounded-md overflow-hidden">
+                      {item.variant?.product?.product_images?.[0]?.url ? (
+                        <img
+                          src={item.variant.product.product_images[0].url}
+                          alt={item.title ?? ""}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                          <Package className="w-6 h-6" />
+                        </div>
+                      )}
+                    </div>
+                    {/* Product Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium line-clamp-1">{item.title}</p>
                       <p className="text-sm text-muted-foreground">
                         SKU: {item.sku}
                       </p>
@@ -233,7 +343,8 @@ export default function OrderDetailPage() {
                         Jumlah: {item.quantity}
                       </p>
                     </div>
-                    <p className="font-medium">
+                    {/* Price */}
+                    <p className="font-medium text-right whitespace-nowrap">
                       {item.quantity} x{" "}
                       {formatCurrency(Number(item.unit_price_cents))}
                     </p>
@@ -439,16 +550,27 @@ export default function OrderDetailPage() {
               <CardTitle>Aksi</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full bg-transparent" variant="outline">
-                <Package className="w-4 h-4 mr-2" />
-                Print Label
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={() => handlePrintLabel(orderData)}
+                disabled={!orderData?.address}
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Cetak Label
               </Button>
-              <Button className="w-full bg-transparent" variant="outline">
-                Send Notification
+              <Button
+                className="w-full"
+                variant="outline"
+                disabled
+                title="Fitur ini akan segera hadir"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Kirim Notifikasi
               </Button>
               <Link href="/dashboard/orders" className="block">
                 <Button className="w-full bg-transparent" variant="outline">
-                  Back to Orders
+                  Kembali ke Pesanan
                 </Button>
               </Link>
             </CardContent>

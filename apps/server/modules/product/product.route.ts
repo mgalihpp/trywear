@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAdmin } from "@/middleware/admin";
+import { adminMiddleware, requireAdmin } from "@/middleware/admin";
 import { authenticateMiddleware } from "@/middleware/authenticated";
 import { ProductVariantsController } from "../variant/variant.controller";
 import { ProductController } from "./product.controller";
@@ -45,7 +45,7 @@ const productVariantsController = new ProductVariantsController();
  *                   items:
  *                     $ref: '#/components/schemas/Product'
  */
-productRouter.get("/", productController.getAll);
+productRouter.get("/", adminMiddleware, productController.getAll);
 
 /**
  * @swagger

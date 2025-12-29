@@ -3,6 +3,20 @@ import { formatCurrency } from "@/features/admin/utils";
 import { statusColors } from "@/features/order/constants/shipment";
 import type { OrderItem, VariantOptions } from "../types";
 
+// Label status pesanan dalam Bahasa Indonesia
+const orderStatusLabels: Record<string, string> = {
+  pending: "Menunggu Konfirmasi",
+  ready: "Siap Kirim",
+  processing: "Diproses",
+  shipped: "Dikirim",
+  in_transit: "Dalam Pengiriman",
+  delivered: "Terkirim",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
+  failed: "Gagal",
+  returned: "Dikembalikan",
+};
+
 type OrderItemsCardProps = {
   items?: OrderItem[];
   orderStatus?: string | null;
@@ -49,6 +63,9 @@ export function OrderItemsCard({
   const statusClass = orderStatus
     ? statusColors[orderStatus as keyof typeof statusColors]
     : "bg-muted text-foreground";
+  const statusLabel = orderStatus
+    ? orderStatusLabels[orderStatus] || orderStatus
+    : "";
 
   return (
     <div className="border border-border p-8 rounded-lg">
@@ -56,7 +73,7 @@ export function OrderItemsCard({
         <div className="space-y-1">
           <h2 className="text-2xl font-bold">Detail Pesanan</h2>
         </div>
-        <Badge className={statusClass}>{orderStatus}</Badge>
+        <Badge className={statusClass}>{statusLabel}</Badge>
       </div>
       <div className="space-y-4">
         {items?.map((item) => (

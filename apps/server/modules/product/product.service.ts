@@ -18,7 +18,9 @@ export class ProductService extends BaseService<Product, "product"> {
   }
 
   findAll = async (q?: ListProductQueryInput) => {
-    const where: Prisma.ProductWhereInput = {};
+    // Filter status: "active" hanya untuk store (ketika ada query params)
+    // Admin dashboard memanggil findAll tanpa params sehingga bisa melihat semua produk
+    const where: Prisma.ProductWhereInput = q ? { status: "active" } : {};
 
     if (!q) {
       return this.db[this.model].findMany({
@@ -150,7 +152,7 @@ export class ProductService extends BaseService<Product, "product"> {
     const where: any = {
       category_id: product.category_id,
       id: { not: product_id },
-      // status: "active",
+      status: "active", // Hanya tampilkan produk aktif di store
     };
 
     // Jika ada color, prioritaskan produk dengan warna yang sama

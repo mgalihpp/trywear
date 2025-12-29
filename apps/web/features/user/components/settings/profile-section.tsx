@@ -235,7 +235,7 @@ export const ProfileSection = () => {
       </div>
 
       <form onSubmit={handleProfileSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 max-w-md">
           <div>
             <Label htmlFor="name">Nama Lengkap</Label>
             <Input
@@ -265,22 +265,23 @@ export const ProfileSection = () => {
               </p>
             )}
           </div> */}
-        </div>
-
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={profileData.email}
-            onChange={updateEmail}
-            className="mt-2"
-          />
-          {profileErrors.email && (
-            <p className="text-sm text-destructive mt-1">
-              {profileErrors.email}
-            </p>
-          )}
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={profileData.email}
+              onChange={updateEmail}
+              readOnly
+              disabled
+              className="mt-2"
+            />
+            {profileErrors.email && (
+              <p className="text-sm text-destructive mt-1">
+                {profileErrors.email}
+              </p>
+            )}
+          </div>
         </div>
 
         <Button

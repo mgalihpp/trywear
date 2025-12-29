@@ -18,7 +18,7 @@ import {
 } from "@repo/ui/components/breadcrumb";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
-import { Check, RefreshCw, Shield, Star, Truck, X } from "lucide-react";
+import { Camera, Check, RefreshCw, Shield, Star, Truck, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -34,6 +34,7 @@ import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
 import { useServerAction } from "@/hooks/useServerAction";
 import type { ProductWithRelations } from "@/types/index";
 import SizeGuideDialog from "./size-guide-dialog";
+import VirtualTryOnDialog from "./virtual-try-on-dialog";
 
 type ProductInfoProps = {
   product: ProductWithRelations;
@@ -67,6 +68,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
   );
   const [quantity, setQuantity] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  const [tryOnOpen, setTryOnOpen] = useState(false);
   const [runAddItemToCartAction, isAddItemToCartPending] =
     useServerAction(addItemToCart);
 
@@ -378,6 +380,17 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
 
       <Separator />
 
+      {/* Virtual Try-On */}
+      <Button
+        size="lg"
+        variant="secondary"
+        className="w-full h-12 text-base font-medium gap-2"
+        onClick={() => setTryOnOpen(true)}
+      >
+        <Camera className="w-5 h-5" />
+        Coba Virtual Try-On
+      </Button>
+
       {/* Actions */}
       <div className="space-y-3">
         <Button
@@ -500,6 +513,12 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
       </Accordion>
 
       <SizeGuideDialog open={sizeGuideOpen} onOpenChange={setSizeGuideOpen} />
+      <VirtualTryOnDialog
+        open={tryOnOpen}
+        onOpenChange={setTryOnOpen}
+        productImage={product.product_images?.[0]?.url}
+        productName={product.title}
+      />
     </div>
   );
 };
