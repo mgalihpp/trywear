@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
 "use client";
 
 import type { Notifications } from "@repo/db";
@@ -16,14 +17,17 @@ import {
   AlertTriangle,
   Bell,
   CheckCheck,
+  CheckCircle,
   CreditCard,
   Package,
+  PackageCheck,
   PackageX,
   RotateCcw,
   ShoppingCart,
   Trash2,
   Truck,
   X,
+  XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -47,6 +51,9 @@ const notificationIcons: Record<string, React.ReactNode> = {
   NEW_ORDER: <ShoppingCart className="h-4 w-4 text-blue-500" />,
   PAYMENT_RECEIVED: <CreditCard className="h-4 w-4 text-green-500" />,
   RETURN_REQUEST: <RotateCcw className="h-4 w-4 text-yellow-500" />,
+  RETURN_APPROVED: <CheckCircle className="h-4 w-4 text-blue-500" />,
+  RETURN_REJECTED: <XCircle className="h-4 w-4 text-red-500" />,
+  RETURN_COMPLETED: <PackageCheck className="h-4 w-4 text-green-500" />,
   LOW_STOCK: <AlertTriangle className="h-4 w-4 text-yellow-500" />,
   OUT_OF_STOCK: <PackageX className="h-4 w-4 text-red-500" />,
 };
@@ -62,7 +69,10 @@ const notificationTitles: Record<string, string> = {
   ORDER_CANCELLED: "Pesanan Dibatalkan",
   NEW_ORDER: "Pesanan Baru",
   PAYMENT_RECEIVED: "Pembayaran Diterima",
-  RETURN_REQUEST: "Permintaan Retur",
+  RETURN_REQUEST: "Permintaan Pengembalian",
+  RETURN_APPROVED: "Pengembalian Disetujui",
+  RETURN_REJECTED: "Pengembalian Ditolak",
+  RETURN_COMPLETED: "Pengembalian Selesai",
   LOW_STOCK: "Stok Menipis",
   OUT_OF_STOCK: "Stok Habis",
 };
@@ -89,7 +99,13 @@ function getNotificationDescription(notification: Notifications): string {
     case "PAYMENT_RECEIVED":
       return `Pembayaran diterima untuk pesanan #${(payload?.order_id as string)?.slice(0, 8) ?? ""}`;
     case "RETURN_REQUEST":
-      return `Permintaan retur untuk pesanan #${(payload?.order_id as string)?.slice(0, 8) ?? ""}`;
+      return `Permintaan pengembalian untuk pesanan #${(payload?.order_id as string)?.slice(0, 8) ?? ""}`;
+    case "RETURN_APPROVED":
+      return (payload?.message as string) ?? `Pengajuan pengembalian Anda telah disetujui`;
+    case "RETURN_REJECTED":
+      return (payload?.message as string) ?? `Pengajuan pengembalian Anda ditolak`;
+    case "RETURN_COMPLETED":
+      return (payload?.message as string) ?? `Pengembalian Anda telah selesai`;
     case "LOW_STOCK":
       return `Stok ${payload?.product_title ?? "produk"} menipis`;
     case "OUT_OF_STOCK":

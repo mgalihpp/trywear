@@ -1,9 +1,19 @@
-import type { Product } from "@repo/db";
+import type { Product, Returns } from "@repo/db";
+import type { ReturnStatusType } from "@repo/schema/returnSchema";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { format } from "date-fns";
-import { ImageIcon, Package, Star } from "lucide-react";
+import {
+  CheckCircle,
+  Clock,
+  ImageIcon,
+  Package,
+  RefreshCw,
+  RotateCcw,
+  Star,
+  XCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
@@ -11,6 +21,8 @@ import { formatCurrency } from "@/features/admin/utils";
 import { statusColors } from "@/features/order/constants/shipment";
 import { useUserOrders } from "@/features/order/queries/useOrderQuery";
 import { authClient } from "@/lib/auth-client";
+import type { OrderWithFullRelations } from "@/types/index";
+import ReturnRequestDialog from "./return-request-dialog";
 import ReviewDialog from "./review-dialog";
 
 // Status labels berdasarkan order.status DAN payment.status
@@ -23,6 +35,7 @@ const orderStatusLabels: Record<string, string> = {
   completed: "Selesai",
   cancelled: "Dibatalkan",
   cancel: "Dibatalkan",
+  returned: "Dikembalikan",
 };
 
 // Status labels untuk payment
@@ -35,6 +48,46 @@ const paymentStatusLabels: Record<string, string> = {
   cancel: "Dibatalkan",
   expired: "Kadaluarsa",
   expire: "Kadaluarsa",
+};
+
+// Status labels untuk pengembalian
+const returnStatusLabels: Record<ReturnStatusType, string> = {
+  requested: "Menunggu Persetujuan",
+  approved: "Disetujui",
+  rejected: "Ditolak",
+  processing: "Diproses",
+  completed: "Selesai",
+};
+
+// Colors untuk return status
+const returnStatusColors: Record<
+  ReturnStatusType,
+  { bg: string; text: string; icon: React.ElementType }
+> = {
+  requested: { bg: "bg-yellow-500/20", text: "text-yellow-600", icon: Clock },
+  approved: { bg: "bg-blue-500/20", text: "text-blue-600", icon: CheckCircle },
+  rejected: { bg: "bg-red-500/20", text: "text-red-600", icon: XCircle },
+  processing: {
+    bg: "bg-indigo-500/20",
+    text: "text-indigo-600",
+    icon: RefreshCw,
+  },
+  completed: {
+    bg: "bg-emerald-500/20",
+    text: "text-emerald-600",
+    icon: CheckCircle,
+  },
+};
+
+// Helper: Get active return from order
+const getActiveReturn = (
+  order: OrderWithFullRelations,
+): Returns | undefined => {
+  return (
+    order.returns?.find(
+      (r) => r.status !== "rejected" && r.status !== "completed",
+    ) ?? order.returns?.[0]
+  ); // fallback to most recent
 };
 
 // Helper: Tentukan status display berdasarkan order dan payment
@@ -85,6 +138,8 @@ export const OrdersSection = () => {
   const { data: sessionData } = authClient.useSession();
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [reviewProduct, setReviewProduct] = useState<Product>();
+  const [returnDialogOpen, setReturnDialogOpen] = useState(false);
+  const [returnOrder, setReturnOrder] = useState<OrderWithFullRelations>();
   const [orderFilter, setOrderFilter] = useState<string>("all");
   const userId = sessionData?.user.id;
   const {
@@ -163,6 +218,35 @@ export const OrdersSection = () => {
   const handleReview = (product: Product) => {
     setReviewProduct(product);
     setReviewDialogOpen(true);
+  };
+
+  const handleReturn = (order: OrderWithFullRelations) => {
+    setReturnOrder(order);
+    setReturnDialogOpen(true);
+  };
+
+  // Check if order can be returned (within 7 days of delivery)
+  const canRequestReturn = (order: OrderWithFullRelations) => {
+    if (order.status !== "delivered" && order.status !== "completed") {
+      return false;
+    }
+    // Check if already has pending return
+    const hasActiveReturn = order.returns?.some(
+      (r) => r.status !== "rejected" && r.status !== "completed",
+    );
+    if (hasActiveReturn) return false;
+
+    // Check 7-day window
+    const deliveredAt = order.shipments?.[0]?.delivered_at;
+    if (deliveredAt) {
+      const deliveredDate = new Date(deliveredAt);
+      const now = new Date();
+      const daysDiff = Math.floor(
+        (now.getTime() - deliveredDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      return daysDiff <= 7;
+    }
+    return true; // Allow if no delivered_at date
   };
 
   return (
@@ -327,23 +411,54 @@ export const OrdersSection = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="p-4 sm:p-5 pt-0 flex gap-2">
+                <div className="p-4 sm:p-5 pt-0 flex flex-wrap gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     asChild
-                    className="flex-1 h-9"
+                    className="flex-1 h-9 min-w-[120px]"
                   >
                     <Link href={`/order?order_id=${order.id}`}>
                       Lihat Detail
                     </Link>
                   </Button>
                   {isDelivered &&
+                    (() => {
+                      const activeReturn = getActiveReturn(order);
+                      if (activeReturn) {
+                        const status = activeReturn.status as ReturnStatusType;
+                        const statusConfig = returnStatusColors[status];
+                        const StatusIcon = statusConfig?.icon || Clock;
+                        return (
+                          <div
+                            className={`flex-1 min-w-[120px] h-9 flex items-center justify-center gap-1.5 rounded-md border ${statusConfig?.bg} ${statusConfig?.text} border-current/20 text-sm`}
+                          >
+                            <StatusIcon className="h-3.5 w-3.5" />
+                            <span>{returnStatusLabels[status] || status}</span>
+                          </div>
+                        );
+                      }
+                      if (canRequestReturn(order)) {
+                        return (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 h-9 min-w-[120px]"
+                            onClick={() => handleReturn(order)}
+                          >
+                            <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+                            Ajukan Pengembalian
+                          </Button>
+                        );
+                      }
+                      return null;
+                    })()}
+                  {isDelivered &&
                     (userReview && reviewLink ? (
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 h-9"
+                        className="flex-1 h-9 min-w-[120px]"
                         asChild
                       >
                         <Link href={reviewLink}>
@@ -355,7 +470,7 @@ export const OrdersSection = () => {
                       <Button
                         variant="default"
                         size="sm"
-                        className="flex-1 h-9"
+                        className="flex-1 h-9 min-w-[120px]"
                         disabled={!primaryProduct || hasReview}
                         onClick={() =>
                           !hasReview &&
@@ -388,6 +503,14 @@ export const OrdersSection = () => {
           open={reviewDialogOpen}
           onOpenChange={setReviewDialogOpen}
           product={reviewProduct}
+        />
+      )}
+
+      {returnOrder && (
+        <ReturnRequestDialog
+          open={returnDialogOpen}
+          onOpenChange={setReturnDialogOpen}
+          order={returnOrder}
         />
       )}
     </div>

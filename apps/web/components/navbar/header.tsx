@@ -92,21 +92,6 @@ export const Header = () => {
                 <Search className="h-5 w-5" />
               </Link>
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "hidden sm:flex",
-                isTransparent
-                  ? "text-white hover:text-white hover:bg-white/20"
-                  : "hover:bg-accent",
-              )}
-              asChild
-            >
-              <Link href="/wishlist">
-                <Heart className="h-5 w-5" />
-              </Link>
-            </Button>
             <div
               className={cn(
                 isTransparent

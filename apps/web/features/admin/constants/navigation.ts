@@ -102,9 +102,7 @@ export const ADMIN_NAV_DATA = {
       icon: RotateCcw,
       url: "#",
       items: [
-        { title: "Permintaan", url: "/returns/requests" },
-        { title: "Disetujui", url: "/returns/approved" },
-        { title: "Ditolak", url: "/returns/rejected" },
+        { title: "Semua Pengembalian", url: "/returns" },
       ],
     },
     {

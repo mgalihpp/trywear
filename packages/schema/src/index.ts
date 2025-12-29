@@ -7,5 +7,6 @@ export const paramsIdSchema = z.object({
 export type ParamsId = z.infer<typeof paramsIdSchema>;
 
 export * from "./couponSchema";
+export * from "./returnSchema";
 export * from "./segmentSchema";
 export * from "./supplierSchema";

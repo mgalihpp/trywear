@@ -49,7 +49,7 @@ import {
 import FilterPrice from "./_components/price-filter";
 import FilterSize from "./_components/size-filter";
 
-const DEFAULT_CUSTOM_PRICE = [0, 1000000] as [number, number];
+const DEFAULT_CUSTOM_PRICE = [0, 10000000] as [number, number];
 
 export default function ProductsPage() {
   const router = useRouter();

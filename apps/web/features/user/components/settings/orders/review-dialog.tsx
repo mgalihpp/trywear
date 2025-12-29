@@ -17,7 +17,7 @@ import {
   DrawerTitle,
 } from "@repo/ui/components/drawer";
 import { Textarea } from "@repo/ui/components/textarea";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -32,6 +32,7 @@ interface ReviewDialogProps {
 
 const ReviewDialog = ({ open, onOpenChange, product }: ReviewDialogProps) => {
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -40,6 +41,10 @@ const ReviewDialog = ({ open, onOpenChange, product }: ReviewDialogProps) => {
   const createProductReviewMutation = useMutation({
     mutationFn: (input: CreateProductReviewInput) =>
       api.product.review.create(input),
+    onSuccess: () => {
+      // Invalidate user orders to refresh review status
+      queryClient.invalidateQueries({ queryKey: ["user-order"] });
+    },
   });
 
   const isSubmitting = createProductReviewMutation.isPending;

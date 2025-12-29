@@ -8,6 +8,7 @@ import { notificationApi } from "./notification.api";
 import { orderApi } from "./order.api";
 import { paymentApi } from "./payment.api";
 import { productApi } from "./product.api";
+import { returnApi } from "./return.api";
 import { segmentApi } from "./segment.api";
 import { supplierApi } from "./supplier.api";
 
@@ -24,4 +25,5 @@ export const api = {
   supplier: supplierApi,
   inventory: inventoryApi,
   coupon: couponApi,
+  return: returnApi,
 };

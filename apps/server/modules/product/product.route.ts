@@ -45,7 +45,7 @@ const productVariantsController = new ProductVariantsController();
  *                   items:
  *                     $ref: '#/components/schemas/Product'
  */
-productRouter.get("/", adminMiddleware, productController.getAll);
+productRouter.get("/", authenticateMiddleware, adminMiddleware, productController.getAll);
 
 /**
  * @swagger

@@ -61,6 +61,12 @@ export class OrderService extends BaseService<Orders, "orders"> {
         },
         user: true,
         payments: true,
+        returns: true,
+        shipments: {
+          include: {
+            shipment_method: true,
+          },
+        },
       },
       orderBy: { created_at: "desc" },
     });

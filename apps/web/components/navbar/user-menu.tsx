@@ -16,7 +16,7 @@ import {
 } from "@repo/ui/components/dropdown-menu";
 import { cn } from "@repo/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { LayoutDashboard, LogOut, Package, User } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, Package, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
@@ -126,6 +126,12 @@ export const UserMenu = ({ isTransparent }: UserMenuProps) => {
           <Link href="/user/settings/orders" className="cursor-pointer">
             <Package className="mr-2 h-4 w-4" />
             <span>Pesanan Saya</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/wishlist" className="cursor-pointer">
+            <Heart className="mr-2 h-4 w-4" />
+            <span>Wishlist</span>
           </Link>
         </DropdownMenuItem>
 

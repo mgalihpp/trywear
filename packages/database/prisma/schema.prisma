@@ -314,6 +314,7 @@ model Returns {
   order_id     String?       @db.Uuid
   user_id      String?
   reason       String?       @db.Text
+  images       Json?         // Array of image URLs for proof
   status       String        @default("requested") @db.VarChar(50)
   created_at   DateTime      @default(now()) @db.Timestamptz
   order        Orders?       @relation(fields: [order_id], references: [id])

@@ -9,6 +9,7 @@ import { notificationRouter } from "@/modules/notification/notification.route";
 import { orderRouter } from "@/modules/order/order.route";
 import { paymentRouter } from "@/modules/payment/payment.route";
 import { productRouter } from "@/modules/product/product.route";
+import { returnRouter } from "@/modules/return/return.route";
 import { segmentRouter } from "@/modules/segment/segment.route";
 import { supplierRouter } from "@/modules/supplier/supplier.route";
 
@@ -112,5 +113,12 @@ v1Router.use("/suppliers", supplierRouter);
  * dikelola di dalam router ini.
  */
 v1Router.use("/coupons", couponRouter);
+
+/**
+ * Route ini menangani semua endpoint terkait return/refund.
+ * Semua route yang berhubungan dengan pengembalian produk.
+ * dikelola di dalam router ini.
+ */
+v1Router.use("/returns", returnRouter);
 
 export default v1Router;
