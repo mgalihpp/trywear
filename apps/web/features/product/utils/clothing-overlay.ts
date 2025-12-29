@@ -17,10 +17,12 @@ export interface BodyMeasurements {
   centerY: number;
   angle: number;
   isVisible: boolean;
+  isFacingCamera: boolean;
 }
 
 // MediaPipe Pose landmark indices
 const LANDMARKS = {
+  NOSE: 0,
   LEFT_SHOULDER: 11,
   RIGHT_SHOULDER: 12,
   LEFT_HIP: 23,
@@ -43,6 +45,7 @@ export function calculateBodyMeasurements(
     return null;
   }
 
+  const nose = landmarks[LANDMARKS.NOSE];
   const leftShoulder = landmarks[LANDMARKS.LEFT_SHOULDER];
   const rightShoulder = landmarks[LANDMARKS.RIGHT_SHOULDER];
   const leftHip = landmarks[LANDMARKS.LEFT_HIP];
@@ -62,6 +65,10 @@ export function calculateBodyMeasurements(
   ) {
     return null;
   }
+
+  // Detect if user is facing the camera by checking nose visibility
+  // High nose visibility = facing camera, low = back to camera
+  const isFacingCamera = (nose?.visibility ?? 0) > 0.5;
 
   // Convert normalized coordinates to pixel coordinates
   const lsX = leftShoulder.x * canvasWidth;
@@ -95,6 +102,7 @@ export function calculateBodyMeasurements(
     centerY,
     angle,
     isVisible: true,
+    isFacingCamera,
   };
 }
 
@@ -108,20 +116,27 @@ export function drawClothingOverlay(
   _canvasWidth: number,
   _canvasHeight: number,
 ): void {
-  const { shoulderWidth, torsoHeight, centerX, centerY, angle } = measurements;
+  const { shoulderWidth, torsoHeight, centerX, centerY, angle, isFacingCamera } = measurements;
 
   // Calculate clothing dimensions with some padding
   const clothingWidth = shoulderWidth * 1.4; // Slightly wider than shoulders
   const clothingHeight = torsoHeight * 1.5; // Cover torso + a bit more
 
-  // Position clothing slightly higher to align with shoulders
-  const offsetY = -torsoHeight * 0.15;
+  // Position clothing to align with shoulders (move up from center)
+  const offsetY = -torsoHeight * 0.1;
 
   ctx.save();
 
-  // Move to center and apply rotation
+  // Move to center position
   ctx.translate(centerX, centerY + offsetY);
+
+  // Apply rotation based on shoulder angle
   ctx.rotate(angle);
+
+  // When facing camera, rotate 180 degrees to correct upside-down orientation
+  if (isFacingCamera) {
+    ctx.rotate(Math.PI);
+  }
 
   // Draw the clothing image centered
   ctx.globalAlpha = 0.85; // Slight transparency for better blending
@@ -147,6 +162,7 @@ export function drawPoseLandmarks(
 ): void {
   // Draw key body landmarks
   const keyPoints = [
+    LANDMARKS.NOSE,
     LANDMARKS.LEFT_SHOULDER,
     LANDMARKS.RIGHT_SHOULDER,
     LANDMARKS.LEFT_HIP,

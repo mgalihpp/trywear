@@ -161,4 +161,24 @@ export class ProductController extends BaseController<Product, ProductService> {
       data: reviews,
     });
   });
+
+  removeBackground = asyncHandler(async (req: Request, res: Response) => {
+    const { imageUrl } = req.body as { imageUrl: string };
+
+    if (!imageUrl) {
+      return new AppResponse({
+        res,
+        statusCode: 400,
+        message: "Image URL is required",
+      });
+    }
+
+    const processedImage = await this.service.removeBackground(imageUrl);
+
+    return new AppResponse({
+      res,
+      data: { image: processedImage },
+      message: "Background removed successfully",
+    });
+  });
 }

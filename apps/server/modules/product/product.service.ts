@@ -6,15 +6,19 @@ import type {
   UpdateProductInput,
 } from "@repo/schema/productSchema";
 import { HTTPSTATUS } from "@/configs/http";
+import { RemoveBgService } from "@/lib/remove-bg";
 import { AppError } from "@/utils/appError";
 import { BaseService } from "../service";
 import { ProductVariantsService } from "../variant/variant.service";
 
 export class ProductService extends BaseService<Product, "product"> {
   variantService: ProductVariantsService;
+  removeBgService: RemoveBgService;
+
   constructor() {
     super("product");
     this.variantService = new ProductVariantsService();
+    this.removeBgService = new RemoveBgService();
   }
 
   findAll = async (q?: ListProductQueryInput) => {
@@ -48,17 +52,17 @@ export class ProductService extends BaseService<Product, "product"> {
     if (q.colors?.length || q.sizes?.length) {
       const colorCond = q.colors?.length
         ? {
-            OR: q.colors.map((c) => ({
-              option_values: { path: ["color"], equals: c },
-            })),
-          }
+          OR: q.colors.map((c) => ({
+            option_values: { path: ["color"], equals: c },
+          })),
+        }
         : null;
       const sizeCond = q.sizes?.length
         ? {
-            OR: q.sizes.map((s) => ({
-              option_values: { path: ["size"], equals: s },
-            })),
-          }
+          OR: q.sizes.map((s) => ({
+            option_values: { path: ["size"], equals: s },
+          })),
+        }
         : null;
 
       where.product_variants = {
@@ -326,5 +330,15 @@ export class ProductService extends BaseService<Product, "product"> {
     });
 
     return reviews;
+  }
+
+  /**
+   * Remove background from product image
+   * @param imageUrl - URL of the image to process
+   * @returns Base64 encoded PNG image with transparent background
+   */
+  async removeBackground(imageUrl: string): Promise<string> {
+    const imageBuffer = await this.removeBgService.removeBackground(imageUrl);
+    return `data:image/png;base64,${imageBuffer.toString("base64")}`;
   }
 }

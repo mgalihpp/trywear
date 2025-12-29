@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "@/lib/axios";
 import { Button } from "@repo/ui/components/button";
 import {
   Dialog,
@@ -46,28 +47,68 @@ export default function VirtualTryOnDialog({
   const [showLandmarks, setShowLandmarks] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
 
-  // Load clothing image
+  // Load clothing image with background removal
   useEffect(() => {
-    if (!productImage) return;
+    if (!productImage || !open) return;
 
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      clothingImageRef.current = img;
-      setImageLoaded(true);
-    };
-    img.onerror = () => {
-      console.error("Failed to load product image");
+    const loadImage = async () => {
+      setIsProcessingImage(true);
       setImageLoaded(false);
+
+      try {
+        // Try to remove background using remove.bg API
+        const response = await axios.post("/products/remove-bg", {
+          imageUrl: productImage,
+        });
+
+        const processedImageUrl = response.data?.data?.image;
+
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          clothingImageRef.current = img;
+          setImageLoaded(true);
+          setIsProcessingImage(false);
+        };
+        img.onerror = () => {
+          console.error("Failed to load processed image, using original");
+          // Fallback to original image
+          loadOriginalImage();
+        };
+        img.src = processedImageUrl || productImage;
+      } catch (error) {
+        console.error("Remove.bg API failed, using original image:", error);
+        // Fallback to original image if API fails
+        loadOriginalImage();
+      }
     };
-    img.src = productImage;
+
+    const loadOriginalImage = () => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        clothingImageRef.current = img;
+        setImageLoaded(true);
+        setIsProcessingImage(false);
+      };
+      img.onerror = () => {
+        console.error("Failed to load product image");
+        setImageLoaded(false);
+        setIsProcessingImage(false);
+      };
+      img.src = productImage;
+    };
+
+    loadImage();
 
     return () => {
       clothingImageRef.current = null;
       setImageLoaded(false);
+      setIsProcessingImage(false);
     };
-  }, [productImage]);
+  }, [productImage, open]);
 
   // Handle pose results - draw overlay
   const handleResults = useCallback(
@@ -199,11 +240,13 @@ export default function VirtualTryOnDialog({
 
         <div className="relative bg-black aspect-video w-full">
           {/* Loading state */}
-          {(isLoading || !isReady) && hasPermission !== false && (
+          {(isLoading || !isReady || isProcessingImage) && hasPermission !== false && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
               <Loader2 className="w-8 h-8 animate-spin mb-2" />
               <p className="text-sm text-muted-foreground">
-                Memuat model pose detection...
+                {isProcessingImage
+                  ? "Memproses gambar pakaian..."
+                  : "Memuat model pose detection..."}
               </p>
             </div>
           )}

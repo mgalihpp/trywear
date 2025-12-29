@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { adminMiddleware, requireAdmin } from "@/middleware/admin";
+import { requireAdmin } from "@/middleware/admin";
 import { authenticateMiddleware } from "@/middleware/authenticated";
 import { ProductVariantsController } from "../variant/variant.controller";
 import { ProductController } from "./product.controller";
@@ -45,7 +45,7 @@ const productVariantsController = new ProductVariantsController();
  *                   items:
  *                     $ref: '#/components/schemas/Product'
  */
-productRouter.get("/", authenticateMiddleware, adminMiddleware, productController.getAll);
+productRouter.get("/", requireAdmin, productController.getAll);
 
 /**
  * @swagger
@@ -414,6 +414,45 @@ productRouter.delete(
   requireAdmin,
   productController.deleteImage,
 );
+
+/**
+ * @swagger
+ * /api/v1/products/remove-bg:
+ *   post:
+ *     summary: Remove background from product image
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - imageUrl
+ *             properties:
+ *               imageUrl:
+ *                 type: string
+ *                 description: URL of the image to process
+ *     responses:
+ *       200:
+ *         description: Background removed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     image:
+ *                       type: string
+ *                       description: Base64 encoded PNG with transparent background
+ */
+productRouter.post("/remove-bg", authenticateMiddleware, productController.removeBackground);
 
 /* ---------------------- PRODUCT VARIANTS ---------------------- */
 
