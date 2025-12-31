@@ -2,9 +2,10 @@ import { ReportDashboard } from "@/features/admin/components/dashboard/reports/r
 
 export default function CustomReportPage() {
   return (
-    <div className="p-0 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <ReportDashboard period="custom" title="Laporan Kustom" />
     </div>
   );
 }
+
 
