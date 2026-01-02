@@ -12,7 +12,6 @@ import {
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@repo/ui/components/tabs";
@@ -27,7 +26,6 @@ import {
   CreditCard,
   ExternalLink,
   Inbox,
-  Package,
   PackageX,
   RotateCcw,
   ShoppingCart,

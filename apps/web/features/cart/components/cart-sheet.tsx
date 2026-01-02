@@ -9,7 +9,7 @@ import {
   SheetTrigger,
 } from "@repo/ui/components/sheet";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import { Loader2, Minus, Plus, ShoppingCart, X } from "lucide-react";
+import { Loader2, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import {
@@ -90,7 +90,7 @@ const CartSheet = () => {
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="relative">
-            <ShoppingCart className="h-5 w-5" />
+            <ShoppingBag className="h-5 w-5" />
             {totalItems() > 0 && (
               <span className="absolute -top-1 -right-1 h-5 w-5 bg-foreground text-background text-xs flex items-center justify-center font-bold rounded-full">
                 {totalItems()}
@@ -141,7 +141,7 @@ const CartSheet = () => {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <ShoppingCart className="h-5 w-5" />
+          <ShoppingBag className="h-5 w-5" />
           {totalItems() > 0 && (
             <span className="absolute -top-1 -right-1 h-5 w-5 bg-foreground text-background text-xs flex items-center justify-center font-bold">
               {totalItems()}
@@ -157,7 +157,7 @@ const CartSheet = () => {
         {items.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center space-y-4">
-              <ShoppingCart className="h-16 w-16 mx-auto text-muted-foreground" />
+              <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground" />
               <p className="text-muted-foreground">Keranjang Anda kosong</p>
               <Button asChild>
                 <Link href="/">Mulai Belanja</Link>

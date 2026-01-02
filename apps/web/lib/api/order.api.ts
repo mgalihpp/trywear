@@ -3,7 +3,6 @@ import type {
   CreateOrderInput,
   UpdateOrderStatusInput,
 } from "@repo/schema/orderSchema";
-import { v4 as uuidv4 } from "uuid";
 import axios from "@/lib/axios";
 import type { ApiResponse, SnapPayload } from "@/types/api";
 import type { OrderWithFullRelations, OrderWithRelations } from "@/types/index";
@@ -32,9 +31,7 @@ export const orderApi = {
     return data;
   },
 
-  create: async (input: CreateOrderInput) => {
-    const idKey = uuidv4();
-
+  create: async (input: CreateOrderInput, idKey: string) => {
     const res = await axios.post<ApiResponse<SnapPayload>>(`/orders`, input, {
       headers: {
         "x-idempotency-key": idKey,

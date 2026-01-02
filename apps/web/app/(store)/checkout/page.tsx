@@ -14,10 +14,11 @@ import { Card } from "@repo/ui/components/card";
 import { Separator } from "@repo/ui/components/separator";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircle, Info } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { clearCart as ClearCartItems } from "@/actions/cart";
 import { cancelOrder, updatePaymentStatus } from "@/actions/payment";
 import { useCartStore } from "@/features/cart/store/useCartStore";
@@ -43,6 +44,7 @@ const scriptId = "midtrans-snap-script";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const idKey = uuidv4();
   const { data } = authClient.useSession();
   const {
     items,
@@ -141,14 +143,17 @@ export default function CheckoutPage() {
     try {
       orderMutation.mutate(
         {
-          user_id: data?.user.id as string,
-          items: items.map((it) => ({
-            variant_id: it.variant_id,
-            quantity: it.quantity,
-          })),
-          address_id: selectedAddressId,
-          shipment_method_id: selectedShippingId,
-          coupon_code: couponCode || undefined,
+          input: {
+            user_id: data?.user.id as string,
+            items: items.map((it) => ({
+              variant_id: it.variant_id,
+              quantity: it.quantity,
+            })),
+            address_id: selectedAddressId,
+            shipment_method_id: selectedShippingId,
+            coupon_code: couponCode || undefined,
+          },
+          idKey
         },
         {
           onSuccess: async (data) => {
@@ -330,7 +335,7 @@ export default function CheckoutPage() {
               <Separator className="my-2 sm:my-0" />
 
               {/* Payment Section */}
-              <Card className="p-6">
+              {/* <Card className="p-6">
                 <h2 className="text-base sm:text-lg font-semibold mb-6">
                   Metode Pembayaran
                 </h2>
@@ -354,7 +359,7 @@ export default function CheckoutPage() {
                     Anda.
                   </p>
                 </div>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Order Summary Sidebar */}

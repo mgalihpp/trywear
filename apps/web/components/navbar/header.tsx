@@ -43,7 +43,7 @@ export const Header = () => {
           : "bg-background/95 backdrop-blur-md border-b border-border shadow-sm",
       )}
     >
-      <div className="container mx-auto px-4 lg:px-8">
+      <div className="mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Left - Mobile Menu & Logo */}
           <div className="flex items-center gap-4">

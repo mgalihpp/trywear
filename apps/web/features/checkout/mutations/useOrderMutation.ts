@@ -1,9 +1,16 @@
+import type { CreateOrderInput } from "@repo/schema/orderSchema";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 export const useCreateOrder = () => {
   return useMutation({
-    mutationFn: api.order.create,
+    mutationFn: ({
+      input,
+      idKey,
+    }: {
+      input: CreateOrderInput;
+      idKey: string;
+    }) => api.order.create(input, idKey),
     onError: (err) => {
       console.error("Gagal membuat pesanan", err);
     },
