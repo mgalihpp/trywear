@@ -1,135 +1,269 @@
-# Turborepo starter
+# TryWear
 
-This Turborepo starter is maintained by the Turborepo core team.
+Platform e-commerce modern dengan fitur **Virtual Try-On** berbasis AI yang memungkinkan pengguna mencoba pakaian secara virtual menggunakan teknologi pose estimation.
 
-## Using this example
+---
 
-Run the following command:
+## Deskripsi
 
-```sh
-npx create-turbo@latest
-```
+TryWear adalah aplikasi toko online lengkap yang dibangun dengan arsitektur monorepo menggunakan Turborepo. Proyek ini menggabungkan fitur e-commerce standar seperti manajemen produk, keranjang belanja, checkout, dan pembayaran dengan teknologi inovatif Virtual Try-On. Fitur ini memanfaatkan MediaPipe Pose untuk mendeteksi postur tubuh pengguna secara real-time dan menampilkan pakaian secara virtual mengikuti gerakan lengan dan posisi tubuh.
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+## Fitur Utama
 
-### Apps and Packages
+### Storefront
+- Katalog produk dengan kategori dan varian (ukuran, warna)
+- Pencarian dan filter produk
+- Keranjang belanja dengan persistensi data
+- Wishlist untuk menyimpan produk favorit
+- Sistem ulasan dan rating produk
+- Virtual Try-On berbasis pose estimation untuk pakaian
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Checkout dan Pembayaran
+- Manajemen alamat pengiriman
+- Integrasi payment gateway Midtrans
+- Sistem kupon dan diskon
+- Notifikasi status pesanan
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Admin Dashboard
+- Manajemen produk, kategori, dan supplier
+- Manajemen inventori dan stok
+- Pemrosesan pesanan dan pengiriman
+- Manajemen pengembalian barang
+- Segmentasi pelanggan
+- Laporan penjualan dan audit log
 
-### Utilities
+### Sistem Autentikasi
+- Login/Register dengan email
+- OAuth provider support
+- Manajemen role (admin/user)
+- Session management
 
-This Turborepo has some additional tools already setup for you:
+---
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## Tech Stack
 
-### Build
+### Frontend (apps/web)
+| Teknologi | Kegunaan |
+|-----------|----------|
+| Next.js 15 | Framework React dengan App Router |
+| React 19 | Library UI |
+| TanStack Query | State management dan data fetching |
+| TanStack Table | Komponen tabel dengan fitur sorting/filter |
+| Zustand | Client-side state management |
+| React Hook Form + Zod | Form handling dan validasi |
+| MediaPipe Pose | Pose estimation untuk Virtual Try-On |
+| Recharts | Visualisasi data dashboard |
+| Better Auth | Autentikasi |
+| Uploadthing | Upload file/gambar |
 
-To build all apps and packages, run the following command:
+### Backend (apps/server)
+| Teknologi | Kegunaan |
+|-----------|----------|
+| Express 5 | HTTP server dan routing |
+| Prisma | ORM dan database management |
+| PostgreSQL | Database utama |
+| Midtrans SDK | Payment gateway integration |
+| Zod | Validasi request/response |
+| Swagger | API documentation |
 
-```
-cd my-turborepo
+### Shared Packages
+| Package | Kegunaan |
+|---------|----------|
+| @repo/db | Prisma client dan konfigurasi database |
+| @repo/ui | Komponen UI reusable (shadcn/ui) |
+| @repo/schema | Zod schema untuk validasi data |
+| @repo/midtrans | Wrapper Midtrans payment |
+| @repo/typescript-config | Konfigurasi TypeScript bersama |
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+### Tooling
+- **Turborepo** - Monorepo build system
+- **pnpm** - Package manager
+- **Biome** - Linting dan formatting
+- **TypeScript** - Type safety
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+---
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+## Struktur Folder
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+toko-online/
+├── apps/
+│   ├── web/                    # Frontend Next.js
+│   │   ├── app/                # App Router pages
+│   │   │   ├── (admin)/        # Admin dashboard routes
+│   │   │   ├── (auth)/         # Authentication routes
+│   │   │   ├── (store)/        # Storefront routes
+│   │   │   └── api/            # API routes
+│   │   ├── components/         # Shared components
+│   │   ├── features/           # Feature-based modules
+│   │   │   ├── admin/          # Admin dashboard features
+│   │   │   ├── cart/           # Keranjang belanja
+│   │   │   ├── checkout/       # Proses checkout
+│   │   │   ├── order/          # Manajemen pesanan
+│   │   │   ├── product/        # Katalog dan Virtual Try-On
+│   │   │   └── ...
+│   │   ├── hooks/              # Custom React hooks
+│   │   └── lib/                # Utilities dan konfigurasi
+│   │
+│   └── server/                 # Backend Express
+│       ├── configs/            # Konfigurasi aplikasi
+│       ├── middleware/         # Express middlewares
+│       ├── modules/            # Feature modules (controller/service)
+│       │   ├── address/
+│       │   ├── order/
+│       │   ├── payment/
+│       │   ├── product/
+│       │   └── ...
+│       ├── routes/             # Route definitions
+│       └── utils/              # Helper functions
+│
+├── packages/
+│   ├── database/               # Prisma schema dan client
+│   ├── midtrans/               # Midtrans SDK wrapper
+│   ├── schema/                 # Shared Zod schemas
+│   ├── typescript-config/      # Shared TS configs
+│   └── ui/                     # Shared UI components
+│
+├── turbo.json                  # Turborepo configuration
+├── pnpm-workspace.yaml         # pnpm workspace config
+└── biome.json                  # Biome linter config
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+---
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## Instalasi
 
+### Prasyarat
+- Node.js >= 18
+- pnpm >= 10.18
+- PostgreSQL database
+
+### Langkah Instalasi
+
+1. Clone repository
+```bash
+git clone https://github.com/mgalihpp/toko-online.git
+cd toko-online
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+2. Install dependencies
+```bash
+pnpm install
 ```
 
-## Useful Links
+3. Setup environment variables
 
-Learn more about the power of Turborepo:
+Buat file `.env` di root, `apps/web`, dan `apps/server` dengan konfigurasi berikut:
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/trywear"
+DIRECT_URL="postgresql://user:password@localhost:5432/trywear"
+
+# Auth
+BETTER_AUTH_SECRET="your-secret-key"
+
+# Midtrans
+MIDTRANS_SERVER_KEY="your-midtrans-server-key"
+MIDTRANS_CLIENT_KEY="your-midtrans-client-key"
+
+# Uploadthing
+UPLOADTHING_TOKEN="your-uploadthing-token"
+```
+
+4. Generate Prisma client dan jalankan migrasi
+```bash
+cd packages/database
+pnpm db:generate
+pnpm db:migrate
+```
+
+---
+
+## Cara Menjalankan
+
+### Development Mode
+
+Jalankan seluruh aplikasi secara bersamaan:
+```bash
+pnpm dev
+```
+
+Atau jalankan aplikasi tertentu:
+```bash
+# Frontend saja
+pnpm dev --filter=web
+
+# Backend saja
+pnpm dev --filter=server
+```
+
+### Build Production
+
+```bash
+pnpm build
+```
+
+### Akses Aplikasi
+
+| Aplikasi | URL |
+|----------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:4000 |
+| Swagger Docs | http://localhost:4000/api-docs |
+
+---
+
+## Contoh Penggunaan
+
+### Virtual Try-On
+
+1. Buka halaman detail produk pakaian
+2. Klik tombol "Coba Virtual" atau ikon kamera
+3. Izinkan akses webcam
+4. Posisikan tubuh agar terdeteksi oleh sistem
+5. Pakaian akan ditampilkan secara virtual mengikuti postur tubuh
+
+### Checkout Flow
+
+1. Tambahkan produk ke keranjang
+2. Buka halaman keranjang dan lanjutkan ke checkout
+3. Pilih atau tambahkan alamat pengiriman
+4. Terapkan kupon jika tersedia
+5. Pilih metode pembayaran dan selesaikan transaksi
+
+---
+
+## Catatan dan Limitasi
+
+- **Virtual Try-On** saat ini optimal untuk pakaian atasan (kaos, kemeja). Dukungan untuk pakaian bawahan masih dalam pengembangan.
+- Fitur Virtual Try-On memerlukan pencahayaan yang memadai dan latar belakang yang tidak terlalu ramai untuk deteksi pose yang akurat.
+- Payment gateway menggunakan mode sandbox Midtrans untuk development. Konfigurasi production memerlukan kredensial terpisah.
+- Upload gambar produk memerlukan konfigurasi Uploadthing yang valid.
+- Database diasumsikan menggunakan PostgreSQL dengan koneksi pooling (Prisma Accelerate compatible).
+
+---
+
+## Rencana Pengembangan
+
+- [ ] Memperbagus Virtual Try-On untuk pakaian atas
+- [ ] Integrasi multiple payment gateway
+- [ ] Progressive Web App (PWA) support
+- [ ] Multi-language support
+- [ ] Real-time notification dengan WebSocket
+- [ ] Integrasi ekspedisi pengiriman (JNE, J&T, SiCepat)
+- [ ] Mobile app dengan React Native
+
+---
+
+## Lisensi
+
+Proyek ini bersifat privat dan tidak untuk didistribusikan secara publik tanpa izin.
+
+---
+
+## Kontributor
+
+Dikembangkan oleh tim NeuralLift.
