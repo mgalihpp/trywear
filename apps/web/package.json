@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@mediapipe/camera_utils": "^0.3.1675466862",
     "@mediapipe/pose": "^0.5.1675469404",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^7.2.0",
     "@react-email/render": "^1.4.0",
     "@repo/midtrans": "workspace:*",
     "@repo/schema": "workspace:*",
