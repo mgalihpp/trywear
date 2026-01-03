@@ -20,18 +20,18 @@ export function EmailTemplate({ url, type }: EmailTemplateProps) {
       }}
     >
       <h1 style={{ margin: "0 0 12px", fontSize: 20 }}>
-        {type === "verify-email" && "Verify your email"}
+        {type === "verify-email" && "Verifikasi Email Anda"}
         {type === "reset-password" && "Reset Password"}
-        {type === "password-changed" && "Password Successfully Changed"}
+        {type === "password-changed" && "Password Berhasil Diubah"}
       </h1>
 
       <p style={{ margin: "0 0 20px", lineHeight: 1.5 }}>
         {type === "verify-email" &&
-          "Thanks for creating an account. Please verify your email address by clicking the button below."}
+          "Terima kasih telah membuat akun. Silakan verifikasi alamat email Anda dengan mengklik tombol di bawah ini."}
         {type === "reset-password" &&
-          "You requested a password reset. Click the button below to choose a new password."}
+          "Anda meminta reset password. Klik tombol di bawah ini untuk memilih password baru."}
         {type === "password-changed" &&
-          "Your password has been successfully changed. If you made this change, no further action is required."}
+          "Password Anda telah berhasil diubah. Jika Anda melakukan perubahan ini, tidak ada tindakan lebih lanjut yang diperlukan."}
       </p>
 
       {type === "password-changed" && (
@@ -46,16 +46,16 @@ export function EmailTemplate({ url, type }: EmailTemplateProps) {
             }}
           >
             <p style={{ margin: 0, fontSize: 14, color: "#15803d" }}>
-              ✓ Your account is now secure with your new password.
+              ✓ Akun Anda sekarang aman dengan password baru Anda.
             </p>
           </div>
 
           <p style={{ margin: "20px 0 8px", fontSize: 14, fontWeight: 600 }}>
-            If you didn't make this change:
+            Jika Anda tidak melakukan perubahan ini:
           </p>
           <p style={{ margin: "0 0 20px", fontSize: 14, lineHeight: 1.6 }}>
-            Please contact our support team immediately. Someone may have
-            unauthorized access to your account.
+            Silakan hubungi tim dukungan kami segera. Seseorang mungkin memiliki
+            akses tidak sah ke akun Anda.
           </p>
         </>
       )}
@@ -77,13 +77,13 @@ export function EmailTemplate({ url, type }: EmailTemplateProps) {
                 fontWeight: 600,
               }}
             >
-              {type === "verify-email" ? "Verify Email" : "Reset Password"}
+              {type === "verify-email" ? "Verifikasi Email" : "Reset Password"}
             </a>
           </div>
 
           <p style={{ margin: "0 0 8px", fontSize: 14 }}>
-            If the button doesn't work, copy and paste the link below into your
-            browser:
+            Jika tombol tidak berfungsi, salin dan tempel tautan di bawah ini ke
+            browser Anda:
           </p>
           <p
             style={{
@@ -107,13 +107,13 @@ export function EmailTemplate({ url, type }: EmailTemplateProps) {
 
       {type !== "password-changed" && (
         <p style={{ margin: "0 0 8px", fontSize: 14 }}>
-          If you didn't request this, you can safely ignore this email.
+          Jika Anda tidak meminta ini, Anda dapat mengabaikan email ini dengan aman.
         </p>
       )}
 
       <div style={{ marginTop: 28, fontSize: 13, color: "#6b7280" }}>
-        <div>Thanks,</div>
-        <div style={{ fontWeight: 600, marginTop: 6 }}>The Team</div>
+        <div>Terima kasih,</div>
+        <div style={{ fontWeight: 600, marginTop: 6 }}>Tim Kami</div>
       </div>
 
       <hr
@@ -126,8 +126,8 @@ export function EmailTemplate({ url, type }: EmailTemplateProps) {
 
       <p style={{ fontSize: 12, color: "#9ca3af", margin: 0 }}>
         {type === "password-changed"
-          ? "This notification was sent for security purposes."
-          : "This link will expire in 24 hours."}
+          ? "Pemberitahuan ini dikirim untuk tujuan keamanan."
+          : "Tautan ini akan kedaluwarsa dalam 24 jam."}
       </p>
     </div>
   );

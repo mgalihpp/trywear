@@ -15,7 +15,7 @@ export default function ForgotPasswordPage() {
           {/* Logo/Brand */}
           <div className="relative z-10">
             <h2 className="text-3xl font-bold text-white mb-2">TryWear</h2>
-            <p className="text-amber-100">Account recovery made easy</p>
+            <p className="text-amber-100">Pemulihan akun menjadi mudah</p>
           </div>
 
           {/* Hero Image */}
@@ -46,9 +46,9 @@ export default function ForgotPasswordPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white font-medium">Quick Recovery</p>
+                <p className="text-white font-medium">Pemulihan Cepat</p>
                 <p className="text-amber-100 text-sm">
-                  Reset your password in minutes
+                  Reset password Anda dalam hitungan menit
                 </p>
               </div>
             </div>
@@ -67,9 +67,9 @@ export default function ForgotPasswordPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white font-medium">Secure Process</p>
+                <p className="text-white font-medium">Proses Aman</p>
                 <p className="text-amber-100 text-sm">
-                  Your data is always protected
+                  Data Anda selalu terlindungi
                 </p>
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
                 Reset Password
               </h1>
               <p className="text-muted-foreground">
-                We'll help you recover your account
+                Kami akan membantu memulihkan akun Anda
               </p>
             </div>
 
@@ -108,16 +108,16 @@ export default function ForgotPasswordPage() {
                       href="/login"
                       className="text-primary hover:underline font-medium"
                     >
-                      Back to Sign In
+                      Kembali ke Masuk
                     </Link>
                   </div>
                   <div className="text-muted-foreground">
-                    Don't have an account?{" "}
+                    Belum punya akun?{" "}
                     <Link
                       href="/register"
                       className="text-primary hover:underline font-medium"
                     >
-                      Sign up
+                      Daftar
                     </Link>
                   </div>
                 </div>

@@ -72,7 +72,7 @@ export const SecuritySection = () => {
   return (
     <div className="max-w-2xl">
       <h2 className="text-2xl font-bold mb-6">Keamanan Akun</h2>
-      <form onSubmit={handlePasswordSubmit} className="space-y-6">
+      <form onSubmit={handlePasswordSubmit} className="space-y-6" aria-disabled={isPending} >
         <div>
           <Label htmlFor="currentPassword">Password Lama</Label>
           <Input
@@ -143,6 +143,33 @@ export const SecuritySection = () => {
           Ubah Password
         </Button>
       </form>
+
+      <div className="mt-10 pt-6 border-t">
+        <h3 className="text-lg font-semibold mb-4">Lupa atau belum punya password?</h3>
+        <p className="text-muted-foreground text-sm mb-4">
+          Jika Anda mendaftar menggunakan Provider seperti Google atau lupa password Anda saat ini, Anda dapat mengirimkan email untuk membuat password baru.
+        </p>
+        <Button 
+          variant="outline" 
+          onClick={async () => {
+             if (data?.user.email) {
+                toast.promise(
+                  authClient.requestPasswordReset({
+                    email: data.user.email,
+                    redirectTo: `${window.location.origin}/reset-password`,
+                  }),
+                  {
+                    loading: 'Mengirim email reset password...',
+                    success: 'Email reset password berhasil dikirim',
+                    error: (err) => err.message || 'Gagal mengirim email reset password'
+                  }
+                );
+             }
+          }}
+        >
+          Kirim Email Reset Password
+        </Button>
+      </div>
     </div>
   );
 };

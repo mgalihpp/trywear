@@ -22,13 +22,13 @@ export default function ForgotPasswordForm() {
 
     // Validation
     if (!email) {
-      setError("Please enter your email address");
+      setError("Silakan masukkan alamat email Anda");
       setIsLoading(false);
       return;
     }
 
     if (!email.includes("@")) {
-      setError("Please enter a valid email address");
+      setError("Silakan masukkan alamat email yang valid");
       setIsLoading(false);
       return;
     }
@@ -66,16 +66,15 @@ export default function ForgotPasswordForm() {
         </div>
         <div>
           <h3 className="font-semibold text-foreground mb-2">
-            Check Your Email
+            Periksa Email Anda
           </h3>
           <p className="text-sm text-muted-foreground">
-            We've sent a password reset link to{" "}
+            Kami telah mengirimkan tautan reset password ke{" "}
             <span className="font-medium text-foreground">{email}</span>
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
-          The link will expire in 24 hours. If you don't see the email, check
-          your spam folder.
+          Tautan akan kedaluwarsa dalam 24 jam. Jika Anda tidak melihat email tersebut, periksa folder spam Anda.
         </p>
         <Button
           variant="outline"
@@ -85,7 +84,7 @@ export default function ForgotPasswordForm() {
             setEmail("");
           }}
         >
-          Try Another Email
+          Coba Email Lain
         </Button>
       </div>
     );
@@ -104,14 +103,14 @@ export default function ForgotPasswordForm() {
       {/* Email Field */}
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium text-foreground">
-          Email Address
+          Alamat Email
         </label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder="anda@contoh.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="pl-10"
@@ -119,7 +118,7 @@ export default function ForgotPasswordForm() {
           />
         </div>
         <p className="text-xs text-muted-foreground">
-          Enter the email address associated with your account
+          Masukkan alamat email yang terdaftar pada akun Anda
         </p>
       </div>
 
@@ -128,10 +127,10 @@ export default function ForgotPasswordForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Sending...
+            Mengirim...
           </>
         ) : (
-          "Send Reset Link"
+          "Kirim Tautan Reset"
         )}
       </Button>
     </form>

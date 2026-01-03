@@ -67,19 +67,19 @@ export default function ResetPasswordForm() {
 
     // Validation
     if (!formData.password || !formData.confirmPassword) {
-      setError("Please fill in all fields");
+      setError("Silakan isi semua kolom");
       setIsLoading(false);
       return;
     }
 
     if (!passwordValidation.isValid) {
-      setError("Password does not meet requirements");
+      setError("Password tidak memenuhi persyaratan");
       setIsLoading(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError("Password tidak cocok");
       setIsLoading(false);
       return;
     }
@@ -111,15 +111,14 @@ export default function ResetPasswordForm() {
         </div>
         <div>
           <h3 className="font-semibold text-foreground mb-2">
-            Password Reset Successful
+            Reset Password Berhasil
           </h3>
           <p className="text-sm text-muted-foreground">
-            Your password has been successfully reset. You can now sign in with
-            your new password.
+            Password Anda berhasil direset. Anda sekarang dapat masuk dengan password baru Anda.
           </p>
         </div>
         <Button className="w-full" onClick={() => router.push("/login")}>
-          Back to Sign In
+          Kembali ke Halaman Masuk
         </Button>
       </div>
     );
@@ -141,7 +140,7 @@ export default function ResetPasswordForm() {
           htmlFor="password"
           className="text-sm font-medium text-foreground"
         >
-          New Password
+          Password Baru
         </label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -173,7 +172,7 @@ export default function ResetPasswordForm() {
         {formData.password && (
           <div className="space-y-2 mt-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
             <p className="text-xs font-medium text-foreground">
-              Password Requirements:
+              Persyaratan Password:
             </p>
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-xs">
@@ -191,7 +190,7 @@ export default function ResetPasswordForm() {
                       : "text-muted-foreground"
                   }
                 >
-                  Uppercase letter
+                  Huruf besar
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs">
@@ -209,7 +208,7 @@ export default function ResetPasswordForm() {
                       : "text-muted-foreground"
                   }
                 >
-                  Lowercase letter
+                  Huruf kecil
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs">
@@ -227,7 +226,7 @@ export default function ResetPasswordForm() {
                       : "text-muted-foreground"
                   }
                 >
-                  Number
+                  Angka
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs">
@@ -245,7 +244,7 @@ export default function ResetPasswordForm() {
                       : "text-muted-foreground"
                   }
                 >
-                  Special character (!@#$%^&*)
+                  Karakter spesial (!@#$%^&*)
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs">
@@ -263,7 +262,7 @@ export default function ResetPasswordForm() {
                       : "text-muted-foreground"
                   }
                 >
-                  At least 8 characters
+                  Minimal 8 karakter
                 </span>
               </div>
             </div>
@@ -277,7 +276,7 @@ export default function ResetPasswordForm() {
           htmlFor="confirmPassword"
           className="text-sm font-medium text-foreground"
         >
-          Confirm Password
+          Konfirmasi Password
         </label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -316,7 +315,7 @@ export default function ResetPasswordForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Resetting Password...
+            Mereset Password...
           </>
         ) : (
           "Reset Password"

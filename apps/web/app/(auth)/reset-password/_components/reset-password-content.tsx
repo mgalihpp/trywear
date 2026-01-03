@@ -14,17 +14,17 @@ export default function ResetPasswordContent() {
       <main className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
         <div className="w-full max-w-md mx-auto lg:mx-0 text-center">
           <h1 className="text-3xl font-bold text-foreground mb-4">
-            Invalid Password Reset Link
+            Tautan Reset Password Tidak Valid
           </h1>
           <p className="text-muted-foreground mb-6">
-            The password reset link is missing or invalid. Please request a new
-            password reset link.
+            Tautan reset password hilang atau tidak valid. Silakan minta tautan
+            reset password baru.
           </p>
           <Link
             href="/forgot-password"
             className="text-primary hover:underline font-medium"
           >
-            Go to Forgot Password
+            Ke Lupa Password
           </Link>
         </div>
       </main>
@@ -38,10 +38,10 @@ export default function ResetPasswordContent() {
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Create New Password
+              Buat Password Baru
             </h1>
             <p className="text-muted-foreground">
-              Enter a strong password to secure your account
+              Masukkan password yang kuat untuk mengamankan akun Anda
             </p>
           </div>
 
@@ -54,12 +54,12 @@ export default function ResetPasswordContent() {
               {/* Footer Links */}
               <div className="text-center text-sm space-y-2">
                 <p className="text-muted-foreground">
-                  Remember your password?{" "}
+                  Ingat password Anda?{" "}
                   <Link
                     href="/login"
                     className="text-primary hover:underline font-medium"
                   >
-                    Sign In
+                    Masuk
                   </Link>
                 </p>
               </div>
