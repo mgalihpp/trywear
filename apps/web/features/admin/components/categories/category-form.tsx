@@ -1,10 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  type CreateCategoryInput,
-  createCategorySchema,
-} from "@repo/schema/categorySchema";
+import { type CreateCategoryInput, createCategorySchema } from "@repo/schema";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import {

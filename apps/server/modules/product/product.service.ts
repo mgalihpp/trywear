@@ -4,7 +4,7 @@ import type {
   CreateProductReviewInput,
   ListProductQueryInput,
   UpdateProductInput,
-} from "@repo/schema/productSchema";
+} from "@repo/schema";
 import { HTTPSTATUS } from "@/configs/http";
 import { RemoveBgService } from "@/lib/remove-bg";
 import { AppError } from "@/utils/appError";

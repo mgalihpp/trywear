@@ -1,7 +1,4 @@
-import type {
-  CreateAddressInput,
-  UpdateAddressInput,
-} from "@repo/schema/addressSchema";
+import type { CreateAddressInput, UpdateAddressInput } from "@repo/schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";

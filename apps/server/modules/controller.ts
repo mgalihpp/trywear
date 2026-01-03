@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@repo/db";
-import { paramsIdSchema } from "@repo/schema/index";
+import { paramsIdSchema } from "@repo/schema";
 import type { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/asyncHandler";
 import { AppResponse } from "@/utils/appResponse";

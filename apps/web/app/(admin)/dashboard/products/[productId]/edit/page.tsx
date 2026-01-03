@@ -5,7 +5,7 @@ import {
   type UpdateProductInput,
   type UpdateVariantInput,
   updateProductSchema,
-} from "@repo/schema/productSchema";
+} from "@repo/schema";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import {

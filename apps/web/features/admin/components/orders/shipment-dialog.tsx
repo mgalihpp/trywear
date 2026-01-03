@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ShipmentStatus,
-  type ShipmentStatusType,
-} from "@repo/schema/shippingSchema";
+import { ShipmentStatus, type ShipmentStatusType } from "@repo/schema";
 import { Button } from "@repo/ui/components/button";
 import {
   Dialog,

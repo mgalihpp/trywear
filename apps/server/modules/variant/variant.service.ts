@@ -1,8 +1,5 @@
 import type { ProductVariants } from "@repo/db";
-import type {
-  CreateVariantInput,
-  UpdateVariantInput,
-} from "@repo/schema/productSchema";
+import type { CreateVariantInput, UpdateVariantInput } from "@repo/schema";
 import { AppError } from "@/utils/appError";
 import { InventoryService } from "../inventory/inventory.service";
 import { BaseService } from "../service";

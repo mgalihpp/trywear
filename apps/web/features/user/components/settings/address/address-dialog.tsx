@@ -1,5 +1,5 @@
 import type { Addresses } from "@repo/db";
-import { updateAddressSchema } from "@repo/schema/addressSchema";
+import { updateAddressSchema } from "@repo/schema";
 import { Button } from "@repo/ui/components/button";
 import { Checkbox } from "@repo/ui/components/checkbox";
 import { Combobox } from "@repo/ui/components/combobox";

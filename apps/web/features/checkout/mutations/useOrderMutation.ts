@@ -1,4 +1,4 @@
-import type { CreateOrderInput } from "@repo/schema/orderSchema";
+import type { CreateOrderInput } from "@repo/schema";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 

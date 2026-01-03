@@ -1,7 +1,4 @@
-import type {
-  CreateCouponInput,
-  UpdateCouponInput,
-} from "@repo/schema/couponSchema";
+import type { CreateCouponInput, UpdateCouponInput } from "@repo/schema";
 import axios from "@/lib/axios";
 import type { ApiResponse } from "@/types/api";
 import type { Coupon } from "@/types/index";

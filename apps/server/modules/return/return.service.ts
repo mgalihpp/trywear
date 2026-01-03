@@ -1,8 +1,5 @@
 import type { Returns } from "@repo/db";
-import type {
-  CreateReturnInput,
-  UpdateReturnStatusInput,
-} from "@repo/schema/returnSchema";
+import type { CreateReturnInput, UpdateReturnStatusInput } from "@repo/schema";
 import { AppError } from "@/utils/appError";
 import { NotificationService } from "../notification/notification.service";
 import { BaseService } from "../service";

@@ -1,8 +1,5 @@
 import type { Notifications } from "@repo/db";
-import {
-  listNotificationsQuerySchema,
-  markAsReadSchema,
-} from "@repo/schema/notificationSchema";
+import { listNotificationsQuerySchema, markAsReadSchema } from "@repo/schema";
 import type { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/asyncHandler";
 import { AppError } from "@/utils/appError";

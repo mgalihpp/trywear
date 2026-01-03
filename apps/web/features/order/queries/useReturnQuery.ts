@@ -1,7 +1,4 @@
-import type {
-  CreateReturnInput,
-  UpdateReturnStatusInput,
-} from "@repo/schema/returnSchema";
+import type { CreateReturnInput, UpdateReturnStatusInput } from "@repo/schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 

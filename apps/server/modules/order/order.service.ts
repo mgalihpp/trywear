@@ -1,10 +1,10 @@
 import type { Orders } from "@repo/db";
-import type { CreateSnapInput } from "@repo/schema/midtransSchema";
 import type {
   CreateOrderInput,
+  CreateSnapInput,
+  ShipmentStatusType,
   UpdateOrderStatusInput,
-} from "@repo/schema/orderSchema";
-import type { ShipmentStatusType } from "@repo/schema/shippingSchema";
+} from "@repo/schema";
 import appConfig from "@/configs/appConfig";
 import { snap } from "@/lib/midtrans";
 import { AppError } from "@/utils/appError";

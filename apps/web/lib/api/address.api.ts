@@ -1,8 +1,5 @@
 import type { Addresses } from "@repo/db";
-import type {
-  CreateAddressInput,
-  UpdateAddressInput,
-} from "@repo/schema/addressSchema";
+import type { CreateAddressInput, UpdateAddressInput } from "@repo/schema";
 import axios from "@/lib/axios";
 import type { ApiResponse } from "@/types/api";
 

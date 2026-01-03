@@ -1,8 +1,5 @@
 import type { Shipments } from "@repo/db";
-import type {
-  CreateShipmentsInput,
-  UpdateShipmetsSchema,
-} from "@repo/schema/shippingSchema";
+import type { CreateShipmentsInput, UpdateShipmetsSchema } from "@repo/schema";
 import { AppError } from "@/utils/appError";
 import { BaseService } from "../service";
 

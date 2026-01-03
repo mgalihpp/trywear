@@ -1,5 +1,5 @@
 import type { Reviews } from "@repo/db";
-import { paramsIdSchema } from "@repo/schema/index";
+import { paramsIdSchema } from "@repo/schema";
 import type { Request, Response } from "express";
 import { z } from "zod";
 import { asyncHandler } from "@/middleware/asyncHandler";

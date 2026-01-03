@@ -1,7 +1,4 @@
-import type {
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from "@repo/schema/categorySchema";
+import type { CreateCategoryInput, UpdateCategoryInput } from "@repo/schema";
 import axios from "@/lib/axios";
 import type { ApiResponse } from "@/types/api";
 import type { CategoryWithRelations } from "@/types/index";

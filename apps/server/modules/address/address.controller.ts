@@ -1,9 +1,9 @@
 import type { Addresses } from "@repo/db";
-import { paramsIdSchema } from "@repo/schema";
 import {
   createAddressSchema,
+  paramsIdSchema,
   updateAddressSchema,
-} from "@repo/schema/addressSchema";
+} from "@repo/schema";
 import type { Request, Response } from "express";
 import { HTTPSTATUS } from "@/configs/http";
 import { asyncHandler } from "@/middleware/asyncHandler";

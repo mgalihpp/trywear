@@ -3,7 +3,7 @@ import {
   createReturnSchema,
   returnIdSchema,
   updateReturnStatusSchema,
-} from "@repo/schema/returnSchema";
+} from "@repo/schema";
 import type { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/asyncHandler";
 import { AppResponse } from "@/utils/appResponse";

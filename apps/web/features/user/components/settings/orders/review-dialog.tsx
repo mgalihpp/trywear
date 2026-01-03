@@ -2,7 +2,7 @@ import type { Product } from "@repo/db";
 import {
   type CreateProductReviewInput,
   createProductReviewSchema,
-} from "@repo/schema/productSchema";
+} from "@repo/schema";
 import { Button } from "@repo/ui/components/button";
 import {
   Dialog,

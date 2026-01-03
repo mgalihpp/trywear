@@ -1,7 +1,4 @@
-import type {
-  CreateCouponInput,
-  UpdateCouponInput,
-} from "@repo/schema/couponSchema";
+import type { CreateCouponInput, UpdateCouponInput } from "@repo/schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/lib/api";

@@ -1,10 +1,10 @@
 import type { Orders } from "@repo/db";
+import type { ShipmentStatusType } from "@repo/schema";
 import {
   createOrderSchema,
   orderIdSchema,
   updateOrderStatusSchema,
-} from "@repo/schema/orderSchema";
-import type { ShipmentStatusType } from "@repo/schema/shippingSchema";
+} from "@repo/schema";
 import type { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/asyncHandler";
 import { AppResponse } from "@/utils/appResponse";

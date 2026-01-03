@@ -1,4 +1,4 @@
-import type { ShipmentStatusType } from "@repo/schema/shippingSchema";
+import type { ShipmentStatusType } from "@repo/schema";
 import type { ShippingMethod } from "@/types/index";
 
 export const SHIPPING_METHODS: ShippingMethod[] = [

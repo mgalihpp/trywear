@@ -1,14 +1,14 @@
 import type { Product } from "@repo/db";
-import { paramsIdSchema } from "@repo/schema";
 import {
   createProductImagesSchema,
   createProductReviewSchema,
   createProductSchema,
   imageIdParams,
   listProductsQuery,
+  paramsIdSchema,
   productIdParams,
   updateProductSchema,
-} from "@repo/schema/productSchema";
+} from "@repo/schema";
 import type { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/asyncHandler";
 import { AppResponse } from "@/utils/appResponse";

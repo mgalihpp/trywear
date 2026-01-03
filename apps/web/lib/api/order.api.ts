@@ -1,8 +1,5 @@
 import type { Orders, Shipments } from "@repo/db";
-import type {
-  CreateOrderInput,
-  UpdateOrderStatusInput,
-} from "@repo/schema/orderSchema";
+import type { CreateOrderInput, UpdateOrderStatusInput } from "@repo/schema";
 import axios from "@/lib/axios";
 import type { ApiResponse, SnapPayload } from "@/types/api";
 import type { OrderWithFullRelations, OrderWithRelations } from "@/types/index";

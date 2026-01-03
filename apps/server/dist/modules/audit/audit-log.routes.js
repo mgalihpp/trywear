@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const audit_log_controller_1 = require("./audit-log.controller");
+const router = (0, express_1.Router)();
+const controller = new audit_log_controller_1.AuditLogController();
+router.get("/", controller.getAuditLogs);
+router.get("/actions", controller.getActions);
+router.get("/:id", controller.getAuditLogById);
+exports.default = router;

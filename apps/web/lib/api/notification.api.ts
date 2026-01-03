@@ -1,5 +1,5 @@
 import type { Notifications } from "@repo/db";
-import type { NotificationType } from "@repo/schema/notificationSchema";
+import type { NotificationType } from "@repo/schema";
 import axios from "@/lib/axios";
 import type { ApiResponse } from "@/types/api";
 

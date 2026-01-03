@@ -3,7 +3,7 @@ import type {
   ListNotificationsQuery,
   NotificationPayload,
   NotificationType,
-} from "@repo/schema/notificationSchema";
+} from "@repo/schema";
 import { BaseService } from "../service";
 
 /**

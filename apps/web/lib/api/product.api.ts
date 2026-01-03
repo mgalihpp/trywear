@@ -6,7 +6,7 @@ import type {
   CreateVariantInput,
   UpdateProductInput,
   UpdateVariantInput,
-} from "@repo/schema/productSchema";
+} from "@repo/schema";
 import axios from "@/lib/axios";
 import type { ApiResponse } from "@/types/api";
 import type { ProductWithRelations } from "@/types/index";

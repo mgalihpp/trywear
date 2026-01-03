@@ -1,4 +1,4 @@
-import type { UpdateOrderStatusInput } from "@repo/schema/orderSchema";
+import type { UpdateOrderStatusInput } from "@repo/schema";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 

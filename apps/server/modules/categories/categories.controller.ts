@@ -1,9 +1,9 @@
 import type { Categories } from "@repo/db";
-import { paramsIdSchema } from "@repo/schema";
 import {
   createCategorySchema,
+  paramsIdSchema,
   updateCategorySchema,
-} from "@repo/schema/categorySchema";
+} from "@repo/schema";
 import type { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/asyncHandler";
 import { AppResponse } from "@/utils/appResponse";

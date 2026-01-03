@@ -1,7 +1,4 @@
-import type {
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from "@repo/schema/categorySchema";
+import type { CreateCategoryInput, UpdateCategoryInput } from "@repo/schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { categoryApi } from "@/lib/api/category.api";

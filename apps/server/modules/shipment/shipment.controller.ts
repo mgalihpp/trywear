@@ -3,7 +3,7 @@ import {
   createShipmentsSchema,
   shipmentIdParams,
   updateShipmetsSchema,
-} from "@repo/schema/shippingSchema";
+} from "@repo/schema";
 import type { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/asyncHandler";
 import { AppResponse } from "@/utils/appResponse";

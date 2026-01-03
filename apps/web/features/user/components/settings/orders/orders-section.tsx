@@ -1,5 +1,5 @@
 import type { Product, Returns } from "@repo/db";
-import type { ReturnStatusType } from "@repo/schema/returnSchema";
+import type { ReturnStatusType } from "@repo/schema";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Skeleton } from "@repo/ui/components/skeleton";

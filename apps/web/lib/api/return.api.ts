@@ -1,8 +1,5 @@
 import type { Orders, ReturnItems, Returns } from "@repo/db";
-import type {
-  CreateReturnInput,
-  UpdateReturnStatusInput,
-} from "@repo/schema/returnSchema";
+import type { CreateReturnInput, UpdateReturnStatusInput } from "@repo/schema";
 import axios from "@/lib/axios";
 import type { ApiResponse } from "@/types/api";
 

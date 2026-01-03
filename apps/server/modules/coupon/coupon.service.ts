@@ -1,8 +1,5 @@
 import type { Coupons } from "@repo/db";
-import type {
-  CreateCouponInput,
-  UpdateCouponInput,
-} from "@repo/schema/couponSchema";
+import type { CreateCouponInput, UpdateCouponInput } from "@repo/schema";
 import { AppError } from "@/utils/appError";
 import { BaseService } from "../service";
 

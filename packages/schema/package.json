@@ -1,9 +1,16 @@
 {
   "name": "@repo/schema",
   "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "exports": {
-    "./*": "./src/*.ts",
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

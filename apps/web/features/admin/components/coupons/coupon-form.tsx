@@ -1,10 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  type CreateCouponInput,
-  createCouponSchema,
-} from "@repo/schema/couponSchema";
+import { type CreateCouponInput, createCouponSchema } from "@repo/schema";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Calendar } from "@repo/ui/components/calendar";
