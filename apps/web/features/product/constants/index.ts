@@ -1,37 +1,37 @@
 export const SORT_OPTIONS = [
   {
-    name: "None",
+    name: "Default",
     value: "none",
   },
   {
-    name: "Newest",
+    name: "Terbaru",
     value: "newest",
   },
   {
-    name: "Price: Low to High",
+    name: "Harga: Rendah ke Tinggi",
     value: "price_asc",
   },
   {
-    name: "Price: High to Low",
+    name: "Harga: Tinggi ke Rendah",
     value: "price_desc",
   },
 ] as const;
 
 export const PRICE_FILTERS = {
   id: "price",
-  name: "Price",
+  name: "Harga",
   option: [
     {
-      value: [0, 1000000],
+      value: [0, 999999999],
       label: "Semua harga",
     },
     {
-      value: [0, 200000],
-      label: "Dibawah Rp 200.000",
+      value: [0, 1000000],
+      label: "Dibawah Rp 1.000.000",
     },
     {
-      value: [0, 500000],
-      label: "Dibawah Rp 500.000",
+      value: [0, 5000000],
+      label: "Dibawah Rp 5.000.000",
     },
     // custom option defined in jsx
   ],

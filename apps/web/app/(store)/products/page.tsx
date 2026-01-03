@@ -239,7 +239,7 @@ export default function ProductsPage() {
               <div className="flex w-full items-center gap-3 border border-gray-200 rounded-md px-2 py-1">
                 <Input
                   className="border-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                  placeholder="Search products..."
+                  placeholder="Cari produk..."
                   value={filter.query}
                   onChange={(e) =>
                     setFilter((prev: any) => ({
@@ -300,11 +300,11 @@ export default function ProductsPage() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                  <BreadcrumbLink href="/">Beranda</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Products</BreadcrumbPage>
+                  <BreadcrumbPage>Produk</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -313,7 +313,7 @@ export default function ProductsPage() {
               {/* Sort Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1 border px-3 py-1 rounded-md hover:bg-gray-50 text-sm font-medium">
-                  Sort
+                  Urutkan
                   <ChevronDown className="size-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="p-0">

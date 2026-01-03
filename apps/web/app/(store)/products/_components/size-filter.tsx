@@ -31,13 +31,13 @@ const FilterSize: React.FC<FilterSizeProps> = ({
     <Accordion type="single" collapsible>
       <AccordionItem value="size">
         <AccordionTrigger className="hover:no-underline">
-          Sizes
+          Ukuran
         </AccordionTrigger>
         <AccordionContent className="pt-6">
           {isLoading ? (
             <FilterSizeSkeleton />
           ) : !sizes || sizes.length === 0 ? (
-            <p className="text-xs text-grey-3">No sizes found.</p>
+            <p className="text-xs text-grey-3">Ukuran tidak ditemukan.</p>
           ) : (
             <ul className="space-y-4">
               {sizes.map((size: string | undefined | null, index) => (

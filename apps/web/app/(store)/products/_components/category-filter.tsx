@@ -26,13 +26,13 @@ const FilterCategory: React.FC<FilterCategoryProps> = ({
     <Accordion type="single" collapsible>
       <AccordionItem value="category">
         <AccordionTrigger className="hover:no-underline">
-          Categories
+          Kategori
         </AccordionTrigger>
         <AccordionContent className="pt-6">
           {isLoading ? (
             <FilterCategorySkeleton />
           ) : !categories || categories.length === 0 ? (
-            <p className="text-xs text-grey-3">No categories found.</p>
+            <p className="text-xs text-grey-3">Kategori tidak ditemukan.</p>
           ) : (
             <ul className="space-y-4">
               <li key={"all"}>
@@ -53,7 +53,7 @@ const FilterCategory: React.FC<FilterCategoryProps> = ({
                     }));
                   }}
                 >
-                  All
+                  Semua
                 </button>
               </li>
               {categories.map((category) => (

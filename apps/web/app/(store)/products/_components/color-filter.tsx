@@ -31,13 +31,13 @@ const FilterColor: React.FC<FilterColorProps> = ({
     <Accordion type="single" collapsible>
       <AccordionItem value="color">
         <AccordionTrigger className="hover:no-underline">
-          Colors
+          Warna
         </AccordionTrigger>
         <AccordionContent className="pt-6">
           {isLoading ? (
             <FilterColorSkeleton />
           ) : !colors || colors.length === 0 ? (
-            <p className="text-xs text-grey-3">No colors found.</p>
+            <p className="text-xs text-grey-3">Warna tidak ditemukan.</p>
           ) : (
             <ul className="space-y-4">
               {colors.map((color: string | undefined | null, index) => (

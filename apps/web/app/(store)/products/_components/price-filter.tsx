@@ -31,7 +31,7 @@ const FilterPrice: React.FC<FilterPriceProps> = ({
     filter.price.range,
   );
 
-  const debouncedRange = useDebounce(tempRange, 500);
+  const debouncedRange = useDebounce(tempRange, 1500);
 
   useEffect(() => {
     if (filter.price.isCustom) {
@@ -108,7 +108,7 @@ const FilterPrice: React.FC<FilterPriceProps> = ({
                   htmlFor={`price-${PRICE_FILTERS.option.length}`}
                   className="ml-3 text-sm text-gray-600"
                 >
-                  Custom
+                  Kustom
                 </label>
               </div>
               <div className="flex justify-between">
