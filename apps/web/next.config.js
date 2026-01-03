@@ -8,9 +8,16 @@ const nextConfig = {
       },
     ],
   },
-  optimizePackageImports: [
-    "@prisma/client",
-  ],
+  // optimizePackageImports: [
+  //   "@prisma/client",
+  // ],
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins = [...config.plugins, new PrismaPlugin()];
+    }
+
+    return config;
+  },
 };
 
 export default nextConfig;
