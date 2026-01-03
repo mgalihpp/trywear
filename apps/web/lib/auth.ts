@@ -1,9 +1,7 @@
 import { db } from "@repo/db";
-import { getBaseUrl } from "@repo/ui/lib/utils";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins";
-import type { NextRequest } from "next/server";
 import { sendEmail } from "@/actions/send-email";
 
 export const auth = betterAuth({
