@@ -102,89 +102,87 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
+        </div>
 
-          </div>
+        <div className="flex items-center justify-center p-4 lg:p-12">
+          <div className="w-full max-w-md">
+            {/* Header */}
+            <div className="mb-8 text-center">
+              <h1 className="text-3xl font-bold text-foreground mb-2">
+                Selamat Datang Kembali
+              </h1>
+              <p className="text-muted-foreground">
+                Masuk ke akun TryWear Anda
+              </p>
+            </div>
 
-          <div className="flex items-center justify-center p-4 lg:p-12">
-            <div className="w-full max-w-md">
-              {/* Header */}
-              <div className="mb-8 text-center">
-                <h1 className="text-3xl font-bold text-foreground mb-2">
-                  Selamat Datang Kembali
-                </h1>
-                <p className="text-muted-foreground">
-                  Masuk ke akun TryWear Anda
-                </p>
-              </div>
+            {/* Login Card */}
+            <Card className="border-0 shadow-none">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-2xl">Masuk</CardTitle>
+                <CardDescription>
+                  Masukkan kredensial Anda untuk mengakses akun
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Login Form */}
+                <LoginForm />
 
-              {/* Login Card */}
-              <Card className="border-0 shadow-none">
-                <CardHeader className="space-y-1">
-                  <CardTitle className="text-2xl">Masuk</CardTitle>
-                  <CardDescription>
-                    Masukkan kredensial Anda untuk mengakses akun
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Login Form */}
-                  <LoginForm />
-
-                  {/* Divider */}
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-card text-muted-foreground">
-                        Atau lanjutkan dengan
-                      </span>
-                    </div>
+                {/* Divider */}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border"></div>
                   </div>
-
-                  {/* Social Login */}
-                  <SocialLoginButtons />
-
-                  {/* Footer Links */}
-                  <div className="space-y-3 text-sm">
-                    <div className="text-center text-muted-foreground">
-                      Belum punya akun?{" "}
-                      <Link
-                        href="/register"
-                        className="text-primary hover:underline font-medium"
-                      >
-                        Daftar
-                      </Link>
-                    </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-card text-muted-foreground">
+                      Atau lanjutkan dengan
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Security Notice */}
-              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg">
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 text-blue-600 dark:text-blue-400">
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
-                    Kami tidak pernah membagikan password Anda. Akun Anda
-                    dilindungi dengan enkripsi standar industri.
-                  </p>
                 </div>
+
+                {/* Social Login */}
+                <SocialLoginButtons />
+
+                {/* Footer Links */}
+                <div className="space-y-3 text-sm">
+                  <div className="text-center text-muted-foreground">
+                    Belum punya akun?{" "}
+                    <Link
+                      href="/register"
+                      className="text-primary hover:underline font-medium"
+                    >
+                      Daftar
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Security Notice */}
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg">
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 text-blue-600 dark:text-blue-400">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  Kami tidak pernah membagikan password Anda. Akun Anda
+                  dilindungi dengan enkripsi standar industri.
+                </p>
               </div>
             </div>
           </div>
         </div>
-      
+      </div>
     </main>
   );
 }
