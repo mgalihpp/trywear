@@ -211,7 +211,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/products">Products</BreadcrumbLink>
+                <BreadcrumbLink href="/products">Produk</BreadcrumbLink>
               </BreadcrumbItem>
 
               <BreadcrumbSeparator />
