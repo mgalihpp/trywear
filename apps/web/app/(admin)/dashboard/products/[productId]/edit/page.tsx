@@ -47,6 +47,7 @@ import type z from "zod";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
 import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
 import { DeleteProductDialog } from "@/features/admin/components/products/delete-product-dialog";
+import { isNotFoundError } from "@/features/admin/utils";
 import { useProductMediaUpload } from "@/features/upload/hooks/useProductMediaUpload";
 import { api } from "@/lib/api";
 import type { VariantCombination, VariantOption } from "@/types/index";
@@ -77,7 +78,12 @@ export default function EditProductPage() {
   } = useProductMediaUpload();
 
   // Fetch product data first
-  const { data: productData, isPending, isError } = useQuery({
+  const {
+    data: productData,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["product", productId],
     queryFn: () => api.product.getById(productId as string),
   });
@@ -307,6 +313,16 @@ export default function EditProductPage() {
   }
 
   if (isError) {
+    if (isNotFoundError(error)) {
+      return (
+        <NotFoundAlert
+          title="Produk Tidak Ditemukan"
+          description="Produk yang Anda cari tidak dapat ditemukan."
+          backUrl="/dashboard/products"
+        />
+      );
+    }
+
     return (
       <div className="p-8">
         <ErrorAlert

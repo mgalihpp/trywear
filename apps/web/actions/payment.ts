@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@repo/db";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 /**
  * Membatalkan order beserta pembayarannya.
@@ -16,10 +18,13 @@ import { db } from "@repo/db";
  */
 export async function cancelOrder(order_id: string) {
   if (!order_id) throw new Error("order_id is required");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   try {
     const order = await db.orders.findFirst({
-      where: { id: order_id },
+      where: { id: order_id, user_id: session?.user.id },
       include: {
         order_items: {
           include: {

@@ -6,11 +6,12 @@ import { CouponForm } from "@/features/admin/components/coupons/coupon-form";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
 import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
 import { useCoupon } from "@/features/admin/queries/useCouponQuery";
+import { isNotFoundError } from "@/features/admin/utils";
 
 export default function EditCouponPage() {
   const params = useParams();
   const id = params.id as string;
-  const { data: coupon, isPending, isError } = useCoupon(id);
+  const { data: coupon, isPending, isError, error } = useCoupon(id);
 
   if (isPending) {
     return (
@@ -27,6 +28,16 @@ export default function EditCouponPage() {
   }
 
   if (isError) {
+    if (isNotFoundError(error)) {
+      return (
+        <NotFoundAlert
+          title="Kupon Tidak Ditemukan"
+          description="Kupon yang Anda cari tidak dapat ditemukan."
+          backUrl="/dashboard/coupons"
+        />
+      );
+    }
+
     return (
       <div className="p-8">
         <ErrorAlert

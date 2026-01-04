@@ -21,7 +21,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
 import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
-import { formatCurrency, formatDate } from "@/features/admin/utils";
+import { formatCurrency, formatDate, isNotFoundError } from "@/features/admin/utils";
 import { api } from "@/lib/api";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
@@ -56,7 +56,7 @@ export default function CustomerDetailPage() {
     status: customer.status,
   });
 
-  const { data: customerData, isLoading, isError } = useQuery({
+  const { data: customerData, isLoading, isError, error } = useQuery({
     queryKey: ["customer", customerId],
     queryFn: () => api.customer.getById(customerId as string),
     enabled: !!customerId,
@@ -197,6 +197,16 @@ export default function CustomerDetailPage() {
   }
 
   if (isError) {
+    if (isNotFoundError(error)) {
+      return (
+        <NotFoundAlert
+          title="Pelanggan Tidak Ditemukan"
+          description="Pelanggan yang Anda cari tidak dapat ditemukan."
+          backUrl="/dashboard/customers"
+        />
+      );
+    }
+
     return (
       <div className="p-8">
         <ErrorAlert

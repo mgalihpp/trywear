@@ -6,11 +6,12 @@ import { CategoryForm } from "@/features/admin/components/categories/category-fo
 import { ErrorAlert } from "@/features/admin/components/error-alert";
 import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
 import { useCategory } from "@/features/admin/queries/useCategoryQuery";
+import { isNotFoundError } from "@/features/admin/utils";
 
 export default function EditCategoryPage() {
   const params = useParams();
   const id = Number(params.id);
-  const { data: category, isPending, isError } = useCategory(id);
+  const { data: category, isPending, isError, error } = useCategory(id);
 
   if (isPending) {
     return (
@@ -29,6 +30,16 @@ export default function EditCategoryPage() {
   }
 
   if (isError) {
+    if (isNotFoundError(error)) {
+      return (
+        <NotFoundAlert
+          title="Kategori tidak ditemukan"
+          description="Kategori yang Anda cari tidak dapat ditemukan atau telah dihapus."
+          backUrl="/dashboard/categories"
+        />
+      );
+    }
+
     return (
       <div className="p-8">
         <ErrorAlert

@@ -27,7 +27,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
 import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
-import { formatCurrency, formatDate } from "@/features/admin/utils";
+import { formatCurrency, formatDate, isNotFoundError } from "@/features/admin/utils";
 import {
   SHIPPING_METHODS,
   statusColors,
@@ -280,7 +280,9 @@ export default function OrderDetailPage() {
   const params = useParams();
   const { orderId } = params;
 
-  const { data: orderData, isPending, isError } = useOrder(orderId as string);
+  const { data: orderData, isPending, isError, error } = useOrder(
+    orderId as string,
+  );
   const updateOrderStatusMutation = useUpdateOrderStatus();
   const [newMethod, setNewMethod] = useState<number | null>(
     orderData?.shipments?.[0]?.shipment_method_id ?? null,
@@ -374,6 +376,16 @@ export default function OrderDetailPage() {
   }
 
   if (isError) {
+    if (isNotFoundError(error)) {
+      return (
+        <NotFoundAlert
+          title="Pesanan Tidak Ditemukan"
+          description="Pesanan yang Anda cari tidak dapat ditemukan."
+          backUrl="/dashboard/orders"
+        />
+      );
+    }
+
     return (
       <div className="p-8">
         <ErrorAlert

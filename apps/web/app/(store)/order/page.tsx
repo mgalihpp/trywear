@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { cancelOrder, updatePaymentStatus } from "@/actions/payment";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
+import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
 import {
   AddressCard,
   OrderItemsCard,
@@ -69,6 +70,7 @@ const OrderDetails = () => {
     isLoading,
     isError,
     isOrderError,
+    orderError,
     isPaymentError,
     paymentError,
   } = useOrderWithPayment(order_id as string);
@@ -251,7 +253,8 @@ const OrderDetails = () => {
       !order_id ||
       hasAutoCancelled ||
       isCancelledPayment ||
-      isOrderStatusCancelled
+      isOrderStatusCancelled ||
+      !isOrderError
     )
       return;
 
@@ -297,6 +300,22 @@ const OrderDetails = () => {
   }
 
   if (isOrderError) {
+    // Check if it's a 404 Not Found error
+    const axiosError = orderError as any;
+    const is404 =
+      axiosError?.response?.status === 404 ||
+      axiosError?.response?.data?.errorCode === "RESOURCE_NOT_FOUND";
+
+    if (is404) {
+      return (
+        <NotFoundAlert
+          title="Pesanan Tidak Ditemukan"
+          description="Pesanan yang Anda cari tidak dapat ditemukan. Mungkin sudah dihapus atau ID pesanan tidak valid."
+          backUrl="/user/settings/orders"
+        />
+      );
+    }
+
     return (
       <ErrorAlert
         title="Terjadi Kesalahan"

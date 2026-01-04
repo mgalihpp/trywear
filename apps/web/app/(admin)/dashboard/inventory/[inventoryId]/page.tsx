@@ -56,7 +56,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
 import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
-import { formatCurrency } from "@/features/admin/utils";
+import { formatCurrency, isNotFoundError } from "@/features/admin/utils";
 import { api } from "@/lib/api";
 
 type StockStatus = "optimal" | "low" | "out";
@@ -95,6 +95,7 @@ export default function InventoryDetailPage() {
     data: inventory,
     isLoading: inventoryLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["inventory", variantId],
     queryFn: () => api.inventory.getById(variantId),
@@ -218,6 +219,16 @@ export default function InventoryDetailPage() {
   }
 
   if (isError) {
+    if (isNotFoundError(error)) {
+      return (
+        <NotFoundAlert
+          title="Inventaris Tidak Ditemukan"
+          description="Data inventaris yang Anda cari tidak dapat ditemukan."
+          backUrl="/dashboard/inventory"
+        />
+      );
+    }
+
     return (
       <div className="p-8">
         <ErrorAlert

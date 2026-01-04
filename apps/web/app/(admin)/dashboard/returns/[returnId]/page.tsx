@@ -27,6 +27,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ErrorAlert } from "@/features/admin/components/error-alert";
 import { NotFoundAlert } from "@/features/admin/components/not-found-alert";
+import { isNotFoundError } from "@/features/admin/utils";
 import {
   useReturn,
   useUpdateReturnStatus,
@@ -62,7 +63,7 @@ export default function ReturnDetailPage() {
   const returnId = params.returnId as string;
   const qc = useQueryClient();
 
-  const { data: returnData, isPending, isError, refetch } = useReturn(returnId);
+  const { data: returnData, isPending, isError, error, refetch } = useReturn(returnId);
   const updateStatusMutation = useUpdateReturnStatus();
 
   const [newStatus, setNewStatus] = useState<ReturnStatusType | "">(
@@ -118,6 +119,16 @@ export default function ReturnDetailPage() {
   }
 
   if (isError) {
+    if (isNotFoundError(error)) {
+      return (
+        <NotFoundAlert
+          title="Pengembalian Tidak Ditemukan"
+          description="Data pengembalian yang Anda cari tidak dapat ditemukan."
+          backUrl="/dashboard/returns"
+        />
+      );
+    }
+
     return (
       <div className="p-8">
         <ErrorAlert

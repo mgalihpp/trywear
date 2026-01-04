@@ -69,3 +69,19 @@ export const formatDate = (input?: string | Date | null): string => {
     })
     .replace("pukul ", "");
 };
+
+export const isNotFoundError = (error: any): boolean => {
+  if (!error) return false;
+
+  // Check for specific error code
+  if (error?.response?.data?.errorCode === "RESOURCE_NOT_FOUND") {
+    return true;
+  }
+
+  // Check for 404 status
+  if (error?.response?.status === 404) {
+    return true;
+  }
+
+  return false;
+};
