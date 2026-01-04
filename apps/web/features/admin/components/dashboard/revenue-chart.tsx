@@ -52,7 +52,7 @@ export function RevenueChart() {
 
   const chartData = data.revenueByMonth.map((item) => ({
     ...item,
-    revenue: item.revenue / 100, // Convert from cents
+    revenue: item.revenue, // Already in Rupiah from API
   }));
 
   // Calculate max value for better Y-axis scaling
@@ -104,7 +104,7 @@ export function RevenueChart() {
             />
             <Tooltip
               formatter={(value: number) => [
-                formatCurrency(value * 100),
+                formatCurrency(value),
                 "Pendapatan",
               ]}
               contentStyle={{

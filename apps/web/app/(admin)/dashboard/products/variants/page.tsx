@@ -10,15 +10,15 @@ export default function VariantsPage() {
     <div className="p-0 md:p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Variants</h1>
+          <h1 className="text-3xl font-bold text-foreground">Varian</h1>
           <p className="text-muted-foreground mt-2">
-            Manage product variants and options
+            Manejemen varian produk
           </p>
         </div>
         <Link href="/dashboard/variants/create">
           <Button className="gap-2">
             <Plus className="w-4 h-4" />
-            Add Variant
+            Tambah Varian
           </Button>
         </Link>
       </div>

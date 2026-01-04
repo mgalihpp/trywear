@@ -10,15 +10,15 @@ export default function CategoriesPage() {
     <div className="p-0 md:p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Categories</h1>
+          <h1 className="text-3xl font-bold text-foreground">Kategori</h1>
           <p className="text-muted-foreground mt-2">
-            Manage product categories
+            Manejemen kategori produk
           </p>
         </div>
         <Link href="/dashboard/categories/create">
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
-            Add Category
+            Tambah Kategori
           </Button>
         </Link>
       </div>
