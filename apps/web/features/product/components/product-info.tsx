@@ -250,7 +250,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           </span>
         </div>
 
-        <div className="flex items-baseline gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-3">
           <p className="text-3xl font-bold">
             {formatCurrency(
               Number(product.price_cents) +

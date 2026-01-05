@@ -2,6 +2,7 @@
 
 import { db } from "@repo/db";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
 export async function getOrCreateWishlist() {
@@ -65,6 +66,14 @@ type AddToWishlistParams = {
 };
 
 export async function addItemToWishlist({ variant_id }: AddToWishlistParams) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   if (!variant_id) return null;
 
   try {

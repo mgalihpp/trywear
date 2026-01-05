@@ -2,6 +2,7 @@
 
 import { db } from "@repo/db";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
 /**
@@ -77,6 +78,14 @@ type AddToCartParams = {
  * @returns CartItem yang baru / yang sudah diupdate, atau null jika gagal
  */
 export async function addItemToCart({ variant_id, quantity }: AddToCartParams) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   if (!variant_id || quantity < 1) return null;
 
   try {
