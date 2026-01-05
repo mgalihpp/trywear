@@ -188,7 +188,7 @@ export default function CreateProductPage() {
   );
 
   return (
-    <div className="p-0 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <div className="max-md:p-4">
         <h1 className="text-3xl font-bold text-foreground">Tambah Produk</h1>
         <p className="text-muted-foreground mt-2">

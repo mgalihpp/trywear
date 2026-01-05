@@ -135,7 +135,7 @@ const handlePrintLabel = (orderData: any) => {
 
 function OrderDetailSkeleton() {
   return (
-    <div className="p-0 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <div>
         <Skeleton className="h-9 w-48" />
         <Skeleton className="h-5 w-64 mt-2" />
@@ -407,7 +407,7 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <div className="p-0 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Detail Pesanan</h1>
         <p className="text-muted-foreground mt-2">

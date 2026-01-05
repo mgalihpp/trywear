@@ -1,77 +1,63 @@
-import { Headphones, Package, RefreshCw, Shield } from "lucide-react";
+import { Headphones, RefreshCw, Shield, Star } from "lucide-react";
 
 const features = [
   {
-    icon: Package,
-    title: "Free Shipping",
-    description: "Gratis ongkir untuk semua pesanan di atas Rp 500.000",
+    icon: Shield,
+    title: "Pembayaran Aman",
+    description: "Transaksi aman dengan berbagai metode pembayaran terpercaya",
   },
   {
     icon: RefreshCw,
-    title: "Easy Returns",
-    description: "Pengembalian mudah dalam waktu 30 hari tanpa ribet",
+    title: "Garansi Produk",
+    description: "Jaminan kualitas produk dengan garansi pengembalian",
   },
   {
-    icon: Shield,
-    title: "Secure Payment",
-    description: "Transaksi aman dengan berbagai metode pembayaran",
+    icon: Star,
+    title: "Produk Berkualitas",
+    description: "Hanya menjual produk original dengan kualitas terbaik",
   },
   {
     icon: Headphones,
-    title: "24/7 Support",
-    description: "Tim customer service siap membantu kapan saja",
+    title: "Layanan Pelanggan",
+    description: "Tim support siap membantu menjawab pertanyaan Anda",
   },
 ];
 
-export const WhyChooseUs = () => {
+export function WhyChooseUs() {
   return (
-    <section className="py-24 lg:py-32 bg-background">
+    <section className="py-12 lg:py-16 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
-        {/* Main Content */}
-        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
-          {/* Left - Image (lebih kecil, 2/5 grid) */}
-          <div className="lg:col-span-2 hidden lg:block">
-            <div className="rounded-3xl overflow-hidden aspect-[3/4] max-w-[320px] mx-auto">
-              <img
-                src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=600&q=80"
-                alt="Why Choose Us"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
+        {/* Section Header */}
+        <div className="text-center mb-10">
+          <p className="text-primary font-medium tracking-widest uppercase text-xs mb-3">
+            ✦ Keunggulan Kami ✦
+          </p>
+          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold mb-3">
+            Kenapa Belanja di Sini?
+          </h2>
+          <p className="text-muted-foreground text-sm max-w-xl mx-auto">
+            Kami berkomitmen memberikan pengalaman belanja terbaik untuk Anda
+          </p>
+        </div>
 
-          {/* Right - Content (3/5 grid) */}
-          <div className="lg:col-span-3">
-            <p className="text-primary font-medium tracking-widest uppercase text-sm mb-4">
-              ✦ Why TryWear ✦
-            </p>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              Kenapa Harus
-              <br />
-              Belanja di Sini?
-            </h2>
-            <p className="text-muted-foreground text-lg mb-10 leading-relaxed max-w-xl">
-              Kami berkomitmen untuk memberikan pengalaman berbelanja terbaik
-              dengan produk berkualitas tinggi dan layanan yang memuaskan.
-            </p>
-
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {features.map((feature) => (
-                <div key={feature.title} className="group">
-                  <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <feature.icon className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
+        {/* Features Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="group text-center p-4 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <feature.icon className="w-5 h-5" />
+              </div>
+              <h3 className="font-semibold text-sm mb-1">{feature.title}</h3>
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                {feature.description}
+              </p>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
-};
+}

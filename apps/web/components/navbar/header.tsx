@@ -32,7 +32,7 @@ export const Header = () => {
   }, []);
 
   // Only use transparent header on landing page when not scrolled
-  const isTransparent = isLandingPage && !isScrolled;
+  const isTransparent = !isLandingPage && !isScrolled;
 
   return (
     <header

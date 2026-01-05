@@ -22,51 +22,57 @@ const FilterCategory: React.FC<FilterCategoryProps> = ({
   isLoading,
   categories,
 }) => {
+  const selectedCategory = filter.category;
+
   return (
-    <Accordion type="single" collapsible>
-      <AccordionItem value="category">
-        <AccordionTrigger className="hover:no-underline">
-          Kategori
+    <Accordion type="single" collapsible defaultValue="category">
+      <AccordionItem value="category" className="border-b-0">
+        <AccordionTrigger className="hover:no-underline py-3">
+          <div className="flex items-center gap-2">
+            <span>Kategori</span>
+          </div>
         </AccordionTrigger>
-        <AccordionContent className="pt-6">
+        <AccordionContent className="pt-2 pb-4">
           {isLoading ? (
             <FilterCategorySkeleton />
           ) : !categories || categories.length === 0 ? (
-            <p className="text-xs text-grey-3">Kategori tidak ditemukan.</p>
+            <p className="text-xs text-muted-foreground py-2">
+              Kategori tidak ditemukan.
+            </p>
           ) : (
-            <ul className="space-y-4">
-              <li key={"all"}>
-                <button
-                  type="button"
-                  className={cn(
-                    "disabled:cursor-not-allowed disabled:opacity-60",
-                    {
-                      "text-gray-900": filter.category === null,
-                      "text-grey-3 hover:text-gray-900 hover:text-opacity-75":
-                        filter.category !== null,
-                    },
-                  )}
-                  onClick={() => {
-                    setFilter((prev) => ({
-                      ...prev,
-                      category: null,
-                    }));
-                  }}
-                >
-                  Semua
-                </button>
-              </li>
-              {categories.map((category) => (
-                <li key={category.id}>
+            <div className="space-y-1">
+              {/* Semua Kategori */}
+              <button
+                type="button"
+                className={cn(
+                  "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors",
+                  selectedCategory === null
+                    ? "bg-primary text-primary-foreground font-medium"
+                    : "hover:bg-secondary text-foreground",
+                )}
+                onClick={() => {
+                  setFilter((prev) => ({
+                    ...prev,
+                    category: null,
+                  }));
+                }}
+              >
+                <span>Semua Kategori</span>
+              </button>
+
+              {/* Category List */}
+              {categories.map((category) => {
+                const isSelected = selectedCategory === category.id;
+
+                return (
                   <button
+                    key={category.id}
                     type="button"
                     className={cn(
-                      "disabled:cursor-not-allowed disabled:opacity-60",
-                      {
-                        "text-gray-900": filter.category === category.id,
-                        "text-grey-3 hover:text-gray-900 hover:text-opacity-75":
-                          filter.category !== category.id,
-                      },
+                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors",
+                      isSelected
+                        ? "bg-secondary text-foreground font-medium"
+                        : "hover:bg-secondary text-foreground",
                     )}
                     onClick={() => {
                       setFilter((prev) => ({
@@ -75,11 +81,11 @@ const FilterCategory: React.FC<FilterCategoryProps> = ({
                       }));
                     }}
                   >
-                    {category.name}
+                    <span>{category.name}</span>
                   </button>
-                </li>
-              ))}
-            </ul>
+                );
+              })}
+            </div>
           )}
         </AccordionContent>
       </AccordionItem>
@@ -88,10 +94,13 @@ const FilterCategory: React.FC<FilterCategoryProps> = ({
 };
 
 const FilterCategorySkeleton = () => {
-  return Array.from({ length: 4 }, (_, index) => (
-    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-    <Skeleton className="mb-4 h-5 w-full" key={index} />
-  ));
+  return (
+    <div className="space-y-1">
+      {Array.from({ length: 4 }, (_, index) => (
+        <Skeleton className="h-10 w-full rounded-lg" key={index} />
+      ))}
+    </div>
+  );
 };
 
 export default FilterCategory;

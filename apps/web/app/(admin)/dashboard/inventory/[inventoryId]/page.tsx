@@ -196,7 +196,7 @@ export default function InventoryDetailPage() {
 
   if (inventoryLoading) {
     return (
-      <div className="p-0 md:p-8 space-y-6">
+      <div className="p-4 md:p-8 space-y-6">
         <div className="flex items-center gap-4">
           <Skeleton className="h-10 w-10" />
           <div className="space-y-2">
@@ -258,7 +258,7 @@ export default function InventoryDetailPage() {
   const totalValue = unitPrice * inventory.stock_quantity;
 
   return (
-    <div className="p-0 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <div className="flex items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
