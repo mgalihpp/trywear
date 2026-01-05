@@ -1,5 +1,6 @@
 "use client";
 
+import type { ShipmentStatusType } from "@repo/schema";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import {
@@ -14,21 +15,20 @@ import { id } from "date-fns/locale";
 import Link from "next/link";
 import { useRecentOrders } from "@/features/admin/queries/useDashboardQuery";
 import { formatCurrency } from "@/features/admin/utils";
+import { statusColors } from "@/features/order/constants/shipment";
 
-const statusConfig: Record<string, { label: string; className: string }> = {
-  pending: { label: "Menunggu", className: "bg-gray-100 text-gray-800" },
-  processing: { label: "Diproses", className: "bg-yellow-100 text-yellow-800" },
-  shipped: { label: "Dikirim", className: "bg-blue-100 text-blue-800" },
-  delivered: {
-    label: "Terkirim",
-    className: "bg-emerald-100 text-emerald-800",
-  },
-  completed: { label: "Selesai", className: "bg-emerald-100 text-emerald-800" },
-  cancelled: { label: "Dibatalkan", className: "bg-red-100 text-red-800" },
-  returned: {
-    label: "Dikembalikan",
-    className: "bg-orange-100 text-orange-800",
-  },
+
+const orderStatusLabels: Record<string, string> = {
+  pending: "Menunggu",
+  ready: "Siap Kirim",
+  processing: "Diproses",
+  shipped: "Dikirim",
+  in_transit: "Dalam Pengiriman",
+  delivered: "Terkirim",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
+  failed: "Gagal",
+  returned: "Dikembalikan",
 };
 
 export function RecentOrders() {
@@ -95,10 +95,7 @@ export function RecentOrders() {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => {
-              const status = statusConfig[order.status] || {
-                label: order.status,
-                className: "bg-gray-100 text-gray-800",
-              };
+              const status = order.status as ShipmentStatusType;
 
               return (
                 <Link
@@ -122,7 +119,7 @@ export function RecentOrders() {
                     <p className="font-medium text-sm">
                       {formatCurrency(order.amount)}
                     </p>
-                    <Badge className={status.className}>{status.label}</Badge>
+                    <Badge className={statusColors[status]}>{orderStatusLabels[status]}</Badge>
                   </div>
                 </Link>
               );
