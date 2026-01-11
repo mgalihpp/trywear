@@ -16,6 +16,7 @@ import { returnRouter } from "@/modules/return/return.route";
 import { reviewRouter } from "@/modules/review/review.route";
 import { segmentRouter } from "@/modules/segment/segment.route";
 import { supplierRouter } from "@/modules/supplier/supplier.route";
+import { tryonRouter } from "@/modules/tryon/tryon.route";
 import { userRouter } from "@/modules/user/user.routes";
 
 /**
@@ -157,5 +158,12 @@ v1Router.use("/audit-logs", auditLogRouter);
  * Route ini menangani manajemen user (admin roles).
  */
 v1Router.use("/users", userRouter);
+
+/**
+ * Route ini menangani semua endpoint terkait virtual try-on AI.
+ * Semua route yang berhubungan dengan AI virtual try-on features.
+ * dikelola di dalam router ini.
+ */
+v1Router.use("/tryon", tryonRouter);
 
 export default v1Router;

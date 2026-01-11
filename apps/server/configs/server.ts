@@ -41,8 +41,8 @@ export class Server {
 
   private middlewares(): void {
     this.app.use(cors(corsOptions));
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json({ limit: "50mb" }));
+    this.app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
     // Middleware tambahan dapat ditambahkan di sini
     this.app.use(addRequestId);
@@ -66,7 +66,7 @@ export class Server {
 
   public listen(): Promise<void> {
     return new Promise((resolve) => {
-      this.app.listen(this.port, () => {
+      const server = this.app.listen(this.port, () => {
         console.log(
           `Server running on port ${this.port}\n\nRunning: ${appConfig.SERVER_ORIGIN}\n\n`,
         );
@@ -76,6 +76,9 @@ export class Server {
 
         resolve();
       });
+
+      // Increase timeout to 5 minutes (300000 ms) for AI generation
+      server.setTimeout(300000);
     });
   }
 }

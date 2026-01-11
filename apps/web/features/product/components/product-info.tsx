@@ -393,7 +393,8 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
             product.product_images?.[0]?.url || ""
           );
           const productTitle = encodeURIComponent(product.title);
-          router.push(`/try-on?image=${imageUrl}&name=${productTitle}`);
+          const productIdParam = encodeURIComponent(product.id);
+          router.push(`/try-on?image=${imageUrl}&name=${productTitle}&productId=${productIdParam}`);
         }}
       >
         <Camera className="w-5 h-5" />
